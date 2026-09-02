@@ -1,0 +1,264 @@
+/* 关系网面板遮罩 */
+.relationship-network-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 23, 0.95);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-fade-in 0.3s ease;
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 面板容器 */
+.relationship-network-panel {
+  width: 95%;
+  height: 95%;
+  max-width: 1400px;
+  max-height: 900px;
+  background: linear-gradient(135deg, #0D1117 0%, #141B2D 50%, #0D1117 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 
+    0 0 60px rgba(212, 175, 55, 0.1),
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: panel-scale-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes panel-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 标题栏 */
+.network-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  background: rgba(20, 27, 45, 0.8);
+}
+
+.network-title {
+  font-family: 'Noto Serif SC', 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #D4AF37;
+  margin: 0;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.network-close-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #B8C5D6;
+}
+
+.network-close-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: #D4AF37;
+}
+
+.network-close-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* SVG画布 */
+.network-svg {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  background: transparent;
+}
+
+/* 节点样式 */
+.network-node {
+  transition: opacity 0.3s ease;
+}
+
+.network-node.selected circle:nth-child(2) {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* 图例 */
+.network-legend {
+  position: absolute;
+  bottom: 60px;
+  left: 24px;
+  background: rgba(20, 27, 45, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  z-index: 10;
+}
+
+.legend-title {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7B8C;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-line {
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11px;
+  color: #B8C5D6;
+}
+
+.legend-divider {
+  height: 1px;
+  background: rgba(212, 175, 55, 0.15);
+  margin: 10px 0;
+}
+
+/* 操作提示 */
+.network-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 27, 45, 0.9);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 20px;
+  padding: 8px 20px;
+  z-index: 10;
+}
+
+.network-hint span {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11px;
+  color: #6B7B8C;
+  white-space: nowrap;
+}
+
+/* Tooltip */
+.network-tooltip {
+  pointer-events: none;
+}
+
+/* 响应式适配 */
+@media (max-width: 1024px) {
+  .relationship-network-panel {
+    width: 98%;
+    height: 98%;
+  }
+  
+  .network-title {
+    font-size: 18px;
+  }
+  
+  .network-legend {
+    bottom: 50px;
+    left: 12px;
+    padding: 10px 12px;
+  }
+  
+  .legend-text {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .relationship-network-overlay {
+    padding: 8px;
+  }
+  
+  .relationship-network-panel {
+    border-radius: 12px;
+  }
+  
+  .network-header {
+    padding: 12px 16px;
+  }
+  
+  .network-title {
+    font-size: 16px;
+  }
+  
+  .network-legend {
+    bottom: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 16px;
+    max-width: 90%;
+  }
+  
+  .legend-divider {
+    display: none;
+  }
+  
+  .legend-title {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  
+  .network-hint {
+    bottom: 12px;
+    padding: 6px 16px;
+  }
+  
+  .network-hint span {
+    font-size: 10px;
+  }
+}
