@@ -1,0 +1,51 @@
+.basil-container {
+  position: absolute;
+  top: 14%;
+  right: 1%;
+  width: 200px;
+  height: 270px;
+  z-index: 1003;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.basil-image {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* 所有视觉效果现在由 JS 直接控制 */
+  will-change: opacity, clip-path, transform, filter;
+}
+
+.basil-pen-light {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(244, 228, 186, 0.4) 20%,
+    rgba(212, 175, 55, 0.3) 40%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 2;
+  will-change: top, left, transform;
+}
+
+/* 城市词条打开时，教堂驯鹿到底层 */
+.basil-container.city-active { z-index: 1 !important; }
+
+@media (max-width: 768px) {
+  .basil-container {
+    width: 130px;
+    height: 180px;
+    top: 12%;
+    right: 1%;
+    z-index: 1003;
+  }
+  .basil-pen-light { width: 25px; height: 25px; }
+}
