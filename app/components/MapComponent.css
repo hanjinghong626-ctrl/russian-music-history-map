@@ -29,9 +29,9 @@
 /* Overlays */
 .map-overlay-tl { position: absolute; top: 16px; left: 16px; z-index: 1000; pointer-events: none; }
 .map-title-elegant {
-  background: rgba(12, 11, 29, 0.75);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: rgba(12, 11, 29, 0.6);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(167, 139, 250, 0.12);
   border-radius: 12px; padding: 16px 24px;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
