@@ -238,3 +238,11 @@ html {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
+
+
+/* ===== Dark Map Filter (Slavic Soul) ===== */
+/* Invert OSM light tiles to dark theme - no API key needed */
+.leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1) saturate(0.3) !important;
+  -webkit-filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1) saturate(0.3) !important;
+}
