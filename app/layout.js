@@ -1,4 +1,4 @@
-import './globals.css';
+// deploy trigger import './globals.css';
 
 export const metadata = {
   title: '斯拉夫之魂 — 俄罗斯音乐史交互地图',
