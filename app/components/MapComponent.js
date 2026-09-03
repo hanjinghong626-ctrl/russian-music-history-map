@@ -66,6 +66,51 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       marker.on('click', () => onComposerSelect(composer));
       marker.composerId = composer.id; marker.addTo(map); markersRef.current.push(marker); composerMapRef.current[composer.id] = marker;
     });
+
+    // 星座连线：同学派作曲家之间的连线
+    const constellationLines = [];
+    const schoolGroups = {};
+    filtered.forEach(c => {
+      if (!schoolGroups[c.school]) schoolGroups[c.school] = [];
+      schoolGroups[c.school].push(c);
+    });
+    
+    // 学派颜色和星座名称
+    const schoolConstellation = {
+      'mighty-handful': { color: 'rgba(135,206,250,0.6)', name: '北斗·强力集团' },
+      'moscow': { color: 'rgba(255,215,140,0.6)', name: '天琴·莫斯科学派' },
+      'silver-age': { color: 'rgba(255,182,193,0.6)', name: '仙后·白银时代' },
+      'soviet': { color: 'rgba(220,220,230,0.6)', name: '南十字·苏联学派' }
+    };
+    
+    Object.entries(schoolGroups).forEach(([school, members]) => {
+      if (members.length > 1 && schoolConstellation[school]) {
+        // 星座连线：连接同学派作曲家
+        for (let i = 0; i < members.length - 1; i++) {
+          const line = L.polyline(
+            [members[i].coordinates, members[i + 1].coordinates],
+            { color: schoolConstellation[school].color, weight: 1.5, dashArray: '4,6', opacity: 0.8 }
+          );
+          line.addTo(map);
+          constellationLines.push(line);
+        }
+        // 星座标签（显示在学派中心）
+        if (members.length >= 3) {
+          const centerLat = members.reduce((s, m) => s + m.coordinates[0], 0) / members.length;
+          const centerLng = members.reduce((s, m) => s + m.coordinates[1], 0) / members.length;
+          const label = L.divIcon({
+            className: 'constellation-label',
+            html: `<div class="constellation-name">${schoolConstellation[school].name}</div>`,
+            iconSize: [120, 20],
+            iconAnchor: [60, 10]
+          });
+          const labelMarker = L.marker([centerLat, centerLng], { icon: label, interactive: false });
+          labelMarker.addTo(map);
+          constellationLines.push(labelMarker);
+        }
+      }
+    });
+    window.constellationLines = constellationLines;
     cities.forEach(city => {
       const hasImage = city.image && city.image.length > 0;
       const icon = hasImage ? createCityIcon() : createSmallCityIcon();
