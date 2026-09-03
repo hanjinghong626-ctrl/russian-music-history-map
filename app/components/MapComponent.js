@@ -39,9 +39,17 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     if (!mapRef.current || mapInstanceRef.current) return;
     const map = L.map(mapRef.current, { center: mapCenter, zoom: mapZoom, zoomControl: false, attributionControl: false, minZoom: 3, maxZoom: 12 });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '' }).addTo(map);
-    // 强制暗色主题：CSS 滤镜反转地图颜色
-    const mapContainer = document.querySelector('.leaflet-map');
-    if (mapContainer) mapContainer.style.filter = 'invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1) saturate(0.3)';
+
+    // SVG 滤镜：只反转瓦片层为暗色，标记/控件不受影响
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svgFilter = document.createElementNS(svgNS, 'svg');
+    svgFilter.setAttribute('width', '0'); svgFilter.setAttribute('height', '0');
+    svgFilter.innerHTML = '<filter id="dark-tiles"><feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0"/><feComponentTransfer><feFuncR type="table" tableValues="0.85 0.15"/><feFuncG type="table" tableValues="0.85 0.15"/><feFuncB type="table" tableValues="0.9 0.12"/></feComponentTransfer></filter>';
+    document.head.appendChild(svgFilter);
+    const style2 = document.createElement('style');
+    style2.textContent = '.leaflet-tile-pane{filter:url(#dark-tiles)}';
+    document.head.appendChild(style2);
+
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.control.attribution({ position: 'bottomright', prefix: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>' }).addTo(map);
     mapInstanceRef.current = map;
@@ -49,7 +57,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     style.id = 'rel-dynamic-styles';
     style.textContent = `@keyframes marker-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.8}}.custom-marker{background:transparent!important;border:none!important}.city-marker{background:transparent!important;border:none!important}.leaflet-container{background:#0A0E17!important;font-family:'Noto Sans SC',sans-serif}.leaflet-control-zoom a{background:#141B2D!important;color:#D4AF37!important;border-color:rgba(212,175,55,.3)!important}.leaflet-control-zoom a:hover{background:#1E2A40!important}.leaflet-control-attribution{background:rgba(10,14,23,.8)!important;color:#6B7B8C!important;font-size:10px!important}.leaflet-control-attribution a{color:#B8C5D6!important}.marker-wrapper.dimmed>div:first-child{opacity:.12!important;box-shadow:none!important;animation:none!important}.marker-wrapper.dimmed>div:last-child{opacity:.12!important;border-color:#3a3a3a!important}`;
     document.head.appendChild(style);
-    return () => { map.remove(); mapInstanceRef.current = null; document.getElementById('rel-dynamic-styles')?.remove(); };
+    return () => { map.remove(); mapInstanceRef.current = null; document.getElementById('rel-dynamic-styles')?.remove(); svgFilter?.remove(); style2?.remove(); };
   }, []);
 
   const handleCitySelect = (city) => { setSelectedCity(city); if (onCitySelect) onCitySelect(city); };
