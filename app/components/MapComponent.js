@@ -73,7 +73,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
 
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
-    L.control.attribution({ position: 'bottomright', prefix: '<a href='https://carto.com/'>© CARTO</a>' }).addTo(map);
+    L.control.attribution({ position: 'bottomright', prefix: '© CARTO © OpenStreetMap' }).addTo(map);
     mapInstanceRef.current = map;
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
