@@ -49,6 +49,21 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     if (!mapRef.current || mapInstanceRef.current) return;
     const map = L.map(mapRef.current, { center: mapCenter, zoom: mapZoom, zoomControl: false, attributionControl: false, minZoom: 3, maxZoom: 12 });
     // 不使用瓦片底图，用纯深色背景
+    
+    // 生成星空粒子背景
+    const starCanvas = document.createElement('div');
+    starCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;';
+    let starsHTML = '';
+    for (let i = 0; i < 200; i++) {
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const size = Math.random() * 2 + 0.5;
+      const opacity = Math.random() * 0.6 + 0.2;
+      const delay = Math.random() * 5;
+      starsHTML += `<div style="position:absolute;left:${x}%;top:${y}%;width:${size}px;height:${size}px;background:rgba(200,220,255,${opacity});border-radius:50%;animation:starTwinkle ${3+Math.random()*4}s ease-in-out ${delay}s infinite;"></div>`;
+    }
+    starCanvas.innerHTML = starsHTML;
+    document.getElementById('map').appendChild(starCanvas);
 
 
 
@@ -57,7 +72,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     mapInstanceRef.current = map;
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
-    style.textContent = `@keyframes marker-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.8}}.custom-marker{background:transparent!important;border:none!important}.city-marker{background:transparent!important;border:none!important}.leaflet-container{background:#030810!important;font-family:'Noto Sans SC',sans-serif}.leaflet-control-zoom a{background:#0a1520!important;color:rgb(135,206,250)!important;border-color:rgba(135,206,250,.3)!important}.leaflet-control-zoom a:hover{background:#0f1f30!important}.leaflet-control-attribution{background:rgba(8,14,24,.8)!important;color:rgba(135,206,250,0.5)!important;font-size:10px!important}.leaflet-control-attribution a{color:rgba(135,206,250,0.7)!important}.marker-wrapper.dimmed>div:first-child{opacity:.12!important;box-shadow:none!important;animation:none!important}.marker-wrapper.dimmed>div:last-child{opacity:.12!important;border-color:#3a3a3a!important}`;
+    style.textContent = `@keyframes starTwinkle{0%,100%{opacity:0.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+    @keyframes marker-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.8}}.custom-marker{background:transparent!important;border:none!important}.city-marker{background:transparent!important;border:none!important}.leaflet-container{background:#030810!important;font-family:'Noto Sans SC',sans-serif}.leaflet-control-zoom a{background:#0a1520!important;color:rgb(135,206,250)!important;border-color:rgba(135,206,250,.3)!important}.leaflet-control-zoom a:hover{background:#0f1f30!important}.leaflet-control-attribution{background:rgba(8,14,24,.8)!important;color:rgba(135,206,250,0.5)!important;font-size:10px!important}.leaflet-control-attribution a{color:rgba(135,206,250,0.7)!important}.marker-wrapper.dimmed>div:first-child{opacity:.12!important;box-shadow:none!important;animation:none!important}.marker-wrapper.dimmed>div:last-child{opacity:.12!important;border-color:#3a3a3a!important}`;
     document.head.appendChild(style);
     return () => { map.remove(); mapInstanceRef.current = null; document.getElementById('rel-dynamic-styles')?.remove(); };
   }, []);
