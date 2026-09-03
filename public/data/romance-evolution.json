@@ -1,0 +1,711 @@
+{
+  "title_zh": "俄罗斯浪漫曲的演进",
+  "title_ru": "Эволюция русского романса",
+  "subtitle_zh": "从格林卡到肖斯塔科维奇",
+  "subtitle_ru": "От Глинки до Шостаковича",
+  "periods": [
+    {
+      "id": "origin",
+      "title_zh": "浪漫曲的起源",
+      "title_ru": "Зарождение романса",
+      "period": "1820s-1840s",
+      "background_zh": "十九世纪初，俄罗斯音乐文化尚处于萌芽阶段。意大利歌剧在圣彼得堡宫廷占据主导地位，本土世俗艺术音乐几乎不存在。一种被称为「比托沃伊歌曲」（бытовая песня，日常生活歌曲）的混合体裁开始大量出现，将德语和法语喜歌剧的歌曲特征与俄罗斯民歌元素相结合，为艺术浪漫曲的诞生提供了土壤。普希金、莱蒙托夫等文学巨匠的诗歌创作，则为浪漫曲提供了丰厚的文学资源。",
+      "style_features": [
+        "从比托沃伊歌曲（бытовой романс）到艺术歌曲的转型",
+        "意大利美声传统与俄罗斯民歌语汇的初步融合",
+        "旋律多采用俄罗斯民间调式（如自然小调、五声性建构）",
+        "伴奏从简单和声衬托走向具有描绘性的钢琴写作"
+      ],
+      "composers": [
+        {
+          "slug": "glinka",
+          "name_zh": "格林卡",
+          "name_ru": "М.И. Глинка",
+          "years": "1804-1857",
+          "role": "俄罗斯浪漫曲的奠基人，将俄罗斯民歌语汇与意大利美声传统融合",
+          "detail_slug": "glinka",
+          "sheet_music_slug": "glinka"
+        }
+      ],
+      "works": [
+        {
+          "title_ru": "Я помню чудное мгновенье",
+          "title_zh": "我记得那美妙的瞬间",
+          "poet": "普希金",
+          "opus": "",
+          "composer_slug": "glinka",
+          "sheet_music_slug": "glinka",
+          "significance": "格林卡最著名的浪漫曲，普希金诗作的音乐化身，被誉为俄罗斯艺术歌曲的开山之作"
+        },
+        {
+          "title_ru": "Сомнение",
+          "title_zh": "怀疑",
+          "poet": "库科尔尼克",
+          "opus": "",
+          "composer_slug": "glinka",
+          "sheet_music_slug": "glinka",
+          "significance": "展示了格林卡处理忧郁情感时独特的和声色彩"
+        },
+        {
+          "title_ru": "Жаворонок",
+          "title_zh": "云雀",
+          "poet": "库科尔尼克",
+          "opus": "",
+          "composer_slug": "glinka",
+          "sheet_music_slug": "glinka",
+          "significance": "出自声乐套曲《告别彼得堡》，钢琴伴奏模仿云雀鸣叫，描绘性写作的典范"
+        },
+        {
+          "title_ru": "Ночной зефир",
+          "title_zh": "夜间的微风",
+          "poet": "普希金",
+          "opus": "",
+          "composer_slug": "glinka",
+          "sheet_music_slug": "glinka",
+          "significance": "展示了格林卡将意大利美声风格融入俄罗斯语境的高超技巧"
+        },
+        {
+          "title_ru": "Венецианская ночь",
+          "title_zh": "威尼斯之夜",
+          "poet": "库科尔尼克",
+          "opus": "",
+          "composer_slug": "glinka",
+          "sheet_music_slug": "glinka",
+          "significance": "出自《告别彼得堡》，意大利船歌风格与俄罗斯抒情气质的结合"
+        },
+        {
+          "title_ru": "Как сладко с тобою мне быть",
+          "title_zh": "与你在一起多么甜蜜",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "glinka",
+          "sheet_music_slug": "glinka",
+          "significance": "沙龙风格浪漫曲的代表，旋律优美流畅"
+        }
+      ],
+      "academic_quotes": [
+        {
+          "text": "格林卡处理俄罗斯民间音乐/民间风格音乐的手法影响了整个强力集团。其浪漫曲创作同样开创了将俄罗斯民歌语汇与意大利美声传统融合的典范。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐：十九世纪欧洲音乐风格史》第十一章"
+        },
+        {
+          "text": "比托沃伊歌曲（бытовой романс）是十九世纪俄罗斯出现的一种新的混合体裁，将德语和法语喜歌剧的歌曲特征与俄罗斯民歌元素相结合，开始大量出现在十九世纪俄罗斯歌剧的旋律风格中。",
+          "source": "诺顿断代史",
+          "source_detail": "第十一章「民族主义音乐」开篇"
+        },
+        {
+          "text": "格林卡将俄罗斯专业音乐赶上欧洲音乐强国的水准，为俄罗斯艺术音乐的发展奠定了基础，开辟了道路。",
+          "source": "于润洋",
+          "source_detail": "《西方音乐通史》第七章"
+        }
+      ]
+    },
+    {
+      "id": "maturation",
+      "title_zh": "浪漫曲的成熟期",
+      "title_ru": "Зрелость романса",
+      "period": "1840s-1860s",
+      "background_zh": "达尔戈梅日斯基开创的现实主义朗诵调革命，将俄罗斯浪漫曲从单纯的抒情歌曲推向了深刻的心理戏剧领域。他主张「艺术真实」，探索语言音调与音乐的紧密结合，被穆索尔斯基称为「伟大音乐真理的导师」。这一时期，浪漫曲开始承载更深刻的社会揭露和讽刺功能。",
+      "style_features": [
+        "现实主义朗诵调（речитатив）的创立：诗歌音调与音乐的精确对应",
+        "从单纯的抒情功能转向心理戏剧性表达",
+        "声乐线条更贴近俄语的语调特征",
+        "钢琴伴奏从背景衬托变为参与戏剧表达的独立声部"
+      ],
+      "composers": [
+        {
+          "slug": "dargomyzhsky",
+          "name_zh": "达尔戈梅日斯基",
+          "name_ru": "А.С. Даргомыжский",
+          "years": "1813-1869",
+          "role": "现实主义朗诵调的开创者，穆索尔斯基称其为「伟大音乐真理的导师」",
+          "detail_slug": "dargomyzhsky",
+          "sheet_music_slug": ""
+        },
+        {
+          "slug": "mussorgsky",
+          "name_zh": "穆索尔斯基",
+          "name_ru": "М.П. Мусоргский",
+          "years": "1839-1881",
+          "role": "将朗诵调推向极自然主义风格，开创极富个性的和声语言",
+          "detail_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy"
+        }
+      ],
+      "works": [
+        {
+          "title_ru": "Мне грустно",
+          "title_zh": "我愁",
+          "poet": "莱蒙托夫",
+          "opus": "",
+          "composer_slug": "dargomyzhsky",
+          "sheet_music_slug": "",
+          "significance": "达尔戈梅日斯基艺术歌曲的代表作，展示了朗诵调风格与情感表达的结合"
+        },
+        {
+          "title_ru": "Старый капрал",
+          "title_zh": "老军士之歌",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "dargomyzhsky",
+          "sheet_music_slug": "",
+          "significance": "社会讽刺倾向的体现，揭示底层人物的命运"
+        },
+        {
+          "title_ru": "Светик Савишна",
+          "title_zh": "亲爱的萨维什纳",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy",
+          "significance": "穆索尔斯基极自然主义朗诵调的奠基之作，1866年创作"
+        },
+        {
+          "title_ru": "Детская",
+          "title_zh": "育儿室（声乐套曲）",
+          "poet": "穆索尔斯基自撰",
+          "opus": "",
+          "composer_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy",
+          "significance": "1870-1872年创作的7首儿童场景歌曲，朗诵调手法的极致运用，对儿童心理的惊人洞察"
+        },
+        {
+          "title_ru": "Семинарист",
+          "title_zh": "神学院学生",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy",
+          "significance": "与《亲爱的萨维什纳》同为1866年的自然主义朗诵调作品"
+        }
+      ],
+      "academic_quotes": [
+        {
+          "text": "达尔戈梅日斯基实现音乐现实主义的途径：运用俄罗斯诗歌的严格朗诵调 + 采用俄罗斯民歌的旋律语汇。其《石客》整部作品几乎从头至尾以戏剧性朗诵调写成，介乎于宣叙调与咏叙调之间。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章"
+        },
+        {
+          "text": "穆索尔斯基的朗诵调并非简单的「现实主义」，而是带有民族主义色彩的朗诵调复兴。受达尔戈梅日斯基《石客》影响，穆索尔斯基在歌曲中设计了一种极自然主义风格的朗诵调。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章，穆索尔斯基条目"
+        },
+        {
+          "text": "达尔戈梅日斯基主张艺术真实，突出社会揭露和讽刺倾向，探索语言音调与音乐的紧密结合。被穆索尔斯基称为「伟大音乐真理的导师」。",
+          "source": "凯尔迪什",
+          "source_detail": "《俄罗斯音乐史纲》"
+        }
+      ]
+    },
+    {
+      "id": "mighty-handful",
+      "title_zh": "强力集团的浪漫曲",
+      "title_ru": "Романсы Могучей кучки",
+      "period": "1860s-1880s",
+      "background_zh": "1860年代，以巴拉基列夫为核心的「强力集团」（Могучая кучка）在车尔尼雪夫斯基现实主义美学影响下，将俄罗斯浪漫曲推向了新的高度。然而诺顿指出，强力集团的统一性远不如斯塔索夫所声称的那样明确：巴拉基列夫的作品几乎不具备民族主义特征，居伊更是如此。真正的统一点是对音乐学院保守倾向的一贯敌视。浪漫曲创作方面，穆索尔斯基的和声创新、鲍罗廷的室内乐式精致、里姆斯基-科萨科夫的东方主义色彩，各自开辟了不同的道路。",
+      "style_features": [
+        "穆索尔斯基：主持续音（pedal point）的大量使用，非常规和弦构建，即兴性语汇",
+        "鲍罗廷：室内乐式的精致写作，旋律风格折衷但充满魅力",
+        "里姆斯基-科萨科夫：东方主义色彩与管弦乐化的声乐写作",
+        "巴拉基列夫：领导角色但作品主要处于欧洲传统中，缺乏民族主义特征"
+      ],
+      "composers": [
+        {
+          "slug": "balakirev",
+          "name_zh": "巴拉基列夫",
+          "name_ru": "М.А. Балакирев",
+          "years": "1837-1910",
+          "role": "强力集团的组织者和领导者，但其作品缺乏民族主义特征",
+          "detail_slug": "balakirev",
+          "sheet_music_slug": ""
+        },
+        {
+          "slug": "mussorgsky",
+          "name_zh": "穆索尔斯基",
+          "name_ru": "М.П. Мусоргский",
+          "years": "1839-1881",
+          "role": "和声创新：主持续音、非常规和弦构建，即兴性语汇",
+          "detail_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy"
+        },
+        {
+          "slug": "borodin",
+          "name_zh": "鲍罗廷",
+          "name_ru": "А.П. Бородин",
+          "years": "1833-1887",
+          "role": "室内乐式精致写作，旋律折衷但魅力独具",
+          "detail_slug": "borodin",
+          "sheet_music_slug": ""
+        },
+        {
+          "slug": "rimsky_korsakov",
+          "name_zh": "里姆斯基-科萨科夫",
+          "name_ru": "Н.А. Римский-Корсаков",
+          "years": "1844-1908",
+          "role": "东方主义色彩与管弦乐化声乐写作，配器大师",
+          "detail_slug": "rimsky_korsakov",
+          "sheet_music_slug": "rimskiy-korsakov"
+        }
+      ],
+      "works": [
+        {
+          "title_ru": "Песни и пляски смерти",
+          "title_zh": "死之歌舞（声乐套曲）",
+          "poet": "果列尼谢夫-库图佐夫",
+          "opus": "",
+          "composer_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy",
+          "significance": "4首歌曲组成，穆索尔斯基最深刻的声乐套曲，和声创新达到高峰。《小夜曲》完全建立在主持续音之上"
+        },
+        {
+          "title_ru": "Без солнца",
+          "title_zh": "没有阳光（声乐套曲）",
+          "poet": "果列尼谢夫-库图佐夫",
+          "opus": "",
+          "composer_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy",
+          "significance": "6首歌曲，深沉的忧郁与内省，朗诵调与抒情性的完美结合"
+        },
+        {
+          "title_ru": "Песня о блохе",
+          "title_zh": "跳蚤之歌",
+          "poet": "歌德（俄译）",
+          "opus": "",
+          "composer_slug": "mussorgsky",
+          "sheet_music_slug": "musorgskiy",
+          "significance": "讽刺性浪漫曲的杰作，穆索尔斯基最广为人知的歌曲之一"
+        },
+        {
+          "title_ru": "Спящая царевна",
+          "title_zh": "睡公主",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "borodin",
+          "sheet_music_slug": "",
+          "significance": "鲍罗廷浪漫曲的代表作，精致优雅的室内乐风格"
+        },
+        {
+          "title_ru": "Пророк",
+          "title_zh": "先知",
+          "poet": "普希金",
+          "opus": "",
+          "composer_slug": "rimsky_korsakov",
+          "sheet_music_slug": "rimskiy-korsakov",
+          "significance": "里姆斯基-科萨科夫浪漫曲的重要代表作，管弦乐化的声乐写作"
+        },
+        {
+          "title_ru": "На холмах Грузии",
+          "title_zh": "在格鲁吉亚的山丘上",
+          "poet": "普希金",
+          "opus": "",
+          "composer_slug": "rimsky_korsakov",
+          "sheet_music_slug": "rimskiy-korsakov",
+          "significance": "东方主义色彩与深沉抒情的结合"
+        }
+      ],
+      "academic_quotes": [
+        {
+          "text": "考虑到巴拉基列夫在五人团中的领导地位，他的作品令人惊讶地几乎没有俄罗斯民族主义原则影响的痕迹。其音乐风格主要处于欧洲传统中。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章，巴拉基列夫条目"
+        },
+        {
+          "text": "穆索尔斯基发展出独具个性的和声风格：即兴性语汇，常将各种传统和声音响以非常规方式结合。大量使用主持续音（pedal point）。《死之歌舞·小夜曲》完全建立在主持续音之上，钢琴上声部从开放型和声下行至密集形和声，过程中增六度等音响未以惯常方式解决。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章，穆索尔斯基条目"
+        },
+        {
+          "text": "强力集团的统一性因内部不同趣味和不断变化的联盟而严重削弱。真正统一点是体制外作曲家对体制内作曲家的一贯敌视——与圣彼得堡音乐学院的保守倾向和谣传的「外来性」有关。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章，补充部分"
+        }
+      ]
+    },
+    {
+      "id": "tchaikovsky",
+      "title_zh": "柴可夫斯基的浪漫曲",
+      "title_ru": "Романсы Чайковского",
+      "period": "1860s-1893",
+      "background_zh": "柴可夫斯基一生创作了103首浪漫曲，横跨14个作品号（Op.6至Op.73）。他通常被归入「国际性」或「欧洲式」一派，但诺顿指出其与民族主义传统的关系远比通行的二元对立描述更为复杂。终其一生，柴可夫斯基保持对俄罗斯本土音乐的兴趣，1868-1869年整理出版民歌集，其歌剧对俄罗斯文学和历史题材的依赖不亚于强力集团。在浪漫曲领域，他将沙龙音乐传统与艺术深度相结合，创造出一种独特的、兼具通俗性与深刻性的抒情风格。",
+      "style_features": [
+        "沙龙音乐传统与艺术深度的结合：宽广旋律线条与略嫌衰颓的副七和弦",
+        "歌词选择：普希金、阿·托尔斯泰、费特等诗人",
+        "创作贯穿一生：从Op.6（1869）到Op.73（1893），风格持续演变",
+        "声乐写作兼具意大利美声的流畅与俄罗斯语调的自然"
+      ],
+      "composers": [
+        {
+          "slug": "tchaikovsky",
+          "name_zh": "柴可夫斯基",
+          "name_ru": "П.И. Чайковский",
+          "years": "1840-1893",
+          "role": "沙龙传统与艺术深度的结合者，「国际性」与「民族性」的复杂统一",
+          "detail_slug": "tchaikovsky",
+          "sheet_music_slug": "chaykovskiy"
+        }
+      ],
+      "opus_groups": [
+        {
+          "opus": "Op.6",
+          "year": "1869",
+          "count": 6,
+          "description_zh": "柴可夫斯基第一部浪漫曲集，包含著名的《不要相信，我的朋友》，歌词取自歌德，英文语境以《None But the Lonely Heart》闻名。沙龙风格与初步的艺术雄心并存。",
+          "highlight_work": "Не верь, мой друг"
+        },
+        {
+          "opus": "Op.16",
+          "year": "1872",
+          "count": 6,
+          "description_zh": "包含《摇篮曲》，展示柴可夫斯基处理简朴抒情题材的功力。",
+          "highlight_work": "Колыбельная песня"
+        },
+        {
+          "opus": "Op.25",
+          "year": "1875",
+          "count": 6,
+          "description_zh": "中期风格日趋成熟，《和解》展示了更深层的情感表达。",
+          "highlight_work": "Примиренье"
+        },
+        {
+          "opus": "Op.27",
+          "year": "1875",
+          "count": 6,
+          "description_zh": "与Op.25同年完成，创作力旺盛期的产物。",
+          "highlight_work": "На сон грядущий"
+        },
+        {
+          "opus": "Op.28",
+          "year": "1875",
+          "count": 6,
+          "description_zh": "以缪塞诗歌译本为词，展示柴可夫斯基对法国浪漫主义文学的回应。",
+          "highlight_work": "Нет, никогда не назову"
+        },
+        {
+          "opus": "Op.38",
+          "year": "1878",
+          "count": 6,
+          "description_zh": "包含《唐璜小夜曲》和《那是在早春》，均为阿·托尔斯泰诗，是柴可夫斯基最受欢迎的浪漫曲集之一。",
+          "highlight_work": "Серенада Дон-Жуана"
+        },
+        {
+          "opus": "Op.47",
+          "year": "1880",
+          "count": 7,
+          "description_zh": "包含《假如我知道》和《灵魂静静飞向天际》，均为阿·托尔斯泰诗，宗教性与世俗性并存。",
+          "highlight_work": "Кабы знала я"
+        },
+        {
+          "opus": "Op.54",
+          "year": "1883",
+          "count": 16,
+          "description_zh": "柴可夫斯基规模最大的浪漫曲集，16首歌曲中包含儿童题材作品，展示作曲家对体裁的全面掌握。",
+          "highlight_work": "Бабушка и внучек"
+        },
+        {
+          "opus": "Op.57",
+          "year": "1884",
+          "count": 6,
+          "description_zh": "包含梅列日科夫斯基诗《告诉我，在树荫下》，晚期风格的内省倾向初现。",
+          "highlight_work": "Скажи, о чем в тени ветвей"
+        },
+        {
+          "opus": "Op.60",
+          "year": "1886",
+          "count": 12,
+          "description_zh": "12首歌曲，包含费特名诗《我什么都不会告诉你》，抒情与含蓄的完美结合。",
+          "highlight_work": "Я тебе ничего не скажу"
+        },
+        {
+          "opus": "Op.63",
+          "year": "1887",
+          "count": 6,
+          "description_zh": "全部以「К.Р.」（大公康斯坦丁·罗曼诺夫）诗作为词，宫廷诗人与音乐家的合作。",
+          "highlight_work": "Я сначала тебя не любила"
+        },
+        {
+          "opus": "Op.73",
+          "year": "1893",
+          "count": 6,
+          "description_zh": "柴可夫斯基最后的浪漫曲集，与《第六「悲怆」交响曲》同年完成。深沉的告别意味，诗作中的忧伤与永恒交织。",
+          "highlight_work": "Мы сидели с тобой"
+        }
+      ],
+      "works": [
+        {
+          "title_ru": "Не верь, мой друг",
+          "title_zh": "不要相信，我的朋友",
+          "poet": "阿·托尔斯泰",
+          "opus": "Op.6 №1",
+          "composer_slug": "tchaikovsky",
+          "sheet_music_slug": "chaykovskiy",
+          "significance": "柴可夫斯基第一首正式出版的浪漫曲，歌德诗《懂得相思的人》的俄译本"
+        },
+        {
+          "title_ru": "Серенада Дон-Жуана",
+          "title_zh": "唐璜小夜曲",
+          "poet": "阿·托尔斯泰",
+          "opus": "Op.38 №1",
+          "composer_slug": "tchaikovsky",
+          "sheet_music_slug": "chaykovskiy",
+          "significance": "最受欢迎的浪漫曲之一，戏剧性与抒情性的完美融合"
+        },
+        {
+          "title_ru": "Я тебе ничего не скажу",
+          "title_zh": "我什么都不会告诉你",
+          "poet": "费特",
+          "opus": "Op.60 №2",
+          "composer_slug": "tchaikovsky",
+          "sheet_music_slug": "chaykovskiy",
+          "significance": "费特名诗的音乐化，含蓄而深情的抒情杰作"
+        },
+        {
+          "title_ru": "То было раннею весной",
+          "title_zh": "那是在早春",
+          "poet": "阿·托尔斯泰",
+          "opus": "Op.38 №2",
+          "composer_slug": "tchaikovsky",
+          "sheet_music_slug": "chaykovskiy",
+          "significance": "春日恋情的音乐描绘，旋律清新优美"
+        },
+        {
+          "title_ru": "Мы сидели с тобой",
+          "title_zh": "我们曾坐在一起",
+          "poet": "拉特гауз",
+          "opus": "Op.73 №1",
+          "composer_slug": "tchaikovsky",
+          "sheet_music_slug": "chaykovskiy",
+          "significance": "柴可夫斯基最后的浪漫曲，深沉的告别"
+        }
+      ],
+      "academic_quotes": [
+        {
+          "text": "柴可夫斯基通常被认为是俄罗斯音乐中「国际性」或「欧洲式」一派的领军人物。但他与这种派系的联系其实相当薄弱。终其一生保持对俄罗斯本土音乐的兴趣，1868-1869年整理出版民歌集。划归「欧洲」阵营的真正原因是外在因素：圣彼得堡音乐学院学生身份、莫斯科音乐学院教职、频繁旅居西方。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章，柴可夫斯基条目"
+        },
+        {
+          "text": "柴可夫斯基的许多歌曲和钢琴音乐都与半通俗的沙龙风格密切相关。最著名的歌曲有着宽广的旋律线条和客厅浪漫曲常用的略嫌衰颓的副七和弦——这种写作风格常在柴可夫斯基的作品中听到。",
+          "source": "诺顿断代史",
+          "source_detail": "《浪漫音乐》第十一章，歌曲创作与沙龙音乐"
+        },
+        {
+          "text": "柴可夫斯基旋律具有「活生生的、有表现力的、伸缩自如」的性格，音乐语言的根基是传统的，但情感表达具有普遍人类意义。",
+          "source": "于润洋",
+          "source_detail": "《西方音乐通史》第七章"
+        }
+      ]
+    },
+    {
+      "id": "transformation",
+      "title_zh": "浪漫曲的转型期",
+      "title_ru": "Трансформация романса",
+      "period": "1890s-1910s",
+      "background_zh": "十九世纪末至二十世纪初，俄罗斯浪漫曲进入转型期。拉赫玛尼诺夫将晚期浪漫主义推向巅峰，其旋律的绵长与和声的半音化达到极致，最终在《练声曲》（Vocalise, Op.34 №14）中实现了无言的升华。斯克里亚宾则从浪漫主义走向神秘主义，其早期浪漫曲仍保留肖邦式的抒情性，但后期和声语言越来越脱离传统调性体系。这一时期的浪漫曲，标志着从十九世纪浪漫主义向二十世纪现代主义的过渡。",
+      "style_features": [
+        "拉赫玛尼诺夫：旋律的绵长与和声的半音化，晚期浪漫主义的巅峰",
+        "斯克里亚宾：从浪漫主义走向神秘主义，和声语言的激进变革",
+        "钢琴伴奏的技术要求大幅提高，与声乐声部形成平等对话",
+        "诗歌选择更多元：象征主义诗歌进入浪漫曲领域"
+      ],
+      "composers": [
+        {
+          "slug": "rakhmaninov",
+          "name_zh": "拉赫玛尼诺夫",
+          "name_ru": "С.В. Рахманинов",
+          "years": "1873-1943",
+          "role": "晚期浪漫主义巅峰，旋律的绵长与和声的半音化",
+          "detail_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov"
+        },
+        {
+          "slug": "scriabin",
+          "name_zh": "斯克里亚宾",
+          "name_ru": "А.Н. Скрябин",
+          "years": "1872-1915",
+          "role": "从浪漫主义走向神秘主义，和声语言的激进变革",
+          "detail_slug": "scriabin",
+          "sheet_music_slug": ""
+        }
+      ],
+      "works": [
+        {
+          "title_ru": "Вокализ, Op.34 №14",
+          "title_zh": "练声曲",
+          "poet": "（无词）",
+          "opus": "Op.34 №14",
+          "composer_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov",
+          "significance": "浪漫曲体裁的终极升华——无言之歌，纯粹的旋律与和声之美"
+        },
+        {
+          "title_ru": "Сирень",
+          "title_zh": "紫丁香",
+          "poet": "",
+          "opus": "Op.21 №5",
+          "composer_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov",
+          "significance": "拉赫玛尼诺夫最脍炙人口的浪漫曲之一，短小精悍的抒情杰作"
+        },
+        {
+          "title_ru": "Весенние воды",
+          "title_zh": "春潮",
+          "poet": "丘特切夫",
+          "opus": "Op.14 №11",
+          "composer_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov",
+          "significance": "激情澎湃的春日颂歌，钢琴伴奏如同潮水涌动"
+        },
+        {
+          "title_ru": "Здесь хорошо",
+          "title_zh": "这里多美好",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov",
+          "significance": "拉赫玛尼诺夫抒情性浪漫曲的代表，宁静而深远"
+        },
+        {
+          "title_ru": "Островок",
+          "title_zh": "小岛",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov",
+          "significance": "意境深远，象征主义诗歌与音乐的融合"
+        },
+        {
+          "title_ru": "Ночь печальна",
+          "title_zh": "忧伤的夜",
+          "poet": "",
+          "opus": "",
+          "composer_slug": "rakhmaninov",
+          "sheet_music_slug": "rahmaninov",
+          "significance": "拉赫玛尼诺夫晚期浪漫主义气质的典型体现"
+        }
+      ],
+      "academic_quotes": [
+        {
+          "text": "拉赫玛尼诺夫被誉为「最后的浪漫主义大师」。深刻的抒情性和悲剧性、旋律优美感人、俄罗斯民族性与西欧技巧完美结合。",
+          "source": "于润洋",
+          "source_detail": "《西方音乐通史》第七章"
+        },
+        {
+          "text": "诺顿在两个地方提及拉赫玛尼诺夫，但未对其作曲创作进行任何讨论，仅将其作为维尼亚夫斯基所开创的「斯拉夫炫技传统」的钢琴家代表之一一笔带过。",
+          "source": "诺顿断代史",
+          "source_detail": "第十一章波兰部分"
+        },
+        {
+          "text": "斯克里亚宾受到神秘主义哲学影响，独创性和声语言，从浪漫主义走向神秘主义。其早期浪漫曲仍保留肖邦式的抒情性。",
+          "source": "凯尔迪什",
+          "source_detail": "《俄罗斯音乐史纲》"
+        }
+      ]
+    },
+    {
+      "id": "soviet",
+      "title_zh": "苏联时期的浪漫曲",
+      "title_ru": "Романс советского периода",
+      "period": "1920s-1970s",
+      "background_zh": "十月革命后，俄罗斯浪漫曲传统在苏联时期经历了深刻的转型。普罗科菲耶夫以新古典主义的冷峻和讽刺性的幽默为浪漫曲注入了现代气质，同时其回国后的作品又回归到更为简朴、抒情的风格。肖斯塔科维奇则在浪漫曲中实现了深沉的内在表达，其声乐套曲常常是政治压力下私人情感的唯一出口。社会主义现实主义的文艺方针在某种程度上限制了浪漫曲的题材选择，但两位大师仍在体制框架内创造出具有深刻人文精神的作品。",
+      "style_features": [
+        "普罗科菲耶夫：新古典主义的冷峻线条与讽刺性幽默，后期回归抒情",
+        "肖斯塔科维奇：深沉的内在表达，政治压力下的私人情感出口",
+        "社会主义现实主义对方针的影响：题材受限但精神不灭",
+        "现代和声语言与传统抒情性的张力"
+      ],
+      "composers": [
+        {
+          "slug": "prokofiev",
+          "name_zh": "普罗科菲耶夫",
+          "name_ru": "С.С. Прокофьев",
+          "years": "1891-1953",
+          "role": "新古典主义与讽刺，后期回归抒情",
+          "detail_slug": "prokofiev",
+          "sheet_music_slug": ""
+        },
+        {
+          "slug": "shostakovich",
+          "name_zh": "肖斯塔科维奇",
+          "name_ru": "Д.Д. Шостакович",
+          "years": "1906-1976",
+          "role": "深沉的内在表达，在体制框架内创造深刻人文精神",
+          "detail_slug": "shostakovich",
+          "sheet_music_slug": ""
+        }
+      ],
+      "works": [
+        {
+          "title_ru": "Пять стихотворений А.Ахматовой",
+          "title_zh": "阿赫玛托娃五首诗",
+          "poet": "阿赫玛托娃",
+          "opus": "Op.27",
+          "composer_slug": "prokofiev",
+          "sheet_music_slug": "",
+          "significance": "普罗科菲耶夫最重要的声乐套曲之一，现代诗歌与现代音乐的结合"
+        },
+        {
+          "title_ru": "Грузинские песни",
+          "title_zh": "格鲁吉亚歌曲",
+          "poet": "",
+          "opus": "Op.71",
+          "composer_slug": "prokofiev",
+          "sheet_music_slug": "",
+          "significance": "晚年抒情风格的回归，民间音乐元素的重新融入"
+        },
+        {
+          "title_ru": "Сатиры (картины прошлого)",
+          "title_zh": "讽刺画（过去的画面）",
+          "poet": "萨沙·乔尔内",
+          "opus": "Op.109",
+          "composer_slug": "shostakovich",
+          "sheet_music_slug": "",
+          "significance": "肖斯塔科维奇晚期声乐套曲，讽刺与深沉并存的杰作"
+        },
+        {
+          "title_ru": "Британские песни",
+          "title_zh": "英国歌曲（声乐套曲）",
+          "poet": "",
+          "opus": "Op.62",
+          "composer_slug": "shostakovich",
+          "sheet_music_slug": "",
+          "significance": "肖斯塔科维奇重要的声乐套曲，展示其深沉的抒情性"
+        }
+      ],
+      "academic_quotes": [
+        {
+          "text": "普罗科菲耶夫早期风格以怪诞、托卡塔风格著称；回国后风格更为简朴、抒情，注重旋律性。宽广旋律结合运动员进行曲式节奏，通俗易懂又技巧精湛。",
+          "source": "于润洋",
+          "source_detail": "《西方音乐通史》第七章"
+        },
+        {
+          "text": "肖斯塔科维奇1936年遭《真理报》批判，1948年再次被批判。他的室内乐和声乐作品常常是政治压力下私人情感的唯一真实出口。",
+          "source": "于润洋",
+          "source_detail": "《西方音乐通史》第七章"
+        }
+      ]
+    }
+  ],
+  "related_links": [
+    {
+      "title_zh": "俄罗斯音乐学派分析",
+      "url": "/music-history/schools",
+      "icon": "🏛"
+    },
+    {
+      "title_zh": "俄语音乐术语库",
+      "url": "/music-history/glossary",
+      "icon": "📖"
+    },
+    {
+      "title_zh": "作曲家详情",
+      "url": "/music-history/composers",
+      "icon": "🎹"
+    },
+    {
+      "title_zh": "曲库总览",
+      "url": "/sheet-music",
+      "icon": "🎼"
+    }
+  ]
+}
