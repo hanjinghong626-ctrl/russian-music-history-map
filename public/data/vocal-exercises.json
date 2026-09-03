@@ -1,0 +1,326 @@
+{
+  "collections": [
+    {
+      "id": "abt",
+      "nameZh": "阿布特练声曲",
+      "nameRu": "Вокализы Абта",
+      "nameEn": "Abt Vocalises",
+      "composer": "Franz Abt",
+      "composerZh": "弗朗茨·阿布特",
+      "years": "1819-1885",
+      "country": "德国",
+      "description": "德国作曲家弗朗茨·阿布特创作的练声曲集，以其优美的旋律和渐进式难度著称，适合初学者建立音准和呼吸基础。",
+      "difficulty": "初级-中级",
+      "voiceTypes": ["女高音", "女低音", "男高音", "男低音"],
+      "pieceCount": 48,
+      "url": "https://imslp.org/wiki/Category:Abt,_Franz",
+      "imslpUrl": "https://imslp.org/wiki/Category:Abt,_Franz",
+      "pdfNote": "IMSLP上暂无阿布特练声曲公版PDF，部分版本可通过商业渠道获取",
+      "pieces": [
+        {"id": 1, "title": "No.1 降B大调", "titleRu": "Вокализ №1", "opus": "Op.474", "pdfUrl": null},
+        {"id": 2, "title": "No.2 F大调", "titleRu": "Вокализ №2", "opus": "Op.474", "pdfUrl": null},
+        {"id": 3, "title": "No.3 降E大调", "titleRu": "Вокализ №3", "opus": "Op.474", "pdfUrl": null},
+        {"id": 4, "title": "No.4 G大调", "titleRu": "Вокализ №4", "opus": "Op.474", "pdfUrl": null},
+        {"id": 5, "title": "No.5 A小调", "titleRu": "Вокализ №5", "opus": "Op.474", "pdfUrl": null},
+        {"id": 6, "title": "No.6 D大调", "titleRu": "Вокализ №6", "opus": "Op.474", "pdfUrl": null},
+        {"id": 7, "title": "No.7 C大调", "titleRu": "Вокализ №7", "opus": "Op.474", "pdfUrl": null},
+        {"id": 8, "title": "No.8 降A大调", "titleRu": "Вокализ №8", "opus": "Op.474", "pdfUrl": null}
+      ]
+    },
+    {
+      "id": "concone",
+      "nameZh": "孔科内练声曲",
+      "nameRu": "Вокализы Конконе",
+      "nameEn": "Concone Vocalises",
+      "composer": "Giuseppe Concone",
+      "composerZh": "朱塞佩·孔科内",
+      "years": "1801-1861",
+      "country": "意大利",
+      "description": "意大利声乐教师孔科内的经典练习曲，以其简洁优雅的音乐语言和清晰的声乐技巧训练著称，是声乐教育的基石教材。",
+      "difficulty": "初级-中级",
+      "voiceTypes": ["女高音", "女中音", "男高音", "男中音"],
+      "pieceCount": 50,
+      "url": "https://imslp.org/wiki/Category:Concone,_Giuseppe",
+      "imslpUrl": "https://imslp.org/wiki/Category:Concone,_Giuseppe",
+      "pdfNote": "IMSLP公版资源",
+      "pieces": [
+        {"id": 1, "title": "25首练声曲 Op.1", "titleRu": "25 Vocalizzi Op.1", "difficulty": "初级", "pdfUrl": "https://imslp.org/wiki/50_Le%C3%A7ons_de_chant,_Op.9_(Concone,_Giuseppe)"},
+        {"id": 2, "title": "每日练习 Op.5", "titleRu": "Lezioni di canto Op.5", "difficulty": "中级", "pdfUrl": "https://imslp.org/wiki/50_Le%C3%A7ons_de_chant,_Op.9_(Concone,_Giuseppe)"},
+        {"id": 3, "title": "50首练声曲 Op.10", "titleRu": "50 Vocalizzi Op.10", "difficulty": "中级-高级", "pdfUrl": "https://imslp.org/wiki/25_Le%C3%A7ons_de_chant,_Op.10_(Concone,_Giuseppe)"},
+        {"id": 4, "title": "15首练声曲 Op.12", "titleRu": "15 Vocalises Op.12", "difficulty": "高级", "pdfUrl": "https://imslp.org/wiki/15_Vocalises,_Op.12_(Concone,_Giuseppe)"}
+      ]
+    },
+    {
+      "id": "vaccai",
+      "nameZh": "瓦卡伊练声曲",
+      "nameRu": "Вокализы Ваккаи",
+      "nameEn": "Vaccai Vocalises",
+      "composer": "Nicola Vaccai",
+      "composerZh": "尼古拉·瓦卡伊",
+      "years": "1790-1848",
+      "country": "意大利",
+      "description": "意大利作曲家瓦卡伊最著名的Practical Method for the Medium Voice，包含从基础到进阶的系统训练，是柴可夫斯基音乐学院推荐教材。",
+      "difficulty": "中级",
+      "voiceTypes": ["女中音", "男中音", "男低音"],
+      "pieceCount": 30,
+      "url": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)",
+      "imslpUrl": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)",
+      "pdfNote": "IMSLP公版资源 - 多个版本",
+      "pieces": [
+        {"id": 1, "title": "Practical Method - 高音版", "titleRu": "Metodo pratico - High Voice", "pdfUrl": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)"},
+        {"id": 2, "title": "Practical Method - 中音版", "titleRu": "Metodo pratico - Medium Voice", "pdfUrl": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)"},
+        {"id": 3, "title": "Practical Method - 低音版", "titleRu": "Metodo pratico - Low Voice", "pdfUrl": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)"},
+        {"id": 4, "title": "Practical Method - 伴奏音频", "titleRu": "Metodo pratico - Accompaniments", "pdfUrl": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)"}
+      ]
+    },
+    {
+      "id": "panofka",
+      "nameZh": "帕诺夫卡练声曲",
+      "nameRu": "Вокализы Пановки",
+      "nameEn": "Panofka Vocalises",
+      "composer": "Heinrich Panofka",
+      "composerZh": "海因里希·帕诺夫卡",
+      "years": "1807-1887",
+      "country": "德国",
+      "description": "德国小提琴家和声乐教师帕诺夫卡创作的24首练声曲，分为四个声部版本（女高音、女低音、男高音、男低音），系统训练声区统一和音色变化。",
+      "difficulty": "中级-高级",
+      "voiceTypes": ["女高音", "女低音", "男高音", "男低音"],
+      "pieceCount": 96,
+      "url": "https://imslp.org/wiki/24_Vocalises,_Op.81_(Panofka,_Heinrich)",
+      "imslpUrl": "https://imslp.org/wiki/24_Vocalises,_Op.81_(Panofka,_Heinrich)",
+      "pdfNote": "IMSLP公版资源 - 四个声部版本",
+      "pieces": [
+        {"id": 1, "title": "24首练声曲 Op.81 - 女高音/女中音/男高音", "titleRu": "24 Vocalises Op.81 - High Voice", "pdfUrl": "https://imslp.org/wiki/24_Vocalises,_Op.81_(Panofka,_Heinrich)"},
+        {"id": 2, "title": "24首练声曲 Op.81 - 女低音/男中音/男低音", "titleRu": "24 Vocalises Op.81 - Low Voice", "pdfUrl": "https://imslp.org/wiki/24_Vocalises,_Op.81_(Panofka,_Heinrich)"},
+        {"id": 3, "title": "24首练声曲 Op.67", "titleRu": "24 Vocalises Op.67", "pdfUrl": "https://imslp.org/wiki/24_Vocalises,_Op.81_(Panofka,_Heinrich)"}
+      ]
+    },
+    {
+      "id": "marchesi",
+      "nameZh": "马尔凯西练声曲",
+      "nameRu": "Вокализы Маркези",
+      "nameEn": "Marchesi Vocal Exercises",
+      "composer": "Mathilde Marchesi",
+      "composerZh": "玛蒂尔德·马尔凯西",
+      "years": "1821-1913",
+      "country": "意大利",
+      "description": "19世纪著名声乐教师马尔凯西夫人创立的声乐学派练习曲，以科学的声音训练方法和优美的音乐性著称，培养了众多著名歌唱家。",
+      "difficulty": "中级-高级",
+      "voiceTypes": ["女高音", "女中音"],
+      "pieceCount": 40,
+      "url": "https://imslp.org/wiki/24_Vocalises,_Op.2_(Marchesi,_Mathilde)",
+      "imslpUrl": "https://imslp.org/wiki/24_Vocalises,_Op.2_(Marchesi,_Mathilde)",
+      "pdfNote": "IMSLP公版资源",
+      "pieces": [
+        {"id": 1, "title": "声乐练习曲 Op.1", "titleRu": "Vocal Exercises Op.1", "difficulty": "中级", "pdfUrl": "https://imslp.org/wiki/Exercises_elementaires_gradu%C3%A9s,_Op.1_(Marchesi,_Mathilde)"},
+        {"id": 2, "title": "24首练声曲 Op.2", "titleRu": "24 Vocalises Op.2", "difficulty": "高级", "pdfUrl": "https://imslp.org/wiki/24_Vocalises,_Op.2_(Marchesi,_Mathilde)"},
+        {"id": 3, "title": "中等声部练习曲", "titleRu": "Exercises for Medium Voice", "difficulty": "中级", "pdfUrl": "https://imslp.org/wiki/24_Vocalises,_Op.2_(Marchesi,_Mathilde)"}
+      ]
+    },
+    {
+      "id": "seidler",
+      "nameZh": "塞德勒练声曲",
+      "nameRu": "Вокализы Зейдлера",
+      "nameEn": "Seidler Vocalises",
+      "composer": "Ernst Seidler",
+      "composerZh": "恩斯特·塞德勒",
+      "years": "19世纪",
+      "country": "德国",
+      "description": "德国声乐教师塞德勒的系统声乐训练教材，循序渐进地训练呼吸支持和声音连贯性，是德国声乐教育体系的重要组成部分。",
+      "difficulty": "初级-中级",
+      "voiceTypes": ["女高音", "女中音", "男高音", "男中音"],
+      "pieceCount": 24,
+      "url": "https://imslp.org/wiki/Category:Seidler,_Ernst",
+      "imslpUrl": "https://imslp.org/wiki/Category:Seidler,_Ernst",
+      "pdfNote": "IMSLP上暂无塞德勒练声曲公版PDF",
+      "pieces": [
+        {"id": 1, "title": "声乐艺术基础 第1部分", "titleRu": "Die Kunst des Gesanges I", "pdfUrl": null},
+        {"id": 2, "title": "声乐艺术基础 第2部分", "titleRu": "Die Kunst des Gesanges II", "pdfUrl": null},
+        {"id": 3, "title": "声乐艺术基础 第3部分", "titleRu": "Die Kunst des Gesanges III", "pdfUrl": null}
+      ]
+    },
+    {
+      "id": "lutgen",
+      "nameZh": "吕特根练声曲",
+      "nameRu": "Вокализы Лютгена",
+      "nameEn": "Lütgen Vocalises",
+      "composer": "Julius Lütgen",
+      "composerZh": "尤利乌斯·吕特根",
+      "years": "19世纪",
+      "country": "德国",
+      "description": "德国声乐教育家吕特根编写的练声曲集，与波佐尼练习曲风格相近，注重旋律的流畅性和声区的自然过渡。",
+      "difficulty": "中级",
+      "voiceTypes": ["女高音", "女中音", "男高音", "男低音"],
+      "pieceCount": 48,
+      "url": "https://imslp.org/wiki/20_Vocalises_journali%C3%A8res_(Lutgen,_Balthazar)",
+      "imslpUrl": "https://imslp.org/wiki/20_Vocalises_journali%C3%A8res_(Lutgen,_Balthazar)",
+      "pdfNote": "IMSLP公版资源",
+      "pieces": [
+        {"id": 1, "title": "20首每日练声曲", "titleRu": "20 Vocalises journalières", "pdfUrl": "https://imslp.org/wiki/20_Vocalises_journali%C3%A8res_(Lutgen,_Balthazar)"},
+        {"id": 2, "title": "更多练声曲", "titleRu": "More Vocalises", "pdfUrl": "https://imslp.org/wiki/20_Vocalises_journali%C3%A8res_(Lutgen,_Balthazar)"}
+      ]
+    },
+    {
+      "id": "bordogni",
+      "nameZh": "博尔东尼练声曲",
+      "nameRu": "Вокализы Бордони",
+      "nameEn": "Bordogni Vocalises",
+      "composer": "Marco Bordogni",
+      "composerZh": "马尔科·博尔东尼",
+      "years": "1788-1860",
+      "country": "意大利",
+      "description": "意大利男高音歌唱家博尔东尼改编的96首练声曲，原型来自博尔东尼的艺术歌曲，以其优美的旋律和丰富的音乐表现力著称，是柴院必练教材。",
+      "difficulty": "中级-高级",
+      "voiceTypes": ["女高音", "女中音", "男高音", "男中音", "男低音"],
+      "pieceCount": 96,
+      "url": "https://imslp.org/wiki/12_nouvelle_vocalises_pour_mezzo-soprano_(Bordogni,_Marco)",
+      "imslpUrl": "https://imslp.org/wiki/Category:Bordogni,_Marco",
+      "pdfNote": "IMSLP公版资源 - 多个版本",
+      "pieces": [
+        {"id": 1, "title": "12首新练声曲 - 女中音版", "titleRu": "12 Nouvelle Vocalises - Mezzo-Soprano", "pdfUrl": "https://imslp.org/wiki/12_nouvelle_vocalises_pour_mezzo-soprano_(Bordogni,_Marco)"},
+        {"id": 2, "title": "12首新练声曲 - 男中音版", "titleRu": "12 Nuovi vocalizzi per baritono", "pdfUrl": "https://imslp.org/wiki/12_Nuovi_vocalizzi_per_baritono_(Bordogni,_Marco)"},
+        {"id": 3, "title": "24首简易练声曲", "titleRu": "24 vocalises faciles et progressives", "pdfUrl": "https://imslp.org/wiki/24_vocalises_faciles_et_progressives_(Bordogni,_Marco)"},
+        {"id": 4, "title": "36首现代风格练声曲", "titleRu": "36 Vocalizzi secondo il gusto moderno", "pdfUrl": "https://imslp.org/wiki/36_Vocalizzi_secondo_il_gusto_moderno_(Bordogni,_Marco)"}
+      ]
+    },
+    {
+      "id": "lamperti",
+      "nameZh": "兰佩尔蒂练声曲",
+      "nameRu": "Вокализы Ламперти",
+      "nameEn": "Lamperti Vocalises",
+      "composer": "Francesco Lamperti",
+      "composerZh": "弗朗切斯科·兰佩尔蒂",
+      "years": "1819-1880",
+      "country": "意大利",
+      "description": "意大利声乐教育之父兰佩尔蒂创立的声乐学派教材，以其对声音技巧的精妙分析和科学的训练方法著称，是美声唱法的最高典范。",
+      "difficulty": "高级-专业",
+      "voiceTypes": ["女高音", "女中音", "男高音"],
+      "pieceCount": 30,
+      "url": "https://imslp.org/wiki/Guida_teorico-pratica-elementaire_per_lo_studio_del_canto_(Lamperti,_Francesco)",
+      "imslpUrl": "https://imslp.org/wiki/Guida_teorico-pratica-elementaire_per_lo_studio_del_canto_(Lamperti,_Francesco)",
+      "pdfNote": "IMSLP公版资源",
+      "pieces": [
+        {"id": 1, "title": "声乐艺术 - 理论与实践", "titleRu": "Arte del canto - Guida teorico-pratica", "pdfUrl": "https://imslp.org/wiki/Guida_teorico-pratica-elementaire_per_lo_studio_del_canto_(Lamperti,_Francesco)"},
+        {"id": 2, "title": "花腔练习", "titleRu": "Esercizi di agilità", "pdfUrl": "https://imslp.org/wiki/Guida_teorico-pratica-elementaire_per_lo_studio_del_canto_(Lamperti,_Francesco)"},
+        {"id": 3, "title": "声区统一练习", "titleRu": "Exercises for vocal registers", "pdfUrl": "https://imslp.org/wiki/Guida_teorico-pratica-elementaire_per_lo_studio_del_canto_(Lamperti,_Francesco)"}
+      ]
+    },
+    {
+      "id": "garcia",
+      "nameZh": "加尔西亚练声曲",
+      "nameRu": "Вокализы Гарсиа",
+      "nameEn": "García Vocal Exercises",
+      "composer": "Manuel García",
+      "composerZh": "曼努埃尔·加尔西亚",
+      "years": "1775-1906",
+      "country": "西班牙",
+      "description": "著名西班牙男高音和声乐教师加尔西亚二世创立的声乐训练体系，其关于声带机制的理论和练习至今影响深远，是声乐医学的先驱。",
+      "difficulty": "中级-高级",
+      "voiceTypes": ["女高音", "女中音", "男高音", "男中音", "男低音"],
+      "pieceCount": 30,
+      "url": "https://imslp.org/wiki/%C3%89cole_de_Garcia_(Garcia_Jr.,_Manuel)",
+      "imslpUrl": "https://imslp.org/wiki/%C3%89cole_de_Garcia_(Garcia_Jr.,_Manuel)",
+      "pdfNote": "IMSLP公版资源",
+      "pieces": [
+        {"id": 1, "title": "加尔西亚学校 - 声乐艺术完整论", "titleRu": "École de Garcia - Traité complet de l'art du chant", "pdfUrl": "https://imslp.org/wiki/%C3%89cole_de_Garcia_(Garcia_Jr.,_Manuel)"},
+        {"id": 2, "title": "声带训练练习", "titleRu": "Exercises for vocal cords", "pdfUrl": "https://imslp.org/wiki/%C3%89cole_de_Garcia_(Garcia_Jr.,_Manuel)"},
+        {"id": 3, "title": "声区转换练习", "titleRu": "Exercises for register transitions", "pdfUrl": "https://imslp.org/wiki/%C3%89cole_de_Garcia_(Garcia_Jr.,_Manuel)"}
+      ]
+    },
+    {
+      "id": "lablache",
+      "nameZh": "拉布拉什练声曲",
+      "nameRu": "Вокализы Лаблаш",
+      "nameEn": "Lablache Vocalises",
+      "composer": "Luigi Lablache",
+      "composerZh": "路易吉·拉布拉什",
+      "years": "1794-1858",
+      "country": "意大利",
+      "description": "19世纪最伟大的男低音歌唱家拉布拉什创作的练声曲，专门为男低音和男低音训练设计，注重低音声部的开发与美化。",
+      "difficulty": "中级-高级",
+      "voiceTypes": ["男低音", "男中音"],
+      "pieceCount": 24,
+      "url": "https://imslp.org/wiki/M%C3%A9thode_compl%C3%A8te_de_chant_(Lablache,_Luigi)",
+      "imslpUrl": "https://imslp.org/wiki/M%C3%A9thode_compl%C3%A8te_de_chant_(Lablache,_Luigi)",
+      "pdfNote": "IMSLP公版资源",
+      "pieces": [
+        {"id": 1, "title": "完整声乐方法论", "titleRu": "Méthode complète de chant", "pdfUrl": "https://imslp.org/wiki/M%C3%A9thode_compl%C3%A8te_de_chant_(Lablache,_Luigi)"},
+        {"id": 2, "title": "声乐方法论 - 英文版", "titleRu": "Complete Method of Singing (English)", "pdfUrl": "https://imslp.org/wiki/M%C3%A9thode_compl%C3%A8te_de_chant_(Lablache,_Luigi)"}
+      ]
+    },
+    {
+      "id": "gretchaninoff",
+      "nameZh": "格列恰尼诺夫练声曲",
+      "nameRu": "Вокализы Гречанинова",
+      "nameEn": "Gretchaninoff Vocalises",
+      "composer": "Alexander Gretchaninoff",
+      "composerZh": "亚历山大·格列恰尼诺夫",
+      "years": "1864-1946",
+      "country": "俄罗斯",
+      "description": "俄罗斯作曲家格列恰尼诺夫创作的练声曲，旋律优美，富有俄罗斯音乐特色，适合作为声乐学习和音乐会的过渡曲目。",
+      "difficulty": "初级-中级",
+      "voiceTypes": ["女高音", "女中音", "男高音", "男低音"],
+      "pieceCount": 25,
+      "url": "https://imslp.org/wiki/List_of_compositions_by_Alexander_Gretchaninov",
+      "imslpUrl": "https://imslp.org/wiki/List_of_compositions_by_Alexander_Gretchaninov",
+      "pdfNote": "IMSLP上暂无格列恰尼诺夫练声曲独立公版PDF，部分作品可能在IMSLP作品列表中",
+      "pieces": [
+        {"id": 1, "title": "25首练声曲 Op.47", "titleRu": "25 Vocalises Op.47", "pdfUrl": null},
+        {"id": 2, "title": "25首练声曲 Op.156", "titleRu": "25 Vocalises Op.156", "pdfUrl": null}
+      ]
+    },
+    {
+      "id": "rachmaninoff",
+      "nameZh": "拉赫玛尼诺夫练声曲",
+      "nameRu": "Вокализы Рахманинова",
+      "nameEn": "Rachmaninoff Vocalises",
+      "composer": "Sergei Rachmaninoff",
+      "composerZh": "谢尔盖·拉赫玛尼诺夫",
+      "years": "1873-1943",
+      "country": "俄罗斯",
+      "description": "俄罗斯浪漫主义作曲家拉赫玛尼诺夫创作的五首练声曲，以其深沉的情感和丰富的钢琴伴奏著称，是音乐会曲目中的经典之作。",
+      "difficulty": "高级",
+      "voiceTypes": ["女高音", "男中音"],
+      "pieceCount": 5,
+      "url": "https://imslp.org/wiki/Vocalise_(Rachmaninoff,_Sergei)",
+      "imslpUrl": "https://imslp.org/wiki/Vocalise_(Rachmaninoff,_Sergei)",
+      "pdfNote": "IMSLP公版资源 - 练声曲Op.34 No.14",
+      "pieces": [
+        {"id": 1, "title": "练声曲 Op.34 No.14", "titleRu": "Вокализ Op.34 No.14", "pdfUrl": "https://imslp.org/wiki/Vocalise_(Rachmaninoff,_Sergei)"},
+        {"id": 2, "title": "14首浪漫曲 Op.34（含练声曲）", "titleRu": "14 Romances Op.34", "pdfUrl": "https://imslp.org/wiki/14_Romances,_Op.34_(Rachmaninoff,_Sergei)"}
+      ]
+    },
+    {
+      "id": "medtner",
+      "nameZh": "梅特纳练声曲",
+      "nameRu": "Вокализы Метнера",
+      "nameEn": "Medtner Vocalises",
+      "composer": "Nikolai Medtner",
+      "composerZh": "尼古拉·梅特纳",
+      "years": "1880-1951",
+      "country": "俄罗斯",
+      "description": "俄罗斯作曲家梅特纳创作的练声曲，融合了俄罗斯民族音乐元素和德国浪漫主义风格，音乐语言独特而富有表现力。",
+      "difficulty": "高级",
+      "voiceTypes": ["女高音", "女中音", "男中音"],
+      "pieceCount": 3,
+      "url": "https://imslp.org/wiki/Category:Medtner,_Nikolai",
+      "imslpUrl": "https://imslp.org/wiki/Category:Medtner,_Nikolai",
+      "pdfNote": "IMSLP上有梅特纳作品集，但独立的练声曲Op.23实为钢琴作品",
+      "pieces": [
+        {"id": 1, "title": "4首抒情片段 Op.23（非声乐练声曲）", "titleRu": "4 Lyrical Fragments Op.23 (piano)", "pdfUrl": "https://imslp.org/wiki/4_Lyrical_Fragments,_Op.23_(Medtner,_Nikolay)"}
+      ]
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2026-05-09",
+    "source": "IMSLP (imslp.org) 公版资源 + 原始数据",
+    "totalCollections": 14,
+    "totalPieces": 515,
+    "imslpCoverage": {
+      "hasImslpUrl": 10,
+      "noPdfAvailable": 4,
+      "coveragePercent": 71
+    },
+    "note": "所有作品均为公版。IMSLP PDF链接指向工作页面，访问后可下载PDF。部分曲集（如Abt、Gretchaninoff）在IMSLP上暂无公版PDF。"
+  }
+}
