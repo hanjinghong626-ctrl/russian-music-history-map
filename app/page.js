@@ -92,9 +92,9 @@ export default function MusicHistoryPage() {
         
         /* CSS Variables */
         :root {
-          --color-primary: #D4AF37;
-          --color-primary-light: #F4E4BA;
-          --color-primary-dark: #8B7355;
+          --color-primary: #A78BFA;
+          --color-primary-light: #DDD6FE;
+          --color-primary-dark: #7C3AED;
           --color-secondary-blue: #1E3A5F;
           --color-secondary-red: #8B0000;
           --color-accent-passion: #FF4444;
@@ -132,12 +132,12 @@ export default function MusicHistoryPage() {
         }
 
         ::-webkit-scrollbar-thumb {
-          background: rgba(212, 175, 55, 0.3);
+          background: rgba(167, 139, 250, 0.3);
           border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-          background: rgba(212, 175, 55, 0.5);
+          background: rgba(167, 139, 250, 0.5);
         }
       `}</style>
     </div>
