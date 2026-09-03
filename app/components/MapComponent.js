@@ -12,14 +12,24 @@ import CityCard from './CityCard';
 import './MapComponent.css';
 import BasilCathedral from './BasilCathedral';
 
-const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = false) => {
-  let color = '#8B7355'; let size = 24; let innerSize = 8;
-  if (isActive) { color = '#D4AF37'; size = 32; innerSize = 12; }
-  else if (isHighlighted) { color = '#4A90D9'; size = 28; innerSize = 10; }
+// 学派颜色配置（星河配色）
+const schoolColors = {
+  'mighty-handful': 'rgb(135,206,250)',  // 冰蓝
+  'moscow': 'rgb(255,215,140)',          // 暖金
+  'silver-age': 'rgb(255,182,193)',      // 玫瑰金
+  'soviet': 'rgb(220,220,230)',          // 银白
+};
+
+const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = false, school = null) => {
+  let color = schoolColors[school] || '#8B7355';
+  let size = 24; let innerSize = 8;
+  if (isActive) { size = 32; innerSize = 12; }
+  else if (isHighlighted) { size = 28; innerSize = 10; }
   if (isDimmed) { color = '#3a3a3a'; }
+  const glowColor = color.replace('rgb', 'rgba').replace(')', ',0.5)');
   return L.divIcon({
     className: 'custom-marker',
-    html: `<div class="marker-wrapper ${isActive?'active':''} ${isHighlighted?'highlighted':''} ${isDimmed?'dimmed':''}" style="width:${size}px;height:${size}px;position:relative;cursor:pointer;"><div style="position:absolute;inset:0;background:${color};border-radius:50%;box-shadow:0 0 ${isActive?'20px':'10px'} ${color}80;animation:marker-pulse ${isActive?'1.5s':'2.5s'} ease-in-out infinite;transition:all 0.3s ease;"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:${innerSize}px;height:${innerSize}px;background:#0A0E17;border-radius:50%;border:2px solid ${color};"></div></div>`,
+    html: `<div class="marker-wrapper ${isActive?'active':''} ${isHighlighted?'highlighted':''} ${isDimmed?'dimmed':''}" style="width:${size}px;height:${size}px;position:relative;cursor:pointer;"><div style="position:absolute;inset:0;background:${color};border-radius:50%;box-shadow:0 0 ${isActive?'20px':'10px'} ${glowColor};animation:marker-pulse ${isActive?'1.5s':'2.5s'} ease-in-out infinite;transition:all 0.3s ease;"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:${innerSize}px;height:${innerSize}px;background:#030810;border-radius:50%;border:2px solid ${color};"></div></div>`,
     iconSize: [size, size], iconAnchor: [size/2, size/2]
   });
 };
@@ -61,7 +71,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     cityMarkersRef.current.forEach(m => map.removeLayer(m)); cityMarkersRef.current = [];
     let filtered = activePeriod ? composers.filter(c => c.period === activePeriod.id) : composers;
     filtered.forEach(composer => {
-      const marker = L.marker(composer.coordinates, { icon: createCustomIcon(false, false, false) });
+      const marker = L.marker(composer.coordinates, { icon: createCustomIcon(false, false, false, composer.school) });
       marker.bindTooltip(`<div class="marker-tooltip"><strong>${composer.name}</strong><br/><span>${composer.birthYear}-${composer.deathYear}</span></div>`, { className: 'custom-tooltip', direction: 'top', offset: [0, -12] });
       marker.on('click', () => onComposerSelect(composer));
       marker.composerId = composer.id; marker.addTo(map); markersRef.current.push(marker); composerMapRef.current[composer.id] = marker;
