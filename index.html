@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>斯拉夫之魂 — 星河版</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#030810;color:#c8dcff;font-family:'Noto Serif SC',Georgia,serif;overflow:hidden;height:100vh;width:100vw}
+.header{position:fixed;top:0;left:0;right:0;height:50px;background:linear-gradient(180deg,rgba(5,13,21,.95),rgba(5,13,21,.7) 80%,transparent);display:flex;align-items:center;padding:0 20px;z-index:1000}
+.logo-icon{font-size:20px;color:#87CEFA;text-shadow:0 0 10px rgba(135,206,250,.5)}
+.logo-text{font-size:16px;font-weight:600;background:linear-gradient(135deg,#87CEFA,#FFD78C 50%,#FFB6C1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;margin-left:8px}
+.header-sub{margin-left:16px;font-size:11px;color:rgba(200,220,255,.4);letter-spacing:1px}
+#map{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;background:#030810}
+.leaflet-container{background:#030810!important}
+.stars-layer{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
+@keyframes starTwinkle{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.8)}}
+.composer-dot{border-radius:50%;cursor:pointer;transition:all .3s}
+.composer-dot:hover{transform:scale(2);z-index:999!important}
+.city-box{width:10px;height:10px;background:rgba(200,220,255,.12);border:1px solid rgba(200,220,255,.25);border-radius:2px;transform:rotate(45deg)}
+.constellation-label{background:transparent!important;border:none!important;pointer-events:none}
+.constellation-name{font-size:11px;letter-spacing:3px;font-weight:300;white-space:nowrap;text-align:center;text-shadow:0 0 12px currentColor,0 0 30px currentColor;opacity:.7}
+.timeline{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:1000;background:rgba(5,13,21,.8);border-radius:25px;padding:4px;border:1px solid rgba(135,206,250,.15)}
+.tl-item{padding:8px 14px;border-radius:20px;cursor:pointer;font-size:12px;color:rgba(200,220,255,.5);transition:all .3s;white-space:nowrap}
+.tl-item:hover{color:rgba(200,220,255,.8)}
+.tl-item.active{background:rgba(135,206,250,.15);color:#87CEFA;text-shadow:0 0 8px rgba(135,206,250,.5)}
+.sidebar{position:fixed;left:0;top:50px;bottom:60px;width:180px;background:linear-gradient(90deg,rgba(5,13,21,.85),transparent);z-index:500;overflow-y:auto;padding:12px 10px;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-title{font-size:10px;color:rgba(200,220,255,.3);letter-spacing:2px;margin-bottom:8px}
+.c-item{padding:5px 6px;margin-bottom:1px;border-radius:5px;cursor:pointer;font-size:11px;color:rgba(200,220,255,.55);display:flex;align-items:center;gap:6px;transition:all .2s}
+.c-item:hover{background:rgba(135,206,250,.08);color:rgba(200,220,255,.9)}
+.c-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.c-year{font-size:9px;color:rgba(200,220,255,.25);margin-left:auto}
+.info-card{position:fixed;right:20px;top:70px;width:280px;background:rgba(10,21,32,.92);border:1px solid rgba(135,206,250,.2);border-radius:12px;padding:20px;z-index:1000;display:none;box-shadow:0 4px 30px rgba(0,0,0,.5)}
+.info-card.show{display:block}
+.info-card .close{position:absolute;top:10px;right:12px;color:rgba(200,220,255,.4);cursor:pointer;font-size:18px}
+.ic-name{font-size:18px;font-weight:600;margin-bottom:4px}
+.ic-ru{font-size:12px;color:rgba(200,220,255,.5);margin-bottom:10px}
+.ic-years{font-size:11px;color:rgba(200,220,255,.4);margin-bottom:10px}
+.ic-desc{font-size:13px;line-height:1.6;color:rgba(200,220,255,.7)}
+.ver{position:fixed;bottom:70px;right:15px;font-size:9px;color:rgba(200,220,255,.15);z-index:1000}
+.leaflet-tooltip{background:rgba(10,21,32,.9)!important;border:1px solid rgba(135,206,250,.2)!important;border-radius:8px!important;color:#c8dcff!important;font-size:12px!important;padding:6px 10px!important;box-shadow:0 4px 15px rgba(0,0,0,.5)!important}
+.leaflet-tooltip-top::before{border-top-color:rgba(10,21,32,.9)!important}
+</style></head><body>
+<div class="header">
+<span class="logo-icon">♪</span>
+<span class="logo-text">斯拉夫之魂</span>
+<span class="header-sub">俄罗斯音乐史 · 星河版</span>
+</div>
+<div id="map"></div>
+<div class="stars-layer" id="stars"></div>
+<div class="sidebar" id="sidebar"></div>
+<div class="info-card" id="card">
+<span class="close" onclick="closeCard()">×</span>
+<div class="ic-name" id="cN"></div>
+<div class="ic-ru" id="cR"></div>
+<div class="ic-years" id="cY"></div>
+<div class="ic-desc" id="cD"></div>
+</div>
+<div class="timeline" id="tl"></div>
+<div class="ver">星河 v5 · 2026.09</div>
+<script>
+var periodConfig = {
+  'national-foundation': {color:'rgb(135,206,250)', name:'北斗·民族奠基'},
+  'national-prosperity': {color:'rgb(255,215,140)', name:'天琴·民族繁荣'},
+  'late-romantic': {color:'rgb(255,182,193)', name:'仙后·白银时代'},
+  'soviet': {color:'rgb(220,220,230)', name:'南十字·苏联学派'},
+  'classical': {color:'rgb(180,200,220)', name:'北极星·古典先驱'}
+};
+
+var composers = [
+{id:'berezovsky',name:'别列佐夫斯基',nameRu:'Березовский',period:'classical',birthYear:1745,deathYear:1777,lat:52.4,lng:31.7,desc:'乌克兰裔俄罗斯作曲家，被誉为俄罗斯第一位在欧洲获得成功的作曲家。'},
+{id:'bortnyansky',name:'博尔特尼扬斯基',nameRu:'Бортнянский',period:'classical',birthYear:1751,deathYear:1825,lat:52.4,lng:31.7,desc:'俄罗斯合唱音乐会创始人之一，东正教音乐大师。'},
+{id:'glinka',name:'格林卡',nameRu:'Глинка',period:'national-foundation',birthYear:1804,deathYear:1857,lat:55.0,lng:33.5,desc:'俄罗斯民族音乐之父，《伊万·苏萨宁》开创俄罗斯歌剧传统。'},
+{id:'dargomyzhsky',name:'达尔戈梅日斯基',nameRu:'Даргомыжский',period:'national-foundation',birthYear:1813,deathYear:1869,lat:54.0,lng:36.0,desc:'现实主义歌剧先驱，对强力集团影响深远。'},
+{id:'serov',name:'谢罗夫',nameRu:'Серов',period:'national-foundation',birthYear:1820,deathYear:1871,lat:55.76,lng:37.62,desc:'歌剧作曲家兼乐评家，推动俄罗斯民族歌剧发展。'},
+{id:'balakirev',name:'巴拉基列夫',nameRu:'Балакирев',period:'national-foundation',birthYear:1837,deathYear:1910,lat:55.76,lng:37.62,desc:'强力集团领袖，东方序曲作者，交响诗《塔玛拉》。'},
+{id:'cui',name:'居伊',nameRu:'Кюи',period:'national-foundation',birthYear:1835,deathYear:1918,lat:55.76,lng:37.62,desc:'强力集团成员，军事工程师兼作曲家。'},
+{id:'borodin',name:'鲍罗丁',nameRu:'Бородин',period:'national-foundation',birthYear:1833,deathYear:1887,lat:55.76,lng:37.62,desc:'强力集团成员，化学家兼作曲家，《伊戈尔王》。'},
+{id:'mussorgsky',name:'穆索尔斯基',nameRu:'Мусоргский',period:'national-foundation',birthYear:1839,deathYear:1881,lat:55.76,lng:37.62,desc:'强力集团核心，《图画展览会》《鲍里斯·戈杜诺夫》。'},
+{id:'rimsky',name:'里姆斯基-科萨科夫',nameRu:'Римский-Корсаков',period:'national-foundation',birthYear:1844,deathYear:1908,lat:59.93,lng:30.32,desc:'强力集团成员，《舍赫拉扎达》《金鸡》，配器大师。'},
+{id:'anton_rubinstein',name:'安东·鲁宾斯坦',nameRu:'А.Рубинштейн',period:'national-prosperity',birthYear:1829,deathYear:1894,lat:55.76,lng:37.62,desc:'莫斯科音乐学院创始人，钢琴家、作曲家。'},
+{id:'tchaikovsky',name:'柴可夫斯基',nameRu:'Чайковский',period:'national-prosperity',birthYear:1840,deathYear:1893,lat:57.0,lng:53.0,desc:'俄罗斯最伟大作曲家之一，《天鹅湖》《悲怆交响曲》。'},
+{id:'taneyev',name:'塔涅耶夫',nameRu:'Танеев',period:'national-prosperity',birthYear:1856,deathYear:1915,lat:55.76,lng:37.62,desc:'莫斯科音乐学院院长，复调大师。'},
+{id:'arensky',name:'阿连斯基',nameRu:'Аренский',period:'national-prosperity',birthYear:1861,deathYear:1906,lat:55.76,lng:37.62,desc:'莫斯科音乐学院教授，拉赫玛尼诺夫的老师。'},
+{id:'gliere',name:'格利埃尔',nameRu:'Глиэр',period:'national-prosperity',birthYear:1875,deathYear:1956,lat:55.76,lng:37.62,desc:'苏联音乐教育家，普罗科菲耶夫的老师。'},
+{id:'grechaninov',name:'格列恰尼诺夫',nameRu:'Гречанинов',period:'national-prosperity',birthYear:1864,deathYear:1956,lat:55.76,lng:37.62,desc:'东正教圣乐大师，晚期浪漫主义作曲家。'},
+{id:'lyadov',name:'利亚多夫',nameRu:'Лядов',period:'national-prosperity',birthYear:1855,deathYear:1914,lat:55.76,lng:37.62,desc:'里姆斯基-科萨科夫学生，色彩性和声大师。'},
+{id:'nielsen_saint',name:'圣-桑关联',nameRu:'',period:'national-prosperity',birthYear:1860,deathYear:1920,lat:55.76,lng:37.62,desc:''},
+{id:'scriabin',name:'斯克里亚宾',nameRu:'Скрябин',period:'late-romantic',birthYear:1872,deathYear:1915,lat:55.76,lng:37.62,desc:'神秘主义作曲家，《普罗米修斯》《狂喜之诗》。'},
+{id:'rachmaninov',name:'拉赫玛尼诺夫',nameRu:'Рахманинов',period:'late-romantic',birthYear:1873,deathYear:1943,lat:58.5,lng:31.3,desc:'最伟大的钢琴作曲家之一，《第二钢琴协奏曲》。'},
+{id:'medtner',name:'梅特纳',nameRu:'Метнер',period:'late-romantic',birthYear:1880,deathYear:1951,lat:55.76,lng:37.62,desc:'德国裔俄罗斯作曲家，与拉赫玛尼诺夫齐名。'},
+{id:'miaskovsky',name:'米亚斯科夫斯基',nameRu:'Мясковский',period:'late-romantic',birthYear:1881,deathYear:1950,lat:55.76,lng:37.62,desc:'27部交响曲作者，苏联交响乐奠基人。'},
+{id:'gliere2',name:'瓦西连科',nameRu:'Василенко',period:'late-romantic',birthYear:1872,deathYear:1928,lat:55.76,lng:37.62,desc:'民族志音乐家，东方音乐研究者。'},
+{id:'goedicke',name:'戈迪克',nameRu:'Гедике',period:'late-romantic',birthYear:1877,deathYear:1957,lat:55.76,lng:37.62,desc:'管风琴家、作曲家，莫斯科音乐学院教授。'},
+{id:'nikolai_rubinstein',name:'尼古拉·鲁宾斯坦',nameRu:'Н.Рубинштейн',period:'late-romantic',birthYear:1835,deathYear:1881,lat:55.76,lng:37.62,desc:'钢琴家、指挥家，莫斯科音乐学院第二任院长。'},
+{id:'cui2',name:'切列普宁',nameRu:'Черепнин',period:'late-romantic',birthYear:1873,deathYear:1945,lat:59.93,lng:30.32,desc:'圣彼得堡音乐学院院长。'},
+{id:'stravinsky',name:'斯特拉文斯基',nameRu:'Стравинский',period:'late-romantic',birthYear:1882,deathYear:1971,lat:58.0,lng:29.0,desc:'20世纪最伟大作曲家之一，《春之祭》《火鸟》。'},
+{id:'prokofiev',name:'普罗科菲耶夫',nameRu:'Прокофьев',period:'soviet',birthYear:1891,deathYear:1953,lat:48.4,lng:35.0,desc:'苏联最杰出作曲家之一，《战争与和平》。'},
+{id:'shostakovich',name:'肖斯塔科维奇',nameRu:'Шостакович',period:'soviet',birthYear:1906,deathYear:1975,lat:55.76,lng:37.62,desc:'15部交响曲见证苏联时代，《第七交响曲》。'},
+{id:'khachaturian',name:'哈恰图良',nameRu:'Хачатурян',period:'soviet',birthYear:1903,deathYear:1978,lat:40.4,lng:44.6,desc:'亚美尼亚裔苏联作曲家，《马刀舞曲》。'},
+{id:'kabalevsky',name:'卡巴列夫斯基',nameRu:'Кабалевский',period:'soviet',birthYear:1904,deathYear:1987,lat:55.76,lng:37.62,desc:'苏联音乐教育家、作曲家。'},
+{id:'khaikin',name:'哈伊金',nameRu:'Хайкин',period:'soviet',birthYear:1905,deathYear:1985,lat:55.76,lng:37.62,desc:''},
+{id:'sveshnikov',name:'斯维什尼科夫',nameRu:'Свешников',period:'soviet',birthYear:1890,deathYear:1980,lat:55.76,lng:37.62,desc:'合唱指挥大师。'},
+{id:'muradeli',name:'穆拉杰利',nameRu:'Мурадели',period:'soviet',birthYear:1908,deathYear:1976,lat:42.3,lng:43.0,desc:'歌剧《伟大的友谊》作者。'},
+{id:'zhelobovsky',name:'热洛博夫斯基',nameRu:'Желобинский',period:'soviet',birthYear:1910,deathYear:1946,lat:55.76,lng:37.62,desc:''},
+{id:'dzerzhinsky',name:'捷尔任斯基',nameRu:'Дзержинский',period:'soviet',birthYear:1909,deathYear:1978,lat:47.2,lng:39.7,desc:'歌剧《静静的顿河》。'},
+{id:'blanter',name:'勃兰切尔',nameRu:'Блантер',period:'soviet',birthYear:1903,deathYear:1990,lat:52.0,lng:32.0,desc:'《喀秋莎》作者。'},
+{id:'dunaevsky',name:'杜纳耶夫斯基',nameRu:'Дунаевский',period:'soviet',birthYear:1900,deathYear:1955,lat:55.76,lng:37.62,desc:'苏联轻歌剧和电影音乐大师。'},
+{id:'shchedrin',name:'谢德林',nameRu:'Щедрин',period:'soviet',birthYear:1932,deathYear:0,lat:55.76,lng:37.62,desc:'当代俄罗斯作曲家，《卡门组曲》。'},
+{id:'schnittke',name:'施尼特凯',nameRu:'Шнитке',period:'soviet',birthYear:1934,deathYear:1998,lat:55.76,lng:37.62,desc:'复风格音乐先驱。'},
+{id:'gubaidulina',name:'古拜杜丽娜',nameRu:'Губайдулина',period:'soviet',birthYear:1931,deathYear:0,lat:55.76,lng:37.62,desc:'当代最重要的女性作曲家之一。'},
+{id:'denisov',name:'杰尼索夫',nameRu:'Денисов',period:'soviet',birthYear:1929,deathYear:1996,lat:55.76,lng:37.62,desc:'苏联先锋派作曲家。'},
+{id:'kandinsky',name:'坎丁斯基',nameRu:'',period:'soviet',birthYear:1930,deathYear:2000,lat:55.76,lng:37.62,desc:''},
+{id:'tishchenko',name:'季先科',nameRu:'Тищенко',period:'soviet',birthYear:1939,deathYear:2010,lat:59.93,lng:30.32,desc:'肖斯塔科维奇学生。'},
+{id:'karayev',name:'卡拉耶夫',nameRu:'Караев',period:'soviet',birthYear:1918,deathYear:1982,lat:40.4,lng:49.9,desc:'阿塞拜疆作曲家。'},
+{id:'tactically',name:'塔克塔基什维利',nameRu:'Тактакишвили',period:'soviet',birthYear:1924,deathYear:1993,lat:41.7,lng:44.8,desc:'格鲁吉亚作曲家。'}
+];
+
+var cities = [
+{name:'莫斯科',nameRu:'Москва',lat:55.76,lng:37.62},
+{name:'圣彼得堡',nameRu:'Санкт-Петербург',lat:59.93,lng:30.32},
+{name:'伊尔库茨克',nameRu:'Иркутск',lat:52.3,lng:104.3},
+{name:'喀山',nameRu:'Казань',lat:55.8,lng:49.1},
+{name:'第比利斯',nameRu:'Тбилиси',lat:41.7,lng:44.8},
+{name:'巴库',nameRu:'Баку',lat:40.4,lng:49.9},
+{name:'埃里温',nameRu:'Ереван',lat:40.2,lng:44.5},
+{name:'新西伯利亚',nameRu:'Новосибирск',lat:55.0,lng:82.9},
+{name:'彼尔姆',nameRu:'Пермь',lat:58.0,lng:56.3},
+{name:'罗斯托夫',nameRu:'Ростов-на-Дону',lat:47.2,lng:39.7}
+];
+
+var periods = [
+{id:'classical',name:'古典先驱',label:'1730-1830'},
+{id:'national-foundation',name:'民族奠基',label:'1830-1870'},
+{id:'national-prosperity',name:'民族繁荣',label:'1870-1910'},
+{id:'late-romantic',name:'白银时代',label:'1890-1930'},
+{id:'soviet',name:'苏联学派',label:'1920-1991'}
+];
+
+function gc(p){return(periodConfig[p]||{}).color||'rgb(180,200,220)'}
+
+var map = L.map('map',{center:[55.5,45],zoom:4,zoomControl:false,attributionControl:false,minZoom:3,maxZoom:10});
+L.control.zoom({position:'bottomright'}).addTo(map);
+
+// Stars
+var sH='';
+for(var i=0;i<300;i++){
+var x=Math.random()*100,y=Math.random()*100,s=Math.random()*2.5+0.3,o=Math.random()*0.5+0.1,d=3+Math.random()*6,dl=Math.random()*8;
+sH+='<div style="position:absolute;left:'+x+'%;top:'+y+'%;width:'+s+'px;height:'+s+'px;background:rgba(200,220,255,'+o+');border-radius:50%;animation:starTwinkle '+d+'s ease-in-out '+dl+'s infinite"></div>';
+}
+document.getElementById('stars').innerHTML=sH;
+
+// Cities
+cities.forEach(function(c){
+var ic=L.divIcon({className:'',html:'<div class="city-box"></div>',iconSize:[10,10],iconAnchor:[5,5]});
+L.marker([c.lat,c.lng],{icon:icon}).addTo(map).bindTooltip('<b>'+c.name+'</b><br>'+c.nameRu,{direction:'top',offset:[0,-8]});
+});
+
+var activePeriod='all', cMarks=[], cLines=[];
+
+function render(){
+cMarks.forEach(function(m){map.removeLayer(m)});cMarks=[];
+cLines.forEach(function(e){map.removeLayer(e)});cLines=[];
+
+var f = activePeriod==='all' ? composers : composers.filter(function(c){return c.period===activePeriod});
+var g={};
+f.forEach(function(c){if(!g[c.period])g[c.period]=[];g[c.period].push(c)});
+
+// Constellation lines
+Object.keys(g).forEach(function(p){
+var ms=g[p];
+if(ms.length<2||!periodConfig[p])return;
+var cl=periodConfig[p].color;
+ms.sort(function(a,b){return a.lng-b.lng});
+for(var i=0;i<ms.length-1;i++){
+var ln=L.polyline([[ms[i].lat,ms[i].lng],[ms[i+1].lat,ms[i+1].lng]],{color:cl,weight:1.5,dashArray:'6,4',opacity:0.5}).addTo(map);
+cLines.push(ln);
+}
+if(ms.length>=3){
+var cLat=0,cLng=0;
+ms.forEach(function(m){cLat+=m.lat;cLng+=m.lng});
+cLat/=ms.length;cLng/=ms.length;
+var lb=L.divIcon({className:'constellation-label',html:'<div class="constellation-name" style="color:'+cl+'">'+periodConfig[p].name+'</div>',iconSize:[140,20],iconAnchor:[70,10]});
+cLines.push(L.marker([cLat,cLng],{icon:lb,interactive:false}).addTo(map));
+}
+});
+
+// Composer dots
+f.forEach(function(c){
+var cl=gc(c.period),sz=8;
+var ic=L.divIcon({className:'',html:'<div class="composer-dot" style="width:'+sz+'px;height:'+sz+'px;background:'+cl+';box-shadow:0 0 6px '+cl+',0 0 12px '+cl+'40"></div>',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
+var mk=L.marker([c.lat,c.lng],{icon:ic}).addTo(map);
+mk.on('click',function(){showCard(c)});
+mk.bindTooltip(c.name+'<br><span style="font-size:10px;opacity:.6">'+c.nameRu+'</span>',{direction:'top',offset:[0,-6]});
+cMarks.push(mk);
+});
+
+// Sidebar
+var sorted=f.slice().sort(function(a,b){return a.birthYear-b.birthYear});
+var h='<div class="sb-title">作曲家 · '+f.length+'</div>';
+sorted.forEach(function(c){
+h+='<div class="c-item" onclick="flyTo(\''+c.id+'\')"><span class="c-dot" style="background:'+gc(c.period)+'"></span><span>'+c.name+'</span><span class="c-year">'+c.birthYear+'</span></div>';
+});
+document.getElementById('sidebar').innerHTML=h;
+}
+
+function showCard(c){
+var cl=gc(c.period);
+document.getElementById('cN').innerHTML='<span style="color:'+cl+'">'+c.name+'</span>';
+document.getElementById('cR').textContent=c.nameRu;
+document.getElementById('cY').textContent=c.birthYear+' — '+(c.deathYear||'?');
+document.getElementById('cD').textContent=c.desc||'';
+document.getElementById('card').className='info-card show';
+map.flyTo([c.lat,c.lng],6,{duration:0.8});
+}
+function closeCard(){document.getElementById('card').className='info-card'}
+function flyTo(id){var c=composers.find(function(x){return x.id===id});if(c)showCard(c)}
+
+// Timeline
+function renderTL(){
+var h='<div class="tl-item '+(activePeriod==='all'?'active':'')+'" onclick="setP(\'all\')">全部</div>';
+periods.forEach(function(p){
+h+='<div class="tl-item '+(activePeriod===p.id?'active':'')+'" onclick="setP(\''+p.id+'\')">'+p.name+'</div>';
+});
+document.getElementById('tl').innerHTML=h;
+}
+function setP(p){activePeriod=p;renderTL();render()}
+
+renderTL();
+render();
+</script>
+</body></html>
