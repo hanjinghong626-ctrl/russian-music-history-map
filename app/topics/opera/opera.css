@@ -24,7 +24,7 @@
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(212, 175, 55, 0.2);
+  border: 3px solid rgba(167, 139, 250, 0.2);
   border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -50,7 +50,7 @@
     rgba(139, 0, 0, 0.25) 0%,
     rgba(30, 58, 95, 0.5) 30%,
     rgba(107, 91, 149, 0.2) 60%,
-    rgba(212, 175, 55, 0.15) 100%
+    rgba(167, 139, 250, 0.15) 100%
   );
   z-index: 0;
 }
@@ -135,9 +135,9 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(10, 14, 23, 0.95);
+  background: rgba(12, 11, 29, 0.95);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  border-bottom: 1px solid rgba(167, 139, 250, 0.15);
   padding: 12px 24px;
   overflow-x: auto;
 }
@@ -160,9 +160,9 @@
   height: 2px;
   background: linear-gradient(
     to right,
-    rgba(212, 175, 55, 0.1),
-    rgba(212, 175, 55, 0.3),
-    rgba(212, 175, 55, 0.1)
+    rgba(167, 139, 250, 0.1),
+    rgba(167, 139, 250, 0.3),
+    rgba(167, 139, 250, 0.1)
   );
   transform: translateY(-50%);
 }
@@ -185,7 +185,7 @@
 .timeline-node:hover .node-dot,
 .timeline-node.active .node-dot {
   background: var(--color-primary);
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.5);
   transform: scale(1.3);
 }
 
@@ -193,7 +193,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: rgba(212, 175, 55, 0.3);
+  background: rgba(167, 139, 250, 0.3);
   border: 2px solid var(--color-primary);
   transition: all 0.3s;
 }
@@ -229,19 +229,19 @@
   margin-bottom: 48px;
   padding: 28px;
   border-radius: 16px;
-  border: 1px solid rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.1);
 }
 
 .period-depth-0 {
-  background: linear-gradient(135deg, rgba(20, 27, 45, 0.95) 0%, rgba(139, 0, 0, 0.15) 50%, rgba(30, 58, 95, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(19, 18, 46, 0.95) 0%, rgba(139, 0, 0, 0.15) 50%, rgba(30, 58, 95, 0.2) 100%);
 }
 
 .period-depth-1 {
-  background: linear-gradient(135deg, rgba(20, 27, 45, 0.95) 0%, rgba(107, 91, 149, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(19, 18, 46, 0.95) 0%, rgba(107, 91, 149, 0.2) 100%);
 }
 
 .period-depth-2 {
-  background: linear-gradient(135deg, rgba(20, 27, 45, 0.95) 0%, rgba(212, 175, 55, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(19, 18, 46, 0.95) 0%, rgba(167, 139, 250, 0.08) 100%);
 }
 
 /* Period Header */
@@ -262,7 +262,7 @@
 .marker-line {
   width: 2px;
   height: 24px;
-  background: linear-gradient(to bottom, var(--color-primary), rgba(212, 175, 55, 0.3));
+  background: linear-gradient(to bottom, var(--color-primary), rgba(167, 139, 250, 0.3));
 }
 
 .marker-dot {
@@ -270,7 +270,7 @@
   height: 10px;
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
   margin-top: 4px;
 }
 
@@ -379,7 +379,7 @@
   gap: 12px;
   align-items: flex-start;
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.1);
   border-radius: 10px;
   padding: 16px;
   text-decoration: none;
@@ -389,8 +389,8 @@
 }
 
 .composer-card:hover {
-  border-color: rgba(212, 175, 55, 0.3);
-  background: rgba(212, 175, 55, 0.04);
+  border-color: rgba(167, 139, 250, 0.3);
+  background: rgba(167, 139, 250, 0.04);
 }
 
 .composer-card.no-link {
@@ -457,7 +457,7 @@
 .work-card {
   position: relative;
   background: rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.08);
   border-radius: 10px;
   padding: 16px 18px;
   cursor: pointer;
@@ -465,13 +465,13 @@
 }
 
 .work-card:hover {
-  border-color: rgba(212, 175, 55, 0.25);
-  background: rgba(212, 175, 55, 0.04);
+  border-color: rgba(167, 139, 250, 0.25);
+  background: rgba(167, 139, 250, 0.04);
 }
 
 .work-card.expanded {
-  border-color: rgba(212, 175, 55, 0.3);
-  background: rgba(212, 175, 55, 0.06);
+  border-color: rgba(167, 139, 250, 0.3);
+  background: rgba(167, 139, 250, 0.06);
 }
 
 .work-main {
@@ -511,7 +511,7 @@
 .work-year {
   font-size: 12px;
   color: var(--color-primary);
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(167, 139, 250, 0.08);
   padding: 1px 8px;
   border-radius: 4px;
 }
@@ -545,7 +545,7 @@
 .work-detail {
   margin-top: 14px;
   padding-top: 14px;
-  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  border-top: 1px solid rgba(167, 139, 250, 0.1);
   animation: fadeIn 0.3s ease;
 }
 
@@ -590,15 +590,15 @@
   color: var(--color-primary);
   text-decoration: none;
   padding: 4px 10px;
-  background: rgba(212, 175, 55, 0.06);
+  background: rgba(167, 139, 250, 0.06);
   border-radius: 6px;
-  border: 1px solid rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.1);
   transition: all 0.2s;
 }
 
 .work-link:hover {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: rgba(212, 175, 55, 0.25);
+  background: rgba(167, 139, 250, 0.15);
+  border-color: rgba(167, 139, 250, 0.25);
 }
 
 /* Academic Quotes - Collapsible */
@@ -611,7 +611,7 @@
   align-items: center;
   gap: 8px;
   background: rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.1);
   border-radius: 8px;
   padding: 10px 16px;
   color: var(--color-text-secondary);
@@ -624,7 +624,7 @@
 }
 
 .quotes-toggle:hover {
-  border-color: rgba(212, 175, 55, 0.2);
+  border-color: rgba(167, 139, 250, 0.2);
   color: var(--color-primary);
 }
 
@@ -678,7 +678,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 24px 24px 48px;
-  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  border-top: 1px solid rgba(167, 139, 250, 0.1);
 }
 
 .footer-title {
@@ -701,7 +701,7 @@
   gap: 10px;
   padding: 14px 18px;
   background: var(--color-bg-card);
-  border: 1px solid rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(167, 139, 250, 0.1);
   border-radius: 10px;
   text-decoration: none;
   color: inherit;
@@ -709,8 +709,8 @@
 }
 
 .related-link:hover {
-  border-color: rgba(212, 175, 55, 0.3);
-  background: rgba(212, 175, 55, 0.04);
+  border-color: rgba(167, 139, 250, 0.3);
+  background: rgba(167, 139, 250, 0.04);
 }
 
 .link-icon {
