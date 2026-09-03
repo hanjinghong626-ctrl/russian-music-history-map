@@ -52,7 +52,7 @@ export default function MusicHistoryPage() {
         <nav className="header-nav">
           <a href="/" className="nav-link">返回首页</a>
           <a href="/" className="nav-link active">交互地图</a>
-          <Link href="/music-history/composers" className="nav-link">作曲家</Link>
+          <Link href="/composers" className="nav-link">作曲家</Link>
           <Link href="/schools" className="nav-link">学派</Link>
           <Link href="/glossary" className="nav-link">术语库</Link>
           <Link href="/topics/romance" className="nav-link">浪漫曲</Link>
