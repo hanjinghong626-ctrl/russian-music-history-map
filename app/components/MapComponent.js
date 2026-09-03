@@ -87,10 +87,10 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     
     // 学派颜色和星座名称
     const schoolConstellation = {
-      'mighty-handful': { color: 'rgba(135,206,250,0.6)', name: '北斗·强力集团' },
-      'moscow': { color: 'rgba(255,215,140,0.6)', name: '天琴·莫斯科学派' },
-      'silver-age': { color: 'rgba(255,182,193,0.6)', name: '仙后·白银时代' },
-      'soviet': { color: 'rgba(220,220,230,0.6)', name: '南十字·苏联学派' }
+      'mighty-handful': { color: 'rgba(135,206,250,0.8)', name: '北斗·强力集团' },
+      'moscow': { color: 'rgba(255,215,140,0.8)', name: '天琴·莫斯科学派' },
+      'silver-age': { color: 'rgba(255,182,193,0.8)', name: '仙后·白银时代' },
+      'soviet': { color: 'rgba(220,220,230,0.8)', name: '南十字·苏联学派' }
     };
     
     Object.entries(schoolGroups).forEach(([school, members]) => {
@@ -99,7 +99,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         for (let i = 0; i < members.length - 1; i++) {
           const line = L.polyline(
             [members[i].coordinates, members[i + 1].coordinates],
-            { color: schoolConstellation[school].color, weight: 1.5, dashArray: '4,6', opacity: 0.8 }
+            { color: schoolConstellation[school].color, weight: 2, dashArray: '6,4', opacity: 0.9 }
           );
           line.addTo(map);
           constellationLines.push(line);
