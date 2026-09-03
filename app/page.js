@@ -54,7 +54,6 @@ export default function MusicHistoryPage() {
           <a href="/" className="nav-link active">交互地图</a>
           <Link href="/composers" className="nav-link">作曲家</Link>
           <Link href="/schools" className="nav-link">学派</Link>
-          <Link href="/glossary" className="nav-link">术语库</Link>
           <Link href="/topics/romance" className="nav-link">浪漫曲</Link>
           <Link href="/topics/opera" className="nav-link">歌剧</Link>
           <Link href="/mystery" className="nav-link">🎭 剧本杀</Link>
