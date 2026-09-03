@@ -83,6 +83,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   return (
     <div className="map-wrapper">
       <div ref={mapRef} className="leaflet-map" />
+      <div className="map-dreamy-overlay" />
       <div className="map-overlay-tl">
         <div className="map-title-elegant">
           <div className="title-main">俄罗斯音乐之魂</div>
