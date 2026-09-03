@@ -240,9 +240,17 @@ html {
 }
 
 
-/* ===== Dark Map Filter (Slavic Soul) ===== */
-/* Invert OSM light tiles to dark theme - no API key needed */
-.leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1) saturate(0.3) !important;
-  -webkit-filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1) saturate(0.3) !important;
+
+/* ===== Dreamy Map Overlay (Slavic Soul) ===== */
+.map-dreamy-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 400;
+  background: 
+    radial-gradient(ellipse at 30% 40%, rgba(100, 60, 180, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(40, 80, 160, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 80%, rgba(120, 50, 150, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(20, 10, 40, 0.3) 0%, transparent 30%, transparent 70%, rgba(10, 5, 30, 0.25) 100%);
+  mix-blend-mode: screen;
 }
