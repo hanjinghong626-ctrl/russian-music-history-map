@@ -1,0 +1,209 @@
+// v2.2 reconnect deploy
+/* Russia Music Soul v2.1 - with atmosphere animations */
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { composers } from '../data/composers';
+import { cities } from '../data/cities';
+import RelationshipNetwork from './RelationshipNetwork';
+import CityCard from './CityCard';
+import './MapComponent.css';
+import BasilCathedral from './BasilCathedral';
+
+// 学派颜色配置（星河配色）
+const periodColors = {
+  'classical': 'rgb(180,200,220)',           // 银灰
+  'national-foundation': 'rgb(135,206,250)', // 冰蓝
+  'national-prosperity': 'rgb(255,215,140)', // 暖金
+  'late-romantic': 'rgb(255,182,193)',       // 玫瑰金
+  'soviet': 'rgb(220,220,230)',              // 银白
+};
+
+const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = false, period = null) => {
+  let color = periodColors[period] || 'rgb(180,200,220)';
+  let size = 24; let innerSize = 8;
+  if (isActive) { size = 32; innerSize = 12; }
+  else if (isHighlighted) { size = 28; innerSize = 10; }
+  if (isDimmed) { color = '#3a3a3a'; }
+  const glowColor = color.replace('rgb', 'rgba').replace(')', ',0.5)');
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div class="marker-wrapper ${isActive?'active':''} ${isHighlighted?'highlighted':''} ${isDimmed?'dimmed':''}" style="width:${size}px;height:${size}px;position:relative;cursor:pointer;"><div style="position:absolute;inset:0;background:${color};border-radius:50%;box-shadow:0 0 ${isActive?'20px':'10px'} ${glowColor};animation:marker-pulse ${isActive?'1.5s':'2.5s'} ease-in-out infinite;transition:all 0.3s ease;"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:${innerSize}px;height:${innerSize}px;background:#030810;border-radius:50%;border:2px solid ${color};"></div></div>`,
+    iconSize: [size, size], iconAnchor: [size/2, size/2]
+  });
+};
+const createCityIcon = () => { const s=14; return L.divIcon({ className:'city-marker', html:`<div style="width:${s}px;height:${s}px;background:#D4AF37;border-radius:50%;box-shadow:0 0 8px rgba(212,175,55,0.5),0 0 2px rgba(212,175,55,0.8);cursor:pointer;"></div>`, iconSize:[s,s], iconAnchor:[s/2,s/2] }); };
+const createSmallCityIcon = () => { const s=10; return L.divIcon({ className:'city-marker small', html:`<div style="width:${s}px;height:${s}px;background:#9B8B6E;border-radius:50%;box-shadow:0 0 6px rgba(155,139,110,0.4),0 0 2px rgba(155,139,110,0.6);cursor:pointer;"></div>`, iconSize:[s,s], iconAnchor:[s/2,s/2] }); };
+
+export default function MapComponent({ activePeriod, onComposerSelect, onCitySelect, mapCenter = [60, 50], mapZoom = 4 }) {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markersRef = useRef([]);
+  const cityMarkersRef = useRef([]);
+  const composerMapRef = useRef({});
+  const [relationshipMode, setRelationshipMode] = useState(false);
+  const [selectedCity, setSelectedCity] = useState(null);
+
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+    const map = L.map(mapRef.current, { center: mapCenter, zoom: mapZoom, zoomControl: false, attributionControl: false, minZoom: 3, maxZoom: 12 });
+    // 不使用瓦片底图，用纯深色背景
+    
+    // 生成星空粒子背景
+    const starCanvas = document.createElement('div');
+    starCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;';
+    let starsHTML = '';
+    for (let i = 0; i < 200; i++) {
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const size = Math.random() * 2 + 0.5;
+      const opacity = Math.random() * 0.6 + 0.2;
+      const delay = Math.random() * 5;
+      starsHTML += `<div style="position:absolute;left:${x}%;top:${y}%;width:${size}px;height:${size}px;background:rgba(200,220,255,${opacity});border-radius:50%;animation:starTwinkle ${3+Math.random()*4}s ease-in-out ${delay}s infinite;"></div>`;
+    }
+    starCanvas.innerHTML = starsHTML;
+    document.getElementById('map').appendChild(starCanvas);
+
+
+
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    L.control.attribution({ position: 'bottomright', prefix: '© Esri' }).addTo(map);
+    mapInstanceRef.current = map;
+    const style = document.createElement('style');
+    style.id = 'rel-dynamic-styles';
+    style.textContent = `@keyframes starTwinkle{0%,100%{opacity:0.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+    @keyframes marker-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.8}}.custom-marker{background:transparent!important;border:none!important}.city-marker{background:transparent!important;border:none!important}.leaflet-container{background:#030810!important;font-family:'Noto Sans SC',sans-serif}.leaflet-control-zoom a{background:#0a1520!important;color:rgb(135,206,250)!important;border-color:rgba(135,206,250,.3)!important}.leaflet-control-zoom a:hover{background:#0f1f30!important}.leaflet-control-attribution{background:rgba(8,14,24,.8)!important;color:rgba(135,206,250,0.5)!important;font-size:10px!important}.leaflet-control-attribution a{color:rgba(135,206,250,0.7)!important}.marker-wrapper.dimmed>div:first-child{opacity:.12!important;box-shadow:none!important;animation:none!important}.marker-wrapper.dimmed>div:last-child{opacity:.12!important;border-color:#3a3a3a!important}`;
+    document.head.appendChild(style);
+    return () => { map.remove(); mapInstanceRef.current = null; document.getElementById('rel-dynamic-styles')?.remove(); };
+  }, []);
+
+  const handleCitySelect = (city) => { setSelectedCity(city); if (onCitySelect) onCitySelect(city); };
+  const handleComposerSelectFromCard = (id) => { const c = composers.find(x => x.id === id); if (c && onComposerSelect) onComposerSelect(c); setSelectedCity(null); };
+
+  useEffect(() => {
+    const map = mapInstanceRef.current; if (!map) return;
+    markersRef.current.forEach(m => map.removeLayer(m)); markersRef.current = [];
+    cityMarkersRef.current.forEach(m => map.removeLayer(m)); cityMarkersRef.current = [];
+    let filtered = activePeriod ? composers.filter(c => c.period === activePeriod.id) : composers;
+    filtered.forEach(composer => {
+      const marker = L.marker(composer.coordinates, { icon: createCustomIcon(false, false, false, composer.period) });
+      marker.bindTooltip(`<div class="marker-tooltip"><strong>${composer.name}</strong><br/><span>${composer.birthYear}-${composer.deathYear}</span></div>`, { className: 'custom-tooltip', direction: 'top', offset: [0, -12] });
+      marker.on('click', () => onComposerSelect(composer));
+      marker.composerId = composer.id; marker.addTo(map); markersRef.current.push(marker); composerMapRef.current[composer.id] = marker;
+    });
+
+    // 星座连线：同学派作曲家之间的连线
+    const constellationLines = [];
+    const schoolGroups = {};
+    filtered.forEach(c => {
+      if (!schoolGroups[c.period]) schoolGroups[c.period] = [];
+      schoolGroups[c.period].push(c);
+    });
+    
+    // 学派颜色和星座名称
+    const schoolConstellation = {
+      'classical': { color: 'rgba(180,200,220,0.8)', name: '北极星·古典先驱' },
+      'national-foundation': { color: 'rgba(135,206,250,0.8)', name: '北斗·民族奠基' },
+      'national-prosperity': { color: 'rgba(255,215,140,0.8)', name: '天琴·民族繁荣' },
+      'late-romantic': { color: 'rgba(255,182,193,0.8)', name: '仙后·白银时代' },
+      'soviet': { color: 'rgba(220,220,230,0.8)', name: '南十字·苏联学派' }
+    };
+    
+    Object.entries(schoolGroups).forEach(([period, members]) => {
+      if (members.length > 1 && schoolConstellation[period]) {
+        // 星座连线：连接同学派作曲家
+        for (let i = 0; i < members.length - 1; i++) {
+          const line = L.polyline(
+            [members[i].coordinates, members[i + 1].coordinates],
+            { color: schoolConstellation[period].color, weight: 2, dashArray: '6,4', opacity: 0.9 }
+          );
+          line.addTo(map);
+          constellationLines.push(line);
+        }
+        // 星座标签（显示在学派中心）
+        if (members.length >= 3) {
+          const centerLat = members.reduce((s, m) => s + m.coordinates[0], 0) / members.length;
+          const centerLng = members.reduce((s, m) => s + m.coordinates[1], 0) / members.length;
+          const label = L.divIcon({
+            className: 'constellation-label',
+            html: `<div class="constellation-name">${schoolConstellation[period].name}</div>`,
+            iconSize: [120, 20],
+            iconAnchor: [60, 10]
+          });
+          const labelMarker = L.marker([centerLat, centerLng], { icon: label, interactive: false });
+          labelMarker.addTo(map);
+          constellationLines.push(labelMarker);
+        }
+      }
+    });
+    window.constellationLines = constellationLines;
+    cities.forEach(city => {
+      const hasImage = city.image && city.image.length > 0;
+      const icon = hasImage ? createCityIcon() : createSmallCityIcon();
+      const cm = L.marker(city.coords, { icon });
+      const tc = hasImage ? `<div class="marker-tooltip city-tooltip"><strong>🏛 ${city.name}</strong><br/><span>${city.nameRu}</span><br/><span style="font-size:10px;opacity:.7">点击查看城市详情</span></div>` : `<div class="marker-tooltip city-tooltip small-city"><strong>🎵 ${city.name}</strong><br/><span>${city.nameRu}</span><br/><span style="font-size:10px;opacity:.7">更多城市开发中</span></div>`;
+      cm.bindTooltip(tc, { className: 'custom-tooltip city ' + (hasImage ? '' : 'small'), direction: 'top', offset: [0, hasImage ? -18 : -14] });
+      cm.on('click', () => { if (city.image) handleCitySelect(city); });
+      cm.addTo(map); cityMarkersRef.current.push(cm);
+    });
+  }, [activePeriod, onComposerSelect]);
+
+  const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
+  const composerCount = composers.length;
+
+  return (
+    <div className="map-wrapper">
+      <div ref={mapRef} className="leaflet-map" />
+      <div className="map-dreamy-overlay" />
+      <div className="map-overlay-tl">
+        <div className="map-title-elegant">
+          <div className="title-main">俄罗斯音乐之魂</div>
+          <div className="title-divider"></div>
+          <div className="title-sub">跨越三百年 · {composerCount}位作曲家 · 47段师承</div>
+        </div>
+      </div>
+      {activePeriod && (
+        <div className="map-overlay-tr">
+          <div className="period-indicator" style={{ '--period-color': activePeriod.color }}>
+            <span className="period-name">{activePeriod.name}</span>
+            <span className="period-years">{activePeriod.startYear}-{activePeriod.endYear}</span>
+          </div>
+        </div>
+      )}
+      <button className={`rel-toggle-btn ${relationshipMode ? 'active' : ''}`} onClick={toggleRelationshipMode} title={relationshipMode ? "退出关系网" : "查看关系网"}>
+        <svg className="rel-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="5" cy="12" r="2.5" fill="currentColor" stroke="none"/><circle cx="19" cy="5" r="2.5" fill="currentColor" stroke="none"/><circle cx="19" cy="19" r="2.5" fill="currentColor" stroke="none"/><line x1="7.2" y1="10.5" x2="16.8" y2="6.5" strokeDasharray="3,2"/><line x1="7.2" y1="13.5" x2="16.8" y2="17.5" strokeDasharray="3,2"/></svg>
+        关系网
+      </button>
+      {relationshipMode && <RelationshipNetwork onClose={() => setRelationshipMode(false)} />}
+      {selectedCity && <CityCard city={selectedCity} composers={composers} onClose={() => setSelectedCity(null)} onSelectComposer={handleComposerSelectFromCard} />}
+      <BasilCathedral cityActive={!!selectedCity} />
+      <div className="map-instructions"><span>点击标记查看作曲家详情 · 点击城市查看详情 · 点击"关系网"按钮查看关系网络</span></div>
+
+      {/* SNOW */}
+      <div className="atmosphere-snow">
+        <div className="snowflake s1"></div><div className="snowflake s2"></div><div className="snowflake s3"></div>
+        <div className="snowflake s4"></div><div className="snowflake s5"></div><div className="snowflake s6"></div>
+        <div className="snowflake s7"></div><div className="snowflake s8"></div><div className="snowflake s9"></div>
+        <div className="snowflake s10"></div><div className="snowflake s11"></div><div className="snowflake s12"></div>
+        <div className="snowflake s13"></div><div className="snowflake s14"></div><div className="snowflake s15"></div>
+        <div className="snowflake s16"></div><div className="snowflake s17"></div><div className="snowflake s18"></div>
+        <div className="snowflake s19"></div><div className="snowflake s20"></div>
+      </div>
+
+      {/* TROIKA - reindeer sleigh using generated image */}
+      <div className="atmosphere-troika">
+        <div className="troika-sleigh">
+          <div className="troika-img"></div>
+        </div>
+      </div>
+
+      {/* NOTES RIVER */}
+      <div className="atmosphere-notes">
+        <span className="gnote n1">♪</span><span className="gnote n2">♫</span><span className="gnote n3">♬</span><span className="gnote n4">♩</span>
+        <span className="gnote n5">♪</span><span className="gnote n6">♫</span><span className="gnote n7">♬</span><span className="gnote n8">♩</span>
+      </div>
+    </div>
+  );
+}
