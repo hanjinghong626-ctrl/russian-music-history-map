@@ -248,9 +248,8 @@ html {
   pointer-events: none;
   z-index: 250;
   background: 
-    radial-gradient(ellipse at 25% 35%, rgba(100, 60, 200, 0.25) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 65%, rgba(40, 90, 200, 0.20) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(80, 40, 180, 0.15) 0%, transparent 65%),
-    linear-gradient(180deg, rgba(15, 8, 35, 0.4) 0%, transparent 25%, transparent 75%, rgba(8, 4, 25, 0.35) 100%);
-  mix-blend-mode: soft-light;
+    radial-gradient(ellipse at 30% 30%, rgba(120, 70, 220, 0.40) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(50, 100, 230, 0.35) 0%, transparent 45%),
+    radial-gradient(ellipse at 55% 45%, rgba(90, 50, 200, 0.25) 0%, transparent 60%);
+  mix-blend-mode: overlay;
 }
