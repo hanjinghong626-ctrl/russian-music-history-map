@@ -34,11 +34,11 @@ export default function ComposerCard({ composer, onClose }) {
   if (!composer) return null;
 
   const periodThemes = {
-    'classical': { primary: '#8B7355', accent: '#1E3A5F' },
-    'national-foundation': { primary: '#D4AF37', accent: '#8B6914' },
-    'national-prosperity': { primary: '#D4AF37', accent: '#8B0000' },
-    'late-romantic': { primary: '#D4AF37', accent: '#FF4444' },
-    'soviet': { primary: '#6B5B95', accent: '#FF4444' }
+    'classical': { primary: '#7C3AED', accent: '#312E81' },
+    'national-foundation': { primary: '#A78BFA', accent: '#6D28D9' },
+    'national-prosperity': { primary: '#A78BFA', accent: '#6D28D9' },
+    'late-romantic': { primary: '#A78BFA', accent: '#F472B6' },
+    'soviet': { primary: '#818CF8', accent: '#F472B6' }
   };
 
   const theme = periodThemes[composer.period] || periodThemes['national-foundation'];
