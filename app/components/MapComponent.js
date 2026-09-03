@@ -49,11 +49,15 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
     const map = L.map(mapRef.current, { center: mapCenter, zoom: mapZoom, zoomControl: false, attributionControl: false, minZoom: 3, maxZoom: 12 });
-    // 不使用瓦片底图，用纯深色背景
+    // 暗色地图底图：深灰陆地+近黑海洋，星河落在大地上
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd', maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }).addTo(map);
     
     // 生成星空粒子背景
     const starCanvas = document.createElement('div');
-    starCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;';
+    starCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:300;overflow:hidden;';
     let starsHTML = '';
     for (let i = 0; i < 200; i++) {
       const x = Math.random() * 100;
@@ -69,7 +73,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
 
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
-    L.control.attribution({ position: 'bottomright', prefix: '© Esri' }).addTo(map);
+    L.control.attribution({ position: 'bottomright', prefix: '<a href='https://carto.com/'>© CARTO</a>' }).addTo(map);
     mapInstanceRef.current = map;
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
