@@ -1,4 +1,4 @@
-// v3.0 星河视觉重构 - 深空底 + 星空 overlay + 去旧动画
+// v4.0 星河银色版 - 建筑动画改银色 + 恢复底图 + 保留星空
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
@@ -8,6 +8,7 @@ import { composers } from '../data/composers';
 import { cities } from '../data/cities';
 import RelationshipNetwork from './RelationshipNetwork';
 import CityCard from './CityCard';
+import BasilCathedral from './BasilCathedral';
 import './MapComponent.css';
 
 // 学派颜色配置（星河配色）
@@ -63,12 +64,18 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
-    // 深空背景地图（无瓦片，纯径向渐变）
     const map = L.map(mapRef.current, {
       center: mapCenter, zoom: mapZoom, zoomControl: false,
       attributionControl: false, minZoom: 3, maxZoom: 12,
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
+
+    // 恢复暗色底图（地理轮廓）- 极低 opacity 融合星河
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd', maxZoom: 18,
+      attribution: '',
+      opacity: 0.35,
+    }).addTo(map);
 
     // 动态注入全局样式
     const style = document.createElement('style');
@@ -204,8 +211,11 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     <div className="map-wrapper">
       <div ref={mapRef} className="leaflet-map" />
 
-      {/* 星空 overlay - 独立于 Leaflet DOM，z-index 在瓦片之上 */}
+      {/* 星空 overlay - 独立于 Leaflet DOM */}
       <div className="starfield-overlay" dangerouslySetInnerHTML={{ __html: starsHTML }} />
+
+      {/* 俄罗斯标志性建筑动画 - 银色星座版 */}
+      <BasilCathedral cityActive={!!selectedCity} />
 
       <div className="map-overlay-tl">
         <div className="map-title-elegant">
