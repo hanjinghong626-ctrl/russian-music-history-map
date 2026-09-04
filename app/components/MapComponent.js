@@ -70,11 +70,11 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
 
-    // 切换为 OSM 标准瓦片 + CSS 暗色滤镜，避免 CARTO 配额水印
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
+    // 恢复 CARTO 暗色底图（深蓝黑配色）
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd', maxZoom: 18,
       attribution: '',
-      className: 'osm-dark-tiles',
+      opacity: 0.35,
     }).addTo(map);
 
     // 动态注入全局样式
@@ -106,10 +106,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         backdrop-filter: blur(8px);
       }
       .leaflet-control-zoom a:hover { background: rgba(135,206,250,0.15) !important; }
-      /* OSM 暗色滤镜：深蓝黑底，保留国界地理轮廓，水印融入暗色 */
-      .osm-dark-tiles {
-        filter: brightness(0.32) contrast(1.5) hue-rotate(215deg);
-      }
       .marker-wrapper.dimmed > div:first-child { opacity: 0.1 !important; box-shadow: none !important; animation: none !important; }
       .marker-wrapper.dimmed > div:last-child { opacity: 0.1 !important; border-color: #2a2a2a !important; }
     `;
