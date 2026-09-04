@@ -15,7 +15,8 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  /* 所有视觉效果现在由 JS 直接控制 */
+  /* CSS filter 把金色线稿实时转为银蓝星座风格 */
+  filter: hue-rotate(170deg) saturate(0.5) brightness(1.2);
   will-change: opacity, clip-path, transform, filter;
 }
 
@@ -25,7 +26,7 @@
   height: 50px;
   background: radial-gradient(circle,
     rgba(255, 255, 255, 0.6) 0%,
-    rgba(244, 228, 186, 0.4) 20%,
+    rgba(170, 195, 230, 0.4) 20%,
     rgba(135, 206, 250, 0.3) 40%,
     transparent 70%
   );
@@ -36,7 +37,7 @@
   will-change: top, left, transform;
 }
 
-/* 城市词条打开时，教堂驯鹿到底层 */
+/* 城市词条打开时，动画退到底层 */
 .basil-container.city-active { z-index: 1 !important; }
 
 @media (max-width: 768px) {
