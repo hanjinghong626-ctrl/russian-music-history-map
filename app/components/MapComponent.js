@@ -70,16 +70,23 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
 
-    // Stamen Toner 暗色底图（无水印，配色接近 CARTO dark）
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png', {
-      maxZoom: 18,
+    // OSM 底图（无水印），深色滤镜
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
       attribution: '',
     }).addTo(map);
+    
+    // 给瓦片容器加深色滤镜
+    const tileContainer = map.getPane('tilePane');
+    tileContainer.classList.add('dark-filter');
 
     // 动态注入全局样式
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
     style.textContent = `
+      .dark-filter {
+        filter: brightness(0.3) contrast(1.4) hue-rotate(215deg) saturate(0.15);
+      }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
         50% { opacity: 1; transform: scale(1.8); }
