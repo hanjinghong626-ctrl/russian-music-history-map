@@ -106,10 +106,9 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         backdrop-filter: blur(8px);
       }
       .leaflet-control-zoom a:hover { background: rgba(135,206,250,0.15) !important; }
-      /* OSM 暗色滤镜：将标准瓦片转为深蓝调，消除水印与标签 */
+      /* OSM 暗色滤镜：深蓝黑底，保留国界地理轮廓，水印融入暗色 */
       .osm-dark-tiles {
-        filter: brightness(0.35) contrast(1.4) saturate(0.15) hue-rotate(210deg);
-        opacity: 0.3;
+        filter: brightness(0.32) contrast(1.5) hue-rotate(215deg);
       }
       .marker-wrapper.dimmed > div:first-child { opacity: 0.1 !important; box-shadow: none !important; animation: none !important; }
       .marker-wrapper.dimmed > div:last-child { opacity: 0.1 !important; border-color: #2a2a2a !important; }
