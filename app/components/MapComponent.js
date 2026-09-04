@@ -85,7 +85,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     style.id = 'rel-dynamic-styles';
     style.textContent = `
       .dark-filter {
-        filter: brightness(0.3) contrast(1.4) hue-rotate(215deg) saturate(0.15);
+        filter: brightness(0.25) contrast(1.6) hue-rotate(225deg) saturate(0.4);
       }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
