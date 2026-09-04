@@ -189,3 +189,54 @@
     font-size: 10px;
   }
 }
+
+
+/* ===== 未来感增强 ===== */
+
+/* 时间轴容器底部光带 */
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(135,206,250,0.3), transparent);
+}
+
+/* 时间轴线增强为光带 */
+.timeline-line {
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(135,206,250,0.1) 10%,
+    rgba(135,206,250,0.4) 50%,
+    rgba(135,206,250,0.1) 90%,
+    transparent 100%
+  ) !important;
+  box-shadow: 0 0 8px rgba(135,206,250,0.15);
+}
+
+/* 时间节点光晕增强 */
+.timeline-dot-inner {
+  box-shadow: 0 0 8px rgba(135,206,250,0.3);
+  transition: all 0.3s ease;
+}
+
+.timeline-item.active .timeline-dot-inner {
+  box-shadow: 0 0 20px var(--period-color), 0 0 40px rgba(135,206,250,0.2);
+}
+
+/* 悬浮时光点呼吸 */
+.timeline-item:hover .timeline-dot-inner {
+  box-shadow: 0 0 14px rgba(135,206,250,0.5);
+}
+
+/* 时期名发光 */
+.timeline-item.active .timeline-name {
+  text-shadow: 0 0 12px var(--period-color), 0 0 24px rgba(135,206,250,0.3);
+}
+
+/* 背景微光 */
+.timeline-glow {
+  height: 80px !important;
+  background: radial-gradient(ellipse at bottom, rgba(135,206,250,0.08) 0%, transparent 70%) !important;
+}
