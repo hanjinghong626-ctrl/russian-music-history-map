@@ -70,12 +70,22 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
 
-    // Esri 深灰暗色底图（原生暗色、无城市标签、无水印，风格同 CARTO dark_nolabels）
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 16,
-      attribution: '',
-      opacity: 0.55,
-    }).addTo(map);
+    // 自绘 GeoJSON 陆地轮廓（无水印、无标签、无外部瓦片依赖）
+    // 深空感：陆地近乎不可见的暗蓝填充，海岸线/国界为淡冰蓝发光细线
+    fetch('/world-lite.geojson')
+      .then(r => r.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: {
+            color: 'rgba(135,206,250,0.35)',
+            weight: 0.8,
+            fillColor: 'rgba(30,45,70,0.55)',
+            fillOpacity: 1,
+          },
+          interactive: false,
+        }).addTo(map);
+      })
+      .catch(() => {});
 
     // 动态注入全局样式
     const style = document.createElement('style');
