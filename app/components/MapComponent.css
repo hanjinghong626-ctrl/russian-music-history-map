@@ -106,3 +106,213 @@
   0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
 }
+
+/* ============================================================
+   v5.0 星河天象：极光 · 银河 · 全域流星 · 城市涟漪 · 标题入场
+   ============================================================ */
+
+/* —— 天象总层（极光/银河），位于地图之上、星空之上，不拦截交互 —— */
+.sky-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 501;
+  pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: screen;
+}
+
+/* —— 银河淡带：斜贯天际的极淡星雾 —— */
+.milky-way {
+  position: absolute;
+  top: -18%; left: -12%;
+  width: 135%; height: 56%;
+  transform: rotate(-16deg);
+  background:
+    radial-gradient(ellipse 60% 55% at 38% 40%, rgba(190, 214, 246, 0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 48% 60% at 62% 55%, rgba(214, 206, 242, 0.07) 0%, transparent 62%),
+    radial-gradient(ellipse 38% 50% at 78% 48%, rgba(170, 200, 235, 0.06) 0%, transparent 60%);
+  filter: blur(14px);
+  opacity: 0.7;
+  animation: milky-breathe 11s ease-in-out infinite;
+  will-change: opacity;
+}
+@keyframes milky-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.85; }
+}
+
+/* —— 北极光帷幕：3 层青蓝流光横向漂移 —— */
+.aurora {
+  position: absolute;
+  left: -35%;
+  width: 170%;
+  height: 62%;
+  filter: blur(34px);
+  transform: skewY(-4deg);
+  will-change: transform, opacity;
+}
+.aurora-1 {
+  top: -22%;
+  background: linear-gradient(100deg,
+    transparent 0%,
+    rgba(64, 200, 208, 0.10) 22%,
+    rgba(86, 172, 255, 0.13) 42%,
+    rgba(120, 232, 196, 0.08) 60%,
+    rgba(96, 160, 255, 0.10) 78%,
+    transparent 100%);
+  animation: aurora-drift-1 17s ease-in-out infinite alternate;
+}
+.aurora-2 {
+  top: -30%;
+  background: linear-gradient(96deg,
+    transparent 0%,
+    rgba(80, 220, 190, 0.07) 26%,
+    rgba(96, 180, 250, 0.10) 48%,
+    rgba(140, 214, 255, 0.07) 70%,
+    transparent 100%);
+  animation: aurora-drift-2 23s ease-in-out infinite alternate;
+}
+.aurora-3 {
+  top: -14%;
+  background: linear-gradient(104deg,
+    transparent 0%,
+    rgba(120, 190, 255, 0.08) 20%,
+    rgba(90, 230, 200, 0.07) 50%,
+    rgba(110, 175, 248, 0.09) 76%,
+    transparent 100%);
+  animation: aurora-drift-3 28s ease-in-out infinite alternate;
+}
+@keyframes aurora-drift-1 {
+  0%   { transform: translateX(-6%) skewY(-4deg) scaleX(1);    opacity: 0.55; }
+  50%  {                                            opacity: 0.95; }
+  100% { transform: translateX(12%) skewY(-4deg) scaleX(1.08); opacity: 0.65; }
+}
+@keyframes aurora-drift-2 {
+  0%   { transform: translateX(14%) skewY(-4deg) scaleX(1.05); opacity: 0.5; }
+  50%  {                                             opacity: 0.9; }
+  100% { transform: translateX(-8%) skewY(-4deg) scaleX(1);    opacity: 0.6; }
+}
+@keyframes aurora-drift-3 {
+  0%   { transform: translateX(0%) skewY(-4deg);   opacity: 0.45; }
+  50%  {                                           opacity: 0.8; }
+  100% { transform: translateX(8%) skewY(-4deg);   opacity: 0.55; }
+}
+
+/* —— 全域流星：外层位移、内层旋转，带星尘尾迹 —— */
+.sky-meteor {
+  position: absolute;
+  top: 10%;
+  left: 80%;
+  width: 220px;
+  height: 3px;
+  z-index: 502;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.sky-meteor i {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: linear-gradient(to left,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(190, 220, 255, 0.7) 22%,
+    rgba(140, 190, 255, 0.22) 52%,
+    transparent 100%);
+  filter: drop-shadow(0 0 7px rgba(170, 210, 255, 0.9));
+  transform: rotate(208deg);
+  transform-origin: right center;
+}
+.sky-meteor i::before {
+  content: '';
+  position: absolute;
+  right: -2px; top: 50%;
+  width: 6px; height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px rgba(210, 235, 255, 1), 0 0 24px rgba(150, 200, 255, 0.7);
+}
+.sky-meteor i::after {
+  content: '';
+  position: absolute;
+  right: 8px; top: 50%;
+  margin-top: -1px;
+  width: 150px; height: 2px;
+  background: repeating-linear-gradient(to left,
+    rgba(200, 228, 255, 0.55) 0 2px,
+    transparent 2px 10px);
+  filter: blur(0.5px);
+}
+.sky-meteor.go {
+  animation: sky-meteor-move 1.9s cubic-bezier(0.28, 0.08, 0.38, 1) forwards;
+}
+.sky-meteor.go i {
+  animation: sky-meteor-twinkle 1.9s ease-out forwards;
+}
+@keyframes sky-meteor-move {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  7%   { opacity: 1; }
+  72%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-78vw, 62vh); }
+}
+@keyframes sky-meteor-twinkle {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* —— 城市金点：灯塔涟漪环 —— */
+.city-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.65);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.25), inset 0 0 6px rgba(212, 175, 55, 0.2);
+  animation: city-beacon 3.6s ease-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+@keyframes city-beacon {
+  0%   { transform: scale(1);    opacity: 0.85; }
+  70%  { transform: scale(3.4);  opacity: 0; }
+  100% { transform: scale(3.4);  opacity: 0; }
+}
+
+/* —— 标题入场：字距展开 + 银线生长 + 副标题浮现（只演一次）—— */
+.map-overlay-tl {
+  animation: title-card-in 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.title-main {
+  animation: title-letterspread 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.title-divider {
+  animation: divider-grow 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
+}
+.title-sub {
+  animation: title-sub-fade 1.2s ease 0.7s both;
+}
+@keyframes title-card-in {
+  0%   { opacity: 0; transform: translateY(-14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes title-letterspread {
+  0%   { opacity: 0; letter-spacing: 18px; }
+  100% { opacity: 1; letter-spacing: 4px; }
+}
+@keyframes divider-grow {
+  0%   { width: 0; opacity: 0; }
+  100% { width: 60px; opacity: 1; }
+}
+@keyframes title-sub-fade {
+  0%   { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 0.8; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora, .milky-way { animation: none !important; }
+  .sky-meteor, .sky-meteor i { animation: none !important; }
+  .city-ripple { animation: none !important; }
+  .map-overlay-tl, .title-main, .title-divider, .title-sub { animation: none !important; }
+}
