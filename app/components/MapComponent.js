@@ -83,7 +83,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     }).addTo(map);
 
     const boundsLayer = L.geoJSON(null, {
-      style: { color: 'rgba(160,200,240,0.5)', weight: 0.9, dashArray: '3,3' },
+      style: { color: 'rgba(175,212,248,0.95)', weight: 1.1, dashArray: '4,3' },
       interactive: false,
     }).addTo(map);
 
@@ -100,13 +100,16 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
 
     const cityLayer = L.geoJSON(null, {
       pointToLayer: (f, latlng) => {
-        const major = f.properties.r <= 1;
+        const p = f.properties;
+        const cls = ['star-city', 'r' + p.r];
+        if (p.r <= 1) cls.push('major');
+        if (p.ruflag) cls.push('ru');
         return L.marker(latlng, {
           icon: L.divIcon({
             className: '',
-            html: `<div class="star-city ${major ? 'major' : ''}">
+            html: `<div class="${cls.join(' ')}">
                      <span class="star-city-dot"></span>
-                     ${major ? `<span class="star-city-name">${f.properties.zh}<em>${f.properties.ru}</em></span>` : ''}
+                     <span class="star-city-name">${p.zh}<em>${p.ru}</em></span>
                    </div>`,
             iconSize: [0, 0],
           }),
@@ -153,10 +156,15 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         transform: translate(-50%, -50%);
         box-shadow: 0 0 5px rgba(150,200,250,0.9);
       }
-      .star-city.major .star-city-dot {
+      .star-city.major .star-city-dot,
+      .star-city.ru.r2 .star-city-dot {
         width: 5px; height: 5px;
         background: rgb(220,238,255);
         box-shadow: 0 0 9px rgba(170,215,255,1), 0 0 18px rgba(140,190,255,0.6);
+      }
+      .star-city.ru .star-city-dot {
+        background: rgb(205,230,255);
+        box-shadow: 0 0 6px rgba(160,205,255,0.95);
       }
       .star-city-name {
         position: absolute; left: 8px; top: -9px;
@@ -169,11 +177,25 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         display: block; font-style: normal; font-size: 9px;
         color: rgba(150,190,225,0.6); letter-spacing: 0.5px;
       }
-      /* 缩放层级：低缩放只显示国名；中缩放显示大城市名；高缩放显示所有城市名 */
-      .leaflet-container.z-low .star-city-name { display: none !important; }
+      /* 城市名默认隐藏，按缩放层级分级显示 */
+      .star-city-name { display: none; }
+      .star-city.ru .star-city-name { color: rgba(215,235,255,0.95); }
+      .star-city.ru .star-city-name em { color: rgba(170,205,240,0.7); }
+      /* 低缩放：仅首都级 */
+      .leaflet-container.z-low .star-city.major .star-city-name { display: block; }
       .leaflet-container.z-low .star-country-label { opacity: 1; }
+      /* 中缩放：首都级 + 俄罗斯 r0-r3 主要城市 */
+      .leaflet-container.z-mid .star-city.major .star-city-name,
+      .leaflet-container.z-mid .star-city.ru.r0 .star-city-name,
+      .leaflet-container.z-mid .star-city.ru.r1 .star-city-name,
+      .leaflet-container.z-mid .star-city.ru.r2 .star-city-name,
+      .leaflet-container.z-mid .star-city.ru.r3 .star-city-name { display: block; }
       .leaflet-container.z-mid .star-country-label { opacity: 0.25; }
-      .leaflet-container.z-mid .star-city:not(.major) .star-city-name { display: none; }
+      /* 高缩放：俄罗斯全部城市 + 各国主要城市 */
+      .leaflet-container.z-high .star-city.ru .star-city-name,
+      .leaflet-container.z-high .star-city.major .star-city-name,
+      .leaflet-container.z-high .star-city.r2 .star-city-name,
+      .leaflet-container.z-high .star-city.r3 .star-city-name { display: block; }
       .leaflet-container.z-high .star-country-label { opacity: 0.12; }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
