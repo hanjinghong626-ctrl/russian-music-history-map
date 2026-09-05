@@ -70,17 +70,22 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
 
-    // OSM 底图（无水印），极低透明度
+    // OSM 底图（无水印），反色滤镜转暗色 + 适中透明度保证轮廓清晰
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '',
-      opacity: 0.12,
+      className: 'osm-dark',
     }).addTo(map);
 
     // 动态注入全局样式
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
     style.textContent = `
+      /* OSM 亮色瓦片转暗色：反色→去饱和→压暗→偏蓝调，配合深蓝黑背景 */
+      .osm-dark {
+        filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.3);
+        opacity: 0.55;
+      }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
         50% { opacity: 1; transform: scale(1.8); }
