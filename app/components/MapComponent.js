@@ -70,27 +70,111 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
 
-    // 自绘 GeoJSON 陆地轮廓（无水印、无标签、无外部瓦片依赖）
-    // 深空感：陆地近乎不可见的暗蓝填充，海岸线/国界为淡冰蓝发光细线
-    fetch('/world-lite.geojson')
-      .then(r => r.json())
-      .then(data => {
-        L.geoJSON(data, {
-          style: {
-            color: 'rgba(135,206,250,0.35)',
-            weight: 0.8,
-            fillColor: 'rgba(30,45,70,0.55)',
-            fillOpacity: 1,
-          },
-          interactive: false,
-        }).addTo(map);
-      })
-      .catch(() => {});
+    // ===== 自绘星图底图：精细陆地 + 国界 + 分级发光地名（无水印/无外部瓦片） =====
+    const landLayer = L.geoJSON(null, {
+      style: {
+        color: 'rgba(150,195,235,0.42)',
+        weight: 0.9,
+        fillColor: 'rgba(22,36,60,0.75)',
+        fillOpacity: 1,
+        lineJoin: 'round',
+      },
+      interactive: false,
+    }).addTo(map);
+
+    const boundsLayer = L.geoJSON(null, {
+      style: { color: 'rgba(150,195,235,0.18)', weight: 0.6, dashArray: '2,4' },
+      interactive: false,
+    }).addTo(map);
+
+    const countryLayer = L.geoJSON(null, {
+      pointToLayer: (f, latlng) => L.marker(latlng, {
+        icon: L.divIcon({
+          className: '',
+          html: `<div class="star-country-label">${f.properties.zh}</div>`,
+          iconSize: [0, 0],
+        }),
+        interactive: false, keyboard: false,
+      }),
+    }).addTo(map);
+
+    const cityLayer = L.geoJSON(null, {
+      pointToLayer: (f, latlng) => {
+        const major = f.properties.r <= 1;
+        return L.marker(latlng, {
+          icon: L.divIcon({
+            className: '',
+            html: `<div class="star-city ${major ? 'major' : ''}">
+                     <span class="star-city-dot"></span>
+                     ${major ? `<span class="star-city-name">${f.properties.zh}<em>${f.properties.ru}</em></span>` : ''}
+                   </div>`,
+            iconSize: [0, 0],
+          }),
+          interactive: false, keyboard: false,
+        });
+      },
+    }).addTo(map);
+
+    const loadGeo = (url, layer) =>
+      fetch(url).then(r => r.json()).then(d => layer.addData(d)).catch(() => {});
+
+    loadGeo('/land-lite.geojson', landLayer);
+    loadGeo('/bounds-lite.geojson', boundsLayer);
+    loadGeo('/country-labels-lite.geojson', countryLayer);
+    loadGeo('/places-lite.geojson', cityLayer);
+
+    const updateLabelZoom = () => {
+      const z = map.getZoom();
+      const el = map.getContainer();
+      el.classList.toggle('z-low', z < 3);
+      el.classList.toggle('z-mid', z >= 3 && z < 5);
+      el.classList.toggle('z-high', z >= 5);
+    };
+    map.on('zoomend', updateLabelZoom);
+    updateLabelZoom();
 
     // 动态注入全局样式
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
     style.textContent = `
+      /* —— 星图底图标签 —— */
+      .star-country-label {
+        transform: translate(-50%, -50%);
+        font-size: 11px; letter-spacing: 4px;
+        color: rgba(170,205,240,0.5);
+        text-shadow: 0 0 8px rgba(100,160,220,0.6);
+        white-space: nowrap; font-weight: 300;
+      }
+      .star-city { position: relative; }
+      .star-city-dot {
+        position: absolute; left: 0; top: 0;
+        width: 3px; height: 3px; border-radius: 50%;
+        background: rgba(190,220,250,0.8);
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 5px rgba(150,200,250,0.9);
+      }
+      .star-city.major .star-city-dot {
+        width: 5px; height: 5px;
+        background: rgb(220,238,255);
+        box-shadow: 0 0 9px rgba(170,215,255,1), 0 0 18px rgba(140,190,255,0.6);
+      }
+      .star-city-name {
+        position: absolute; left: 8px; top: -9px;
+        font-size: 11px; line-height: 1.25;
+        color: rgba(200,225,250,0.92);
+        text-shadow: 0 0 6px rgba(90,150,220,0.8), 0 1px 3px rgba(0,0,0,0.9);
+        white-space: nowrap; font-weight: 400;
+      }
+      .star-city-name em {
+        display: block; font-style: normal; font-size: 9px;
+        color: rgba(150,190,225,0.6); letter-spacing: 0.5px;
+      }
+      /* 缩放层级：低缩放只显示国名；中缩放显示大城市名；高缩放显示所有城市名 */
+      .leaflet-container.z-low .star-city-name { display: none !important; }
+      .leaflet-container.z-low .star-country-label { opacity: 1; }
+      .leaflet-container.z-mid .star-country-label { opacity: 0.25; }
+      .leaflet-container.z-mid .star-city:not(.major) .star-city-name { display: none; }
+      .leaflet-container.z-high .star-country-label { opacity: 0.12; }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
         50% { opacity: 1; transform: scale(1.8); }
