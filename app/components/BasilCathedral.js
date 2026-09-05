@@ -1,4 +1,4 @@
-// v5.2 星河显影仪 - 星环底盘 + 星尘星雾 + 收笔星爆 + 点击建筑展开介绍卡片
+// v5.3 星河显影仪（性能重构）- 遮板平移揭示(GPU合成) + rAF静置休眠 + 图片预载
 'use client';
 import { useEffect, useRef, useMemo, useState } from 'react';
 import './BasilCathedral.css';
@@ -97,7 +97,7 @@ function calcState(elapsed) {
     secondary = { art: prev, phase: 'fading', p: Math.min(1, local / FADE_MS) };
   }
 
-  return { primary, secondary, crossing: !!secondary, slotIndex: i };
+  return { primary, secondary, crossing: !!secondary, slotIndex: i, slotStart: acc };
 }
 
 let cycleStartTime = null;
@@ -123,6 +123,7 @@ export default function BasilCathedral({ cityActive }) {
   const captionRef = useRef(null);
   const hintRef = useRef(null);
   const rafRef = useRef(null);
+  const sleepRef = useRef(null);
   const prevCrossingRef = useRef(false);
   const lastSlotRef = useRef(-1);
   const holdingRef = useRef(false);
@@ -137,6 +138,16 @@ export default function BasilCathedral({ cityActive }) {
   // 城市词条打开时关闭建筑卡片
   useEffect(() => { if (cityActive) setCardArt(null); }, [cityActive]);
 
+  // 城市退底 class 同步（rAF 休眠期间也能响应）
+  useEffect(() => {
+    containerRef.current?.classList.toggle('city-active', !!cityActive);
+  }, [cityActive]);
+
+  // 卡片开关时同步轻触提示（rAF 休眠期间也能响应）
+  useEffect(() => {
+    if (hintRef.current) hintRef.current.style.opacity = cardArt ? '0' : '';
+  }, [cardArt]);
+
   // 点击卡片外部关闭
   useEffect(() => {
     if (!cardArt) return;
@@ -147,6 +158,11 @@ export default function BasilCathedral({ cityActive }) {
     document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);
   }, [cardArt]);
+
+  // 七张线稿预加载解码，避免切换时卡顿
+  useEffect(() => {
+    ARTWORKS.forEach(a => { const im = new Image(); im.src = getImageUrl(a.id); });
+  }, []);
 
   // 星尘微粒
   const stardustHTML = useMemo(() => {
@@ -167,12 +183,20 @@ export default function BasilCathedral({ cityActive }) {
   useEffect(() => {
     const startTime = getCycleStartTime();
 
+    // 遮板平移揭示：transform 只走 GPU 合成，不触发大图重绘
     function renderSlot(layerEl, slot, isTop) {
       if (!layerEl) return;
-      if (!slot) { layerEl.style.opacity = '0'; return; }
-      const img = layerEl.querySelector('.basil-image');
+      const veil = layerEl.querySelector('.basil-veil');
       const shimmer = layerEl.querySelector('.basil-shimmer');
-      const scan = layerEl.querySelector('.basil-scan');
+      const img = layerEl.querySelector('.basil-image');
+
+      if (!slot) {
+        layerEl.style.opacity = '0';
+        layerEl.classList.remove('hold-float');
+        if (veil) { veil.classList.remove('h'); veil.style.transform = ''; }
+        return;
+      }
+
       const url = getImageUrl(slot.art.id);
       if (img.dataset.url !== url) {
         img.style.backgroundImage = `url(${url})`;
@@ -183,46 +207,34 @@ export default function BasilCathedral({ cityActive }) {
       }
       const horizontal = slot.art.id === 'reindeer';
       const ep = easeInOut(slot.p);
-
-      let opacity = 0;
-      let clip = horizontal ? 'inset(0 100% 0 0)' : 'inset(0 0 100% 0)';
-      let scanOpacity = 0;
-      let shimmerOn = false;
+      veil.classList.toggle('h', horizontal);
 
       if (slot.phase === 'drawing') {
-        opacity = Math.min(1, slot.p * 6);
-        if (horizontal) {
-          clip = `inset(0 ${100 - ep * 100}% 0 0)`;
-          scan.style.left = `${ep * 100}%`;
-        } else {
-          clip = `inset(0 0 ${100 - ep * 100}% 0)`;
-          scan.style.top = `${ep * 100}%`;
-        }
-        scanOpacity = 1;
-        shimmerOn = true;
+        layerEl.style.opacity = '1';
+        img.style.opacity = String(Math.min(1, slot.p * 6));
+        veil.style.transform = horizontal
+          ? `translateX(${(ep * 100).toFixed(2)}%)`
+          : `translateY(${(ep * 100).toFixed(2)}%)`;
+        shimmer.classList.add('flow');
+        layerEl.classList.remove('hold-float');
       } else if (slot.phase === 'holding') {
-        opacity = 1;
-        clip = 'inset(0 0 0 0)';
-        shimmerOn = true;
-      } else if (slot.phase === 'fading') {
-        opacity = 1 - ep;
-        clip = 'inset(0 0 0 0)';
+        layerEl.style.opacity = '1';
+        img.style.opacity = '1';
+        veil.style.transform = horizontal ? 'translateX(100%)' : 'translateY(100%)';
+        shimmer.classList.add('flow');
+        layerEl.classList.add('hold-float');
+      } else { // fading
+        layerEl.style.opacity = String(1 - ep);
+        img.style.opacity = '1';
+        veil.style.transform = horizontal ? 'translateX(100%)' : 'translateY(100%)';
+        shimmer.classList.remove('flow');
+        layerEl.classList.remove('hold-float');
       }
-
-      img.style.opacity = String(opacity);
-      img.style.clipPath = clip;
-      shimmer.style.opacity = shimmerOn ? (slot.phase === 'holding' ? '' : '0.55') : '0';
-      shimmer.style.clipPath = slot.phase === 'drawing' ? clip : 'inset(0 0 0 0)';
-      shimmer.classList.toggle('flow', shimmerOn);
-      scan.classList.toggle('h', horizontal);
-      scan.style.opacity = String(scanOpacity);
-      scan.style.display = scanOpacity > 0 ? 'block' : 'none';
       layerEl.style.zIndex = String(isTop ? 2 : 1);
-      layerEl.style.opacity = '1';
-      layerEl.classList.toggle('hold-float', slot.phase === 'holding');
     }
 
-    function update() {
+    function tick() {
+      rafRef.current = null;
       if (!containerRef.current) return;
       const elapsed = Date.now() - startTime;
       const state = calcState(elapsed);
@@ -245,27 +257,24 @@ export default function BasilCathedral({ cityActive }) {
         if (cardArtRef.current) setCardArt(null);
       }
 
-      // 星核光斑 + 收笔星爆
+      // 星核光斑 + 收笔星爆（transform 定位，不触发布局）
       const pen = penRef.current;
       if (pen) {
         if (state.primary.phase === 'drawing') {
           const ep = easeInOut(state.primary.p);
-          pen.style.display = 'block';
+          const w = containerRef.current.clientWidth;
+          const h = containerRef.current.clientHeight;
           let scale = 1, penOp = 1;
           if (state.primary.p > 0.86) {
             const k = (state.primary.p - 0.86) / 0.14;
             scale = 1 + k * 1.8;
             penOp = 1 - k;
           }
+          const x = state.primary.art.id === 'reindeer' ? ep * w : w / 2;
+          const y = state.primary.art.id === 'reindeer' ? h / 2 : ep * h;
+          pen.style.display = 'block';
           pen.style.opacity = String(penOp);
-          pen.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(2)})`;
-          if (state.primary.art.id === 'reindeer') {
-            pen.style.left = `${ep * 100}%`;
-            pen.style.top = '50%';
-          } else {
-            pen.style.top = `${ep * 100}%`;
-            pen.style.left = '50%';
-          }
+          pen.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%) scale(${scale.toFixed(2)})`;
         } else {
           pen.style.display = 'none';
         }
@@ -292,9 +301,9 @@ export default function BasilCathedral({ cityActive }) {
         caption.style.opacity = String(Math.max(0, capOp));
       }
 
-      // 轻触提示
-      if (hintRef.current) {
-        hintRef.current.style.opacity = (isHolding && !cardArtRef.current) ? '1' : '0';
+      // 轻触提示（卡片打开时由 effect 接管隐藏）
+      if (hintRef.current && !cardArtRef.current) {
+        hintRef.current.style.opacity = isHolding ? '1' : '0';
       }
 
       // 流星转场
@@ -308,13 +317,25 @@ export default function BasilCathedral({ cityActive }) {
         prevCrossingRef.current = state.crossing;
       }
 
-      rafRef.current = requestAnimationFrame(update);
+      // 静置阶段休眠：停留期无需逐帧更新，睡到下一槽位开始再唤醒
+      if (isHolding) {
+        const slotEndElapsed = state.slotStart + SLOT_MS[state.slotIndex];
+        const remain = slotEndElapsed - elapsed;
+        sleepRef.current = setTimeout(() => {
+          sleepRef.current = null;
+          rafRef.current = requestAnimationFrame(tick);
+        }, Math.max(80, remain + 40));
+      } else {
+        rafRef.current = requestAnimationFrame(tick);
+      }
     }
 
-    rafRef.current = requestAnimationFrame(update);
+    rafRef.current = requestAnimationFrame(tick);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (sleepRef.current) clearTimeout(sleepRef.current);
       rafRef.current = null;
+      sleepRef.current = null;
     };
   }, []);
 
@@ -343,12 +364,12 @@ export default function BasilCathedral({ cityActive }) {
         <div className="basil-layer" ref={el => { layerRefs.current[0] = el; }}>
           <div className="basil-image" />
           <div className="basil-shimmer" />
-          <div className="basil-scan" />
+          <div className="basil-veil"><i /></div>
         </div>
         <div className="basil-layer" ref={el => { layerRefs.current[1] = el; }}>
           <div className="basil-image" />
           <div className="basil-shimmer" />
-          <div className="basil-scan" />
+          <div className="basil-veil"><i /></div>
         </div>
         <div ref={penRef} className="basil-pen-light" style={{ display: 'none' }} />
         <div ref={meteorRef} className="basil-meteor" />
