@@ -83,7 +83,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     }).addTo(map);
 
     const boundsLayer = L.geoJSON(null, {
-      style: { color: 'rgba(150,195,235,0.18)', weight: 0.6, dashArray: '2,4' },
+      style: { color: 'rgba(160,200,240,0.5)', weight: 0.9, dashArray: '3,3' },
       interactive: false,
     }).addTo(map);
 
