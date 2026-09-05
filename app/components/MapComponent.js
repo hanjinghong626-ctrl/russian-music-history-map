@@ -1,4 +1,4 @@
-// v4.0 星河银色版 - 建筑动画改银色 + 恢复底图 + 保留星空
+// v5.0 星河天象版 - 北极光/银河/流星 + 连线流光 + 城市涟漪 + 标题入场
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
@@ -33,7 +33,11 @@ const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = fa
     iconSize: [size, size], iconAnchor: [size/2, size/2]
   });
 };
-const createCityIcon = () => { const s=14; return L.divIcon({ className:'city-marker', html:`<div style="width:${s}px;height:${s}px;background:#D4AF37;border-radius:50%;box-shadow:0 0 12px rgba(212,175,55,0.6),0 0 4px rgba(212,175,55,0.9);cursor:pointer;"></div>`, iconSize:[s,s], iconAnchor:[s/2,s/2] }); };
+const createCityIcon = () => {
+  const s = 14;
+  const delay = (Math.random() * 3.8).toFixed(2);
+  return L.divIcon({ className: 'city-marker', html: `<div style="width:${s}px;height:${s}px;position:relative;cursor:pointer;"><span class="city-ripple" style="animation-delay:${delay}s"></span><div style="position:absolute;inset:0;background:#D4AF37;border-radius:50%;box-shadow:0 0 12px rgba(212,175,55,0.6),0 0 4px rgba(212,175,55,0.9);"></div></div>`, iconSize: [s, s], iconAnchor: [s/2, s/2] });
+};
 const createSmallCityIcon = () => { const s=10; return L.divIcon({ className:'city-marker small', html:`<div style="width:${s}px;height:${s}px;background:#9B8B6E;border-radius:50%;box-shadow:0 0 8px rgba(155,139,110,0.5);cursor:pointer;"></div>`, iconSize:[s,s], iconAnchor:[s/2,s/2] }); };
 
 export default function MapComponent({ activePeriod, onComposerSelect, onCitySelect, mapCenter = [60, 50], mapZoom = 4 }) {
@@ -42,6 +46,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const markersRef = useRef([]);
   const cityMarkersRef = useRef([]);
   const composerMapRef = useRef({});
+  const flowDotsRef = useRef([]);
+  const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
 
@@ -240,11 +246,34 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const handleCitySelect = (city) => { setSelectedCity(city); if (onCitySelect) onCitySelect(city); };
   const handleComposerSelectFromCard = (id) => { const c = composers.find(x => x.id === id); if (c && onComposerSelect) onComposerSelect(c); setSelectedCity(null); };
 
+  // ===== 全域流星：12-21 秒随机一颗 =====
+  useEffect(() => {
+    const el = skyMeteorRef.current;
+    if (!el) return;
+    let timer;
+    const launch = () => {
+      el.classList.remove('go');
+      void el.offsetWidth; // 重排以重启动画
+      el.style.top = (4 + Math.random() * 24) + '%';
+      el.style.left = (52 + Math.random() * 38) + '%';
+      el.classList.add('go');
+      timer = setTimeout(launch, 12000 + Math.random() * 9000);
+    };
+    timer = setTimeout(launch, 5000 + Math.random() * 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const map = mapInstanceRef.current; if (!map) return;
     markersRef.current.forEach(m => map.removeLayer(m)); markersRef.current = [];
     cityMarkersRef.current.forEach(m => map.removeLayer(m)); cityMarkersRef.current = [];
     if (window.constellationLines) { window.constellationLines.forEach(l => map.removeLayer(l)); window.constellationLines = []; }
+    // 清理上一轮流光点
+    flowDotsRef.current.forEach(({ g, upd }) => { try { map.off('zoomend', upd); } catch (e) {} g.remove(); });
+    flowDotsRef.current = [];
+
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const flowDots = [];
 
     let filtered = activePeriod ? composers.filter(c => c.period === activePeriod.id) : composers;
     filtered.forEach(composer => {
@@ -282,7 +311,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
           glow.addTo(map);
           constellationLines.push(glow);
         }
-        // 主体线
+        // 主体线 + 沿线流光巡行点
         for (let i = 0; i < members.length - 1; i++) {
           const line = L.polyline(
             [members[i].coordinates, members[i + 1].coordinates],
@@ -290,6 +319,42 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
           );
           line.addTo(map);
           constellationLines.push(line);
+
+          // 师承流光：光点沿虚线缓缓流动（SVG 原生 animateMotion，不占 JS 重绘）
+          const pathEl = line.getElement && line.getElement();
+          if (pathEl && pathEl.getAttribute('d')) {
+            const d = pathEl.getAttribute('d');
+            const g = document.createElementNS(SVG_NS, 'g');
+            g.style.pointerEvents = 'none';
+            const halo = document.createElementNS(SVG_NS, 'circle');
+            halo.setAttribute('r', '5');
+            halo.setAttribute('fill', cfg.color);
+            halo.setAttribute('opacity', '0.28');
+            const core = document.createElementNS(SVG_NS, 'circle');
+            core.setAttribute('r', '2.3');
+            core.setAttribute('fill', '#f2f8ff');
+            core.setAttribute('opacity', '0.95');
+            const dur = (4.5 + Math.random() * 2.8).toFixed(2);
+            const begin = (-Math.random() * 7).toFixed(2);
+            [halo, core].forEach(c => {
+              const am = document.createElementNS(SVG_NS, 'animateMotion');
+              am.setAttribute('path', d);
+              am.setAttribute('dur', dur + 's');
+              am.setAttribute('begin', begin + 's');
+              am.setAttribute('repeatCount', 'indefinite');
+              c.appendChild(am);
+              g.appendChild(c);
+            });
+            pathEl.parentNode.appendChild(g);
+            const upd = () => {
+              const p = line.getElement();
+              if (!p) return;
+              const nd = p.getAttribute('d');
+              g.querySelectorAll('animateMotion').forEach(am => am.setAttribute('path', nd));
+            };
+            map.on('zoomend', upd);
+            flowDots.push({ g, upd });
+          }
         }
         // 星座标签（暗色底衬）
         if (members.length >= 3) {
@@ -308,6 +373,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       }
     });
     window.constellationLines = constellationLines;
+    flowDotsRef.current = flowDots;
 
     cities.forEach(city => {
       const hasImage = city.image && city.image.length > 0;
@@ -330,6 +396,15 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       {/* 星空 overlay - 独立于 Leaflet DOM */}
       <div className="starfield-overlay" dangerouslySetInnerHTML={{ __html: starsHTML }} />
 
+      {/* 星河天象：北极光 · 银河 · 流星 */}
+      <div className="sky-fx" aria-hidden="true">
+        <div className="milky-way" />
+        <div className="aurora aurora-1" />
+        <div className="aurora aurora-2" />
+        <div className="aurora aurora-3" />
+      </div>
+      <div className="sky-meteor" ref={skyMeteorRef} aria-hidden="true"><i /></div>
+
       {/* 俄罗斯标志性建筑动画 - 银色星座版 */}
       <BasilCathedral cityActive={!!selectedCity} />
 
@@ -337,7 +412,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         <div className="map-title-elegant">
           <div className="title-main">俄罗斯音乐之魂</div>
           <div className="title-divider"></div>
-          <div className="title-sub">跨越三百年 · {composerCount}位作曲家 · 47段师承</div>
+          <div className="title-sub">星河为谱 · 群星作章</div>
         </div>
       </div>
       {activePeriod && (
