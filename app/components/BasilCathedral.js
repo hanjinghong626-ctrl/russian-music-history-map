@@ -14,13 +14,13 @@ const ARTWORKS = [
 ];
 const STORAGE_KEY = 'basil-cycle-start';
 
-const WAIT_MS = 1200;
-const HOLD_MS = 22000;
-const FADE_MS = 2600;
+const HOLD_MS = 22000;  // 完整展示时长
+const FADE_MS = 2600;   // 交叉溶解时长（旧图淡出 = 新图绘制开头，完全重叠）
 
 function getDrawDuration(id) { return id === 'reindeer' ? 8000 : 19000; }
-function getSlotDuration(a) { return WAIT_MS + getDrawDuration(a.id) + HOLD_MS + FADE_MS; }
-const FULL_CYCLE_MS = ARTWORKS.reduce((s, a) => s + getSlotDuration(a), 0);
+// 每个槽位 = 绘制 + 停留；淡出与下一槽的绘制开头重叠
+const SLOT_MS = ARTWORKS.map(a => getDrawDuration(a.id) + HOLD_MS);
+const FULL_CYCLE_MS = SLOT_MS.reduce((s, v) => s + v, 0);
 
 function getImageUrl(id) {
   const map = {
@@ -39,38 +39,33 @@ function easeInOut(t) {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 }
 
-// 时间轴：返回 primary（当前作品）+ secondary（转场重叠时正在显影的下一张）
+// 连续时间轴：primary = 当前正在绘制/展示的图；secondary = 交叉溶解期正在淡出的上一张
 function calcState(elapsed) {
   let t = ((elapsed % FULL_CYCLE_MS) + FULL_CYCLE_MS) % FULL_CYCLE_MS;
-  for (let i = 0; i < ARTWORKS.length; i++) {
-    const a = ARTWORKS[i];
-    const dur = getSlotDuration(a);
-    if (t < dur) {
-      const dd = getDrawDuration(a.id);
-      let primary;
-      if (t < WAIT_MS) {
-        primary = { art: a, phase: 'waiting', p: t / WAIT_MS };
-      } else if (t < WAIT_MS + dd) {
-        primary = { art: a, phase: 'drawing', p: (t - WAIT_MS) / dd };
-      } else if (t < WAIT_MS + dd + HOLD_MS) {
-        primary = { art: a, phase: 'holding', p: (t - WAIT_MS - dd) / HOLD_MS };
-      } else {
-        primary = { art: a, phase: 'fading', p: (t - WAIT_MS - dd - HOLD_MS) / FADE_MS, fadeElapsed: t - WAIT_MS - dd - HOLD_MS };
-      }
-      let secondary = null;
-      if (primary.phase === 'fading') {
-        // 旧图淡出的同时，下一张开始显影（交叉溶解）
-        const next = ARTWORKS[(i + 1) % ARTWORKS.length];
-        const nt = primary.fadeElapsed;
-        const ndd = getDrawDuration(next.id);
-        if (nt < WAIT_MS) secondary = { art: next, phase: 'waiting', p: nt / WAIT_MS };
-        else secondary = { art: next, phase: 'drawing', p: Math.min(1, (nt - WAIT_MS) / ndd) };
-      }
-      return { primary, secondary, fading: primary.phase === 'fading', slotIndex: i };
-    }
-    t -= dur;
+  let acc = 0, i = 0;
+  for (; i < ARTWORKS.length; i++) {
+    if (t < acc + SLOT_MS[i]) break;
+    acc += SLOT_MS[i];
   }
-  return { primary: { art: ARTWORKS[0], phase: 'waiting', p: 0 }, secondary: null, fading: false, slotIndex: 0 };
+  const a = ARTWORKS[i];
+  const local = t - acc;
+  const dd = getDrawDuration(a.id);
+
+  let primary;
+  if (local < dd) {
+    primary = { art: a, phase: 'drawing', p: local / dd };
+  } else {
+    primary = { art: a, phase: 'holding', p: (local - dd) / HOLD_MS };
+  }
+
+  // 新图绘制的最初 FADE_MS 内，上一张同时淡出（进度同步，零跳变）
+  let secondary = null;
+  if (local < FADE_MS) {
+    const prev = ARTWORKS[(i - 1 + ARTWORKS.length) % ARTWORKS.length];
+    secondary = { art: prev, phase: 'fading', p: Math.min(1, local / FADE_MS) };
+  }
+
+  return { primary, secondary, crossing: !!secondary, slotIndex: i };
 }
 
 let cycleStartTime = null;
@@ -95,7 +90,7 @@ export default function BasilCathedral({ cityActive }) {
   const meteorRef = useRef(null);
   const captionRef = useRef(null);
   const rafRef = useRef(null);
-  const prevFadingRef = useRef(false);
+  const prevCrossingRef = useRef(false);
   const cityActiveRef = useRef(cityActive);
   cityActiveRef.current = cityActive;
 
@@ -103,16 +98,15 @@ export default function BasilCathedral({ cityActive }) {
     const startTime = getCycleStartTime();
 
     function renderSlot(layerEl, slot, isTop) {
-      if (!layerEl || !slot) {
-        if (layerEl) layerEl.style.opacity = '0';
-        return;
-      }
+      if (!layerEl) return;
+      if (!slot) { layerEl.style.opacity = '0'; return; }
       const img = layerEl.querySelector('.basil-image');
       const shimmer = layerEl.querySelector('.basil-shimmer');
       const scan = layerEl.querySelector('.basil-scan');
       const url = getImageUrl(slot.art.id);
       if (img.dataset.url !== url) {
         img.style.backgroundImage = `url(${url})`;
+        shimmer.style.backgroundImage = `url(${url})`;
         shimmer.style.webkitMaskImage = `url(${url})`;
         shimmer.style.maskImage = `url(${url})`;
         img.dataset.url = url;
@@ -123,8 +117,7 @@ export default function BasilCathedral({ cityActive }) {
       let opacity = 0;
       let clip = horizontal ? 'inset(0 100% 0 0)' : 'inset(0 0 100% 0)';
       let scanOpacity = 0;
-      let shimmerOpacity = 0;
-      scan.classList.toggle('h', horizontal);
+      let shimmerOn = false;
 
       if (slot.phase === 'drawing') {
         opacity = Math.min(1, slot.p * 6);
@@ -136,13 +129,11 @@ export default function BasilCathedral({ cityActive }) {
           scan.style.top = `${ep * 100}%`;
         }
         scanOpacity = 1;
-        shimmerOpacity = 0.55;
-        shimmer.classList.add('flow');
+        shimmerOn = true;
       } else if (slot.phase === 'holding') {
         opacity = 1;
         clip = 'inset(0 0 0 0)';
-        shimmerOpacity = 1;
-        shimmer.classList.add('flow');
+        shimmerOn = true;
       } else if (slot.phase === 'fading') {
         opacity = 1 - ep;
         clip = 'inset(0 0 0 0)';
@@ -150,9 +141,12 @@ export default function BasilCathedral({ cityActive }) {
 
       img.style.opacity = String(opacity);
       img.style.clipPath = clip;
-      shimmer.style.opacity = String(shimmerOpacity);
+      shimmer.style.opacity = shimmerOn ? (slot.phase === 'holding' ? '' : '0.55') : '0';
       shimmer.style.clipPath = slot.phase === 'drawing' ? clip : 'inset(0 0 0 0)';
+      shimmer.classList.toggle('flow', shimmerOn);
+      scan.classList.toggle('h', horizontal);
       scan.style.opacity = String(scanOpacity);
+      scan.style.display = scanOpacity > 0 ? 'block' : 'none';
       layerEl.style.zIndex = String(isTop ? 2 : 1);
       layerEl.style.opacity = '1';
       layerEl.classList.toggle('hold-float', slot.phase === 'holding');
@@ -165,22 +159,19 @@ export default function BasilCathedral({ cityActive }) {
 
       containerRef.current.classList.toggle('city-active', !!cityActiveRef.current);
 
-      // 层分配：按作品槽位奇偶，相邻作品永远在不同层，交叉溶解时自然上下分层
+      // 层分配：按作品槽位奇偶，相邻作品永远在不同层
       const primaryLayer = state.slotIndex % 2;
       const secondaryLayer = 1 - primaryLayer;
-      renderSlot(layerRefs.current[primaryLayer], state.primary, !state.secondary);
-      renderSlot(layerRefs.current[secondaryLayer], state.secondary, !!state.secondary);
+      renderSlot(layerRefs.current[primaryLayer], state.primary, true);
+      renderSlot(layerRefs.current[secondaryLayer], state.secondary, false);
 
-      // 绘制星核光斑（跟随扫描线）
+      // 绘制星核光斑（跟随当前绘制边缘）
       const pen = penRef.current;
-      const drawSlot = (state.secondary && state.secondary.phase === 'drawing')
-        ? state.secondary
-        : (state.primary.phase === 'drawing' ? state.primary : null);
       if (pen) {
-        if (drawSlot) {
-          const ep = easeInOut(drawSlot.p);
+        if (state.primary.phase === 'drawing') {
+          const ep = easeInOut(state.primary.p);
           pen.style.display = 'block';
-          if (drawSlot.art.id === 'reindeer') {
+          if (state.primary.art.id === 'reindeer') {
             pen.style.left = `${ep * 100}%`;
             pen.style.top = '50%';
           } else {
@@ -192,36 +183,36 @@ export default function BasilCathedral({ cityActive }) {
         }
       }
 
-      // 双语字幕
+      // 双语字幕：交叉溶解期旧字幕淡出、新字幕在绘制过半后淡入
       const caption = captionRef.current;
       if (caption) {
-        let capArt = state.primary.art;
-        let capOp = 0;
-        if (state.secondary && state.secondary.phase === 'drawing' && state.secondary.p > 0.55) {
+        let capArt, capOp;
+        if (state.crossing && state.primary.p < 0.55) {
           capArt = state.secondary.art;
-          capOp = Math.min(1, (state.secondary.p - 0.55) / 0.4);
+          capOp = 1 - easeInOut(state.secondary.p);
+        } else if (state.primary.phase === 'drawing') {
+          capArt = state.primary.art;
+          capOp = state.primary.p > 0.6 ? Math.min(1, (state.primary.p - 0.6) / 0.35) : 0;
         } else {
-          const ph = state.primary.phase;
-          if (ph === 'drawing' && state.primary.p > 0.6) capOp = (state.primary.p - 0.6) / 0.4;
-          else if (ph === 'holding') capOp = 1;
-          else if (ph === 'fading') capOp = 1 - easeInOut(state.primary.p);
+          capArt = state.primary.art;
+          capOp = 1;
         }
         if (caption.dataset.id !== capArt.id) {
           caption.innerHTML = `<span class="cap-zh">${capArt.zh}</span><span class="cap-ru">${capArt.ru}</span>`;
           caption.dataset.id = capArt.id;
         }
-        caption.style.opacity = String(capOp);
+        caption.style.opacity = String(Math.max(0, capOp));
       }
 
-      // 流星转场（fading 边沿触发一次）
+      // 流星转场（交叉溶解开始边沿触发一次）
       const meteor = meteorRef.current;
       if (meteor) {
-        if (state.fading && !prevFadingRef.current) {
+        if (state.crossing && !prevCrossingRef.current) {
           meteor.classList.remove('go');
           void meteor.offsetWidth;
           meteor.classList.add('go');
         }
-        prevFadingRef.current = state.fading;
+        prevCrossingRef.current = state.crossing;
       }
 
       rafRef.current = requestAnimationFrame(update);
