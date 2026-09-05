@@ -70,22 +70,17 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       zoomSnap: 0.5, zoomDelta: 0.5,
     });
 
-    // OSM 底图（无水印），反色滤镜转暗色 + 适中透明度保证轮廓清晰
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+    // Esri 深灰暗色底图（原生暗色、无城市标签、无水印，风格同 CARTO dark_nolabels）
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 16,
       attribution: '',
-      className: 'osm-dark',
+      opacity: 0.55,
     }).addTo(map);
 
     // 动态注入全局样式
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
     style.textContent = `
-      /* OSM 反色转暗：海岸/国界为亮线，底为暗色不发灰；低透明度保留梦幻感 */
-      .osm-dark {
-        filter: invert(1) hue-rotate(180deg) brightness(0.6) contrast(1.0) saturate(0.15);
-        opacity: 0.28;
-      }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
         50% { opacity: 1; transform: scale(1.8); }
