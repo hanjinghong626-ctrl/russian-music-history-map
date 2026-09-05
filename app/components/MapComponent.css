@@ -219,8 +219,8 @@
     rgba(190, 220, 255, 0.7) 22%,
     rgba(140, 190, 255, 0.22) 52%,
     transparent 100%);
-  filter: drop-shadow(0 0 7px rgba(170, 210, 255, 0.9));
-  transform: rotate(208deg);
+  filter: drop-shadow(0 0 6px rgba(170, 210, 255, 0.7));
+  transform: rotate(157deg);
   transform-origin: right center;
 }
 .sky-meteor i::before {
