@@ -135,9 +135,11 @@
 .basil-layer {
   position: absolute;
   inset: 0;
+  z-index: 2;
   opacity: 0;
   transition: none;
   pointer-events: none;
+  will-change: opacity;
 }
 .basil-layer.hold-float {
   animation: hold-float 7s ease-in-out infinite;
@@ -156,7 +158,7 @@
   background-position: center;
   filter: hue-rotate(170deg) saturate(0.5) brightness(1.2)
           drop-shadow(0 0 10px rgba(160, 195, 235, 0.35));
-  will-change: opacity, clip-path;
+  will-change: opacity;
 }
 
 /* —— 银线流光 —— */
@@ -176,69 +178,86 @@
   mix-blend-mode: screen;
   filter: brightness(1.9) saturate(0.25)
           drop-shadow(0 0 6px rgba(210, 230, 255, 0.9));
-  will-change: opacity, clip-path;
+  will-change: opacity;
 }
 .basil-shimmer.flow {
-  animation: shimmer-flicker 2.2s ease-in-out infinite;
+  animation: shimmer-flicker 2.6s ease-in-out infinite;
 }
 @keyframes shimmer-flicker {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.9; }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
 }
 
-/* —— 绘制扫描光带 —— */
-.basil-scan {
+/* —— 揭示遮板：transform 平移（GPU 合成，零大图重绘），前沿即扫描光带 —— */
+.basil-veil {
   position: absolute;
-  display: none;
+  inset: 0;
+  z-index: 3;
   pointer-events: none;
-  will-change: left, top;
+  transform: translateY(0);
+  will-change: transform;
+  background:
+    radial-gradient(circle 1px at 22% 28%, rgba(200, 225, 255, 0.45), transparent 100%),
+    radial-gradient(circle 1.4px at 66% 18%, rgba(200, 225, 255, 0.35), transparent 100%),
+    radial-gradient(circle 1px at 44% 62%, rgba(200, 225, 255, 0.3), transparent 100%),
+    radial-gradient(circle 1px at 80% 52%, rgba(200, 225, 255, 0.28), transparent 100%),
+    radial-gradient(circle 1.2px at 12% 70%, rgba(200, 225, 255, 0.25), transparent 100%),
+    radial-gradient(ellipse at 50% 42%,
+      rgba(15, 29, 51, 0.985) 0%,
+      rgba(9, 18, 34, 0.992) 55%,
+      rgba(6, 13, 26, 1) 100%);
 }
-.basil-scan:not(.h) {
-  left: 12%;
-  width: 76%;
-  height: 42px;
+.basil-veil i {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: -1px;
+  height: 38px;
   transform: translateY(-50%);
   background: linear-gradient(to bottom,
     transparent 0%,
-    rgba(160, 205, 255, 0.05) 25%,
-    rgba(210, 235, 255, 0.28) 50%,
-    rgba(160, 205, 255, 0.05) 75%,
+    rgba(160, 205, 255, 0.06) 30%,
+    rgba(215, 238, 255, 0.30) 50%,
+    rgba(160, 205, 255, 0.06) 70%,
     transparent 100%);
 }
-.basil-scan:not(.h)::after {
+.basil-veil i::after {
   content: '';
   position: absolute;
   left: 0; right: 0; top: 50%;
   height: 1px;
   background: linear-gradient(to right,
-    transparent, rgba(220, 240, 255, 0.85), transparent);
-  box-shadow: 0 0 8px rgba(180, 220, 255, 0.8);
+    transparent, rgba(225, 242, 255, 0.9), transparent);
+  box-shadow: 0 0 8px rgba(180, 220, 255, 0.85);
 }
-.basil-scan.h {
-  top: 8%;
-  height: 84%;
-  width: 42px;
+.basil-veil.h i {
+  top: 6%;
+  bottom: 6%;
+  left: -1px;
+  right: auto;
+  width: 38px;
+  height: auto;
   transform: translateX(-50%);
   background: linear-gradient(to right,
     transparent 0%,
-    rgba(160, 205, 255, 0.05) 25%,
-    rgba(210, 235, 255, 0.28) 50%,
-    rgba(160, 205, 255, 0.05) 75%,
+    rgba(160, 205, 255, 0.06) 30%,
+    rgba(215, 238, 255, 0.30) 50%,
+    rgba(160, 205, 255, 0.06) 70%,
     transparent 100%);
 }
-.basil-scan.h::after {
-  content: '';
-  position: absolute;
+.basil-veil.h i::after {
   top: 0; bottom: 0; left: 50%;
-  width: 1px;
+  right: auto;
+  width: 1px; height: auto;
   background: linear-gradient(to bottom,
-    transparent, rgba(220, 240, 255, 0.85), transparent);
-  box-shadow: 0 0 8px rgba(180, 220, 255, 0.8);
+    transparent, rgba(225, 242, 255, 0.9), transparent);
 }
 
 /* —— 绘制星核光斑 —— */
 .basil-pen-light {
   position: absolute;
+  left: 0;
+  top: 0;
   width: 56px;
   height: 56px;
   background: radial-gradient(circle,
@@ -252,7 +271,7 @@
   transform: translate(-50%, -50%);
   z-index: 4;
   pointer-events: none;
-  will-change: left, top;
+  will-change: transform;
 }
 
 /* —— 流星转场 —— */
