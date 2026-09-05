@@ -254,12 +254,12 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const launch = () => {
       el.classList.remove('go');
       void el.offsetWidth; // 重排以重启动画
-      el.style.top = (4 + Math.random() * 24) + '%';
-      el.style.left = (52 + Math.random() * 38) + '%';
+      el.style.top = (3 + Math.random() * 10) + '%';
+      el.style.left = (62 + Math.random() * 26) + '%';
       el.classList.add('go');
-      timer = setTimeout(launch, 12000 + Math.random() * 9000);
+      timer = setTimeout(launch, 16000 + Math.random() * 12000);
     };
-    timer = setTimeout(launch, 5000 + Math.random() * 5000);
+    timer = setTimeout(launch, 8000 + Math.random() * 7000);
     return () => clearTimeout(timer);
   }, []);
 
