@@ -1,27 +1,28 @@
-// v3.0 星河银色版 - 建筑线稿从金色改为银蓝星座风格
+// v5.0 星河显影版 - 交叉溶解 + 流星转场 + 星光扫描 + 银线流光 + 双语字幕
 'use client';
 import { useEffect, useRef } from 'react';
 import './BasilCathedral.css';
 
-const ARTWORKS = ['cathedral', 'reindeer', 'gum', 'bolshoi', 'msu', 'soviet', 'st-isaac'];
+const ARTWORKS = [
+  { id: 'cathedral', zh: '圣瓦西里大教堂', ru: 'Собор Василия Блаженного' },
+  { id: 'reindeer',  zh: '北方驯鹿',       ru: 'Северный олень' },
+  { id: 'gum',       zh: '古姆百货',       ru: 'ГУМ' },
+  { id: 'bolshoi',   zh: '莫斯科大剧院',   ru: 'Большой театр' },
+  { id: 'msu',       zh: '莫斯科大学',     ru: 'МГУ' },
+  { id: 'soviet',    zh: '苏维埃宫',       ru: 'Дворец Советов' },
+  { id: 'st-isaac',  zh: '圣以撒大教堂',   ru: 'Исаакиевский собор' },
+];
 const STORAGE_KEY = 'basil-cycle-start';
 
-// 银色主题色
-const SILVER = 'rgba(170, 195, 230, 0.5)';
-const SILVER_BRIGHT = 'rgba(200, 220, 250, 0.6)';
-const SILVER_DIM = 'rgba(150, 175, 210, 0.3)';
+const WAIT_MS = 1200;
+const HOLD_MS = 22000;
+const FADE_MS = 2600;
 
-function getDrawDuration(artwork) {
-  return artwork === 'reindeer' ? 8000 : 19000;
-}
+function getDrawDuration(id) { return id === 'reindeer' ? 8000 : 19000; }
+function getSlotDuration(a) { return WAIT_MS + getDrawDuration(a.id) + HOLD_MS + FADE_MS; }
+const FULL_CYCLE_MS = ARTWORKS.reduce((s, a) => s + getSlotDuration(a), 0);
 
-function getArtworkDuration(artwork) {
-  return 2000 + getDrawDuration(artwork) + 30000 + 3000 + 10000;
-}
-
-const FULL_CYCLE_MS = ARTWORKS.reduce((sum, a) => sum + getArtworkDuration(a), 0);
-
-function getImageUrl(artwork) {
+function getImageUrl(id) {
   const map = {
     cathedral: '/images/basil-golden-lineart.png',
     reindeer: '/images/golden-reindeer-lineart.png',
@@ -31,31 +32,48 @@ function getImageUrl(artwork) {
     soviet: '/images/soviet-palace-golden-lineart.png',
     'st-isaac': '/images/st-isaac-golden-lineart.png',
   };
-  return map[artwork] || map.cathedral;
+  return map[id] || map.cathedral;
 }
 
-function calcDetailedState(elapsed) {
+function easeInOut(t) {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
+
+// 时间轴：返回 primary（当前作品）+ secondary（转场重叠时正在显影的下一张）
+function calcState(elapsed) {
   let t = ((elapsed % FULL_CYCLE_MS) + FULL_CYCLE_MS) % FULL_CYCLE_MS;
-  for (const artwork of ARTWORKS) {
-    const dur = getArtworkDuration(artwork);
+  for (let i = 0; i < ARTWORKS.length; i++) {
+    const a = ARTWORKS[i];
+    const dur = getSlotDuration(a);
     if (t < dur) {
-      const dd = getDrawDuration(artwork);
-      if (t < 2000) return { artwork, phase: 'waiting', progress: t / 2000, phaseElapsed: t, phaseDuration: 2000 };
-      t -= 2000;
-      if (t < dd) return { artwork, phase: 'drawing', progress: t / dd, phaseElapsed: t, phaseDuration: dd };
-      t -= dd;
-      if (t < 30000) return { artwork, phase: 'holding', progress: t / 30000, phaseElapsed: t, phaseDuration: 30000 };
-      t -= 3000;
-      if (t < 3000) return { artwork, phase: 'fading', progress: t / 3000, phaseElapsed: t, phaseDuration: 3000 };
-      return { artwork, phase: 'gone', progress: (t - 3000) / 10000, phaseElapsed: t, phaseDuration: 10000 };
+      const dd = getDrawDuration(a.id);
+      let primary;
+      if (t < WAIT_MS) {
+        primary = { art: a, phase: 'waiting', p: t / WAIT_MS };
+      } else if (t < WAIT_MS + dd) {
+        primary = { art: a, phase: 'drawing', p: (t - WAIT_MS) / dd };
+      } else if (t < WAIT_MS + dd + HOLD_MS) {
+        primary = { art: a, phase: 'holding', p: (t - WAIT_MS - dd) / HOLD_MS };
+      } else {
+        primary = { art: a, phase: 'fading', p: (t - WAIT_MS - dd - HOLD_MS) / FADE_MS, fadeElapsed: t - WAIT_MS - dd - HOLD_MS };
+      }
+      let secondary = null;
+      if (primary.phase === 'fading') {
+        // 旧图淡出的同时，下一张开始显影（交叉溶解）
+        const next = ARTWORKS[(i + 1) % ARTWORKS.length];
+        const nt = primary.fadeElapsed;
+        const ndd = getDrawDuration(next.id);
+        if (nt < WAIT_MS) secondary = { art: next, phase: 'waiting', p: nt / WAIT_MS };
+        else secondary = { art: next, phase: 'drawing', p: Math.min(1, (nt - WAIT_MS) / ndd) };
+      }
+      return { primary, secondary, fading: primary.phase === 'fading', slotIndex: i };
     }
     t -= dur;
   }
-  return { artwork: 'cathedral', phase: 'waiting', progress: 0, phaseElapsed: 0, phaseDuration: 2000 };
+  return { primary: { art: ARTWORKS[0], phase: 'waiting', p: 0 }, secondary: null, fading: false, slotIndex: 0 };
 }
 
 let cycleStartTime = null;
-
 function getCycleStartTime() {
   if (cycleStartTime !== null) return cycleStartTime;
   try {
@@ -70,100 +88,146 @@ function getCycleStartTime() {
   return cycleStartTime;
 }
 
-function easeInOut(t) {
-  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-}
-
 export default function BasilCathedral({ cityActive }) {
   const containerRef = useRef(null);
-  const imageRef = useRef(null);
+  const layerRefs = useRef([null, null]);
   const penRef = useRef(null);
+  const meteorRef = useRef(null);
+  const captionRef = useRef(null);
   const rafRef = useRef(null);
+  const prevFadingRef = useRef(false);
   const cityActiveRef = useRef(cityActive);
   cityActiveRef.current = cityActive;
 
   useEffect(() => {
     const startTime = getCycleStartTime();
 
-    function update() {
-      if (!containerRef.current || !imageRef.current || !penRef.current) return;
+    function renderSlot(layerEl, slot, isTop) {
+      if (!layerEl || !slot) {
+        if (layerEl) layerEl.style.opacity = '0';
+        return;
+      }
+      const img = layerEl.querySelector('.basil-image');
+      const shimmer = layerEl.querySelector('.basil-shimmer');
+      const scan = layerEl.querySelector('.basil-scan');
+      const url = getImageUrl(slot.art.id);
+      if (img.dataset.url !== url) {
+        img.style.backgroundImage = `url(${url})`;
+        shimmer.style.webkitMaskImage = `url(${url})`;
+        shimmer.style.maskImage = `url(${url})`;
+        img.dataset.url = url;
+      }
+      const horizontal = slot.art.id === 'reindeer';
+      const ep = easeInOut(slot.p);
 
-      const elapsed = Date.now() - startTime;
-      const state = calcDetailedState(elapsed);
-      const { artwork, phase, progress, phaseElapsed, phaseDuration } = state;
-      const drawDirection = artwork === 'reindeer' ? 'horizontal' : 'vertical';
+      let opacity = 0;
+      let clip = horizontal ? 'inset(0 100% 0 0)' : 'inset(0 0 100% 0)';
+      let scanOpacity = 0;
+      let shimmerOpacity = 0;
+      scan.classList.toggle('h', horizontal);
 
-      containerRef.current.className = `basil-container phase-${phase} draw-${drawDirection}${cityActiveRef.current ? ' city-active' : ''}`;
-
-      imageRef.current.style.backgroundImage = `url(${getImageUrl(artwork)})`;
-
-      if (phase === 'waiting') {
-        imageRef.current.style.opacity = '0';
-        imageRef.current.style.clipPath = drawDirection === 'vertical' 
-          ? 'inset(0 0 100% 0)' 
-          : 'inset(0 0 0 100%)';
-        penRef.current.style.display = 'none';
-      } 
-      else if (phase === 'drawing') {
-        const easedProgress = easeInOut(progress);
-        imageRef.current.style.opacity = '1';
-        
-        if (drawDirection === 'vertical') {
-          const clipBottom = 100 - (easedProgress * 100);
-          imageRef.current.style.clipPath = `inset(0 0 ${clipBottom}% 0)`;
-          penRef.current.style.display = 'block';
-          const penTop = -25 + (easedProgress * (270 + 50));
-          penRef.current.style.top = `${penTop}px`;
-          penRef.current.style.left = '50%';
-          penRef.current.style.transform = 'translateX(-50%)';
+      if (slot.phase === 'drawing') {
+        opacity = Math.min(1, slot.p * 6);
+        if (horizontal) {
+          clip = `inset(0 ${100 - ep * 100}% 0 0)`;
+          scan.style.left = `${ep * 100}%`;
         } else {
-          const translateX = 100 - (easedProgress * 100);
-          imageRef.current.style.clipPath = `inset(0 0 0 0)`;
-          imageRef.current.style.transform = `translateX(${translateX}%)`;
-          imageRef.current.style.opacity = String(Math.min(1, progress * 8));
-          penRef.current.style.display = 'block';
-          const penLeft = 95 - (easedProgress * 95);
-          penRef.current.style.left = `${penLeft}%`;
-          penRef.current.style.top = '50%';
-          penRef.current.style.transform = 'translate(-50%, -50%)';
+          clip = `inset(0 0 ${100 - ep * 100}% 0)`;
+          scan.style.top = `${ep * 100}%`;
         }
-        
-        // 银色光晕（替代金色）
-        imageRef.current.style.filter = 'hue-rotate(170deg) saturate(0.5) brightness(1.2) drop-shadow(0 0 8px rgba(170, 195, 230, 0.4))';
+        scanOpacity = 1;
+        shimmerOpacity = 0.55;
+        shimmer.classList.add('flow');
+      } else if (slot.phase === 'holding') {
+        opacity = 1;
+        clip = 'inset(0 0 0 0)';
+        shimmerOpacity = 1;
+        shimmer.classList.add('flow');
+      } else if (slot.phase === 'fading') {
+        opacity = 1 - ep;
+        clip = 'inset(0 0 0 0)';
       }
-      else if (phase === 'holding') {
-        imageRef.current.style.opacity = '1';
-        imageRef.current.style.clipPath = 'inset(0 0 0 0)';
-        imageRef.current.style.transform = 'translateX(0)';
-        
-        // 银色微光呼吸效果
-        const shimmerProgress = (phaseElapsed % 3000) / 3000;
-        const shimmerValue = 12 + Math.sin(shimmerProgress * Math.PI * 2) * 4;
-        const shimmerAlpha = 0.3 + Math.sin(shimmerProgress * Math.PI * 2) * 0.1;
-        imageRef.current.style.filter = `hue-rotate(170deg) saturate(0.5) brightness(1.2) drop-shadow(0 0 ${shimmerValue}px rgba(170, 195, 230, ${shimmerAlpha}))`;
-        
-        penRef.current.style.display = 'none';
+
+      img.style.opacity = String(opacity);
+      img.style.clipPath = clip;
+      shimmer.style.opacity = String(shimmerOpacity);
+      shimmer.style.clipPath = slot.phase === 'drawing' ? clip : 'inset(0 0 0 0)';
+      scan.style.opacity = String(scanOpacity);
+      layerEl.style.zIndex = String(isTop ? 2 : 1);
+      layerEl.style.opacity = '1';
+      layerEl.classList.toggle('hold-float', slot.phase === 'holding');
+    }
+
+    function update() {
+      if (!containerRef.current) return;
+      const elapsed = Date.now() - startTime;
+      const state = calcState(elapsed);
+
+      containerRef.current.classList.toggle('city-active', !!cityActiveRef.current);
+
+      // 层分配：按作品槽位奇偶，相邻作品永远在不同层，交叉溶解时自然上下分层
+      const primaryLayer = state.slotIndex % 2;
+      const secondaryLayer = 1 - primaryLayer;
+      renderSlot(layerRefs.current[primaryLayer], state.primary, !state.secondary);
+      renderSlot(layerRefs.current[secondaryLayer], state.secondary, !!state.secondary);
+
+      // 绘制星核光斑（跟随扫描线）
+      const pen = penRef.current;
+      const drawSlot = (state.secondary && state.secondary.phase === 'drawing')
+        ? state.secondary
+        : (state.primary.phase === 'drawing' ? state.primary : null);
+      if (pen) {
+        if (drawSlot) {
+          const ep = easeInOut(drawSlot.p);
+          pen.style.display = 'block';
+          if (drawSlot.art.id === 'reindeer') {
+            pen.style.left = `${ep * 100}%`;
+            pen.style.top = '50%';
+          } else {
+            pen.style.top = `${ep * 100}%`;
+            pen.style.left = '50%';
+          }
+        } else {
+          pen.style.display = 'none';
+        }
       }
-      else if (phase === 'fading') {
-        const fadeProgress = easeInOut(progress);
-        imageRef.current.style.opacity = String(1 - fadeProgress);
-        imageRef.current.style.clipPath = 'inset(0 0 0 0)';
-        imageRef.current.style.transform = 'translateX(0)';
-        imageRef.current.style.filter = 'hue-rotate(170deg) saturate(0.5) brightness(1.2) drop-shadow(0 0 12px rgba(170, 195, 230, 0.3))';
-        penRef.current.style.display = 'none';
+
+      // 双语字幕
+      const caption = captionRef.current;
+      if (caption) {
+        let capArt = state.primary.art;
+        let capOp = 0;
+        if (state.secondary && state.secondary.phase === 'drawing' && state.secondary.p > 0.55) {
+          capArt = state.secondary.art;
+          capOp = Math.min(1, (state.secondary.p - 0.55) / 0.4);
+        } else {
+          const ph = state.primary.phase;
+          if (ph === 'drawing' && state.primary.p > 0.6) capOp = (state.primary.p - 0.6) / 0.4;
+          else if (ph === 'holding') capOp = 1;
+          else if (ph === 'fading') capOp = 1 - easeInOut(state.primary.p);
+        }
+        if (caption.dataset.id !== capArt.id) {
+          caption.innerHTML = `<span class="cap-zh">${capArt.zh}</span><span class="cap-ru">${capArt.ru}</span>`;
+          caption.dataset.id = capArt.id;
+        }
+        caption.style.opacity = String(capOp);
       }
-      else if (phase === 'gone') {
-        imageRef.current.style.opacity = '0';
-        imageRef.current.style.clipPath = 'inset(0 0 0 0)';
-        imageRef.current.style.transform = 'translateX(0)';
-        penRef.current.style.display = 'none';
+
+      // 流星转场（fading 边沿触发一次）
+      const meteor = meteorRef.current;
+      if (meteor) {
+        if (state.fading && !prevFadingRef.current) {
+          meteor.classList.remove('go');
+          void meteor.offsetWidth;
+          meteor.classList.add('go');
+        }
+        prevFadingRef.current = state.fading;
       }
 
       rafRef.current = requestAnimationFrame(update);
     }
 
     rafRef.current = requestAnimationFrame(update);
-
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
@@ -171,9 +235,21 @@ export default function BasilCathedral({ cityActive }) {
   }, []);
 
   return (
-    <div ref={containerRef} className="basil-container phase-waiting draw-vertical">
-      <div ref={imageRef} className="basil-image" />
-      <div ref={penRef} className="basil-pen-light draw-vertical" style={{ display: 'none' }} />
+    <div ref={containerRef} className={`basil-container${cityActive ? ' city-active' : ''}`}>
+      <div className="basil-polaris" />
+      <div className="basil-layer" ref={el => { layerRefs.current[0] = el; }}>
+        <div className="basil-image" />
+        <div className="basil-shimmer" />
+        <div className="basil-scan" />
+      </div>
+      <div className="basil-layer" ref={el => { layerRefs.current[1] = el; }}>
+        <div className="basil-image" />
+        <div className="basil-shimmer" />
+        <div className="basil-scan" />
+      </div>
+      <div ref={penRef} className="basil-pen-light" style={{ display: 'none' }} />
+      <div ref={meteorRef} className="basil-meteor" />
+      <div ref={captionRef} className="basil-caption" />
     </div>
   );
 }
