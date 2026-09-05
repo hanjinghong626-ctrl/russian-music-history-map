@@ -1,4 +1,4 @@
-/* v5.0 星河显影版 */
+/* v5.2 星河显影仪 */
 .basil-container {
   position: absolute;
   top: 14%;
@@ -6,8 +6,107 @@
   width: 200px;
   height: 300px;
   z-index: 1003;
-  pointer-events: none;
   overflow: hidden;
+}
+
+/* —— 星环底盘（星盘瞄准环） —— */
+.basil-astrolabe {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.astrolabe-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+}
+.astrolabe-ring.outer {
+  width: 188px;
+  height: 188px;
+  margin: -94px 0 0 -94px;
+  border: 1px dashed rgba(150, 195, 235, 0.22);
+  animation: ring-spin 90s linear infinite;
+}
+.astrolabe-ring.outer::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(190, 220, 255, 0.55) 0deg 1.2deg,
+    transparent 1.2deg 30deg
+  );
+  -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%, #000 64%, transparent 65%);
+  mask: radial-gradient(circle, transparent 62%, #000 63%, #000 64%, transparent 65%);
+}
+.astrolabe-ring.inner {
+  width: 148px;
+  height: 148px;
+  margin: -74px 0 0 -74px;
+  border: 1px solid rgba(150, 195, 235, 0.13);
+  animation: ring-spin-rev 60s linear infinite;
+}
+.astrolabe-ring.inner::before,
+.astrolabe-ring.inner::after {
+  content: '';
+  position: absolute;
+  background: rgba(170, 210, 250, 0.16);
+}
+.astrolabe-ring.inner::before {
+  left: 0; right: 0; top: 50%;
+  height: 1px; margin-top: -0.5px;
+}
+.astrolabe-ring.inner::after {
+  top: 0; bottom: 0; left: 50%;
+  width: 1px; margin-left: -0.5px;
+}
+@keyframes ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-spin-rev {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* —— 底部星雾 —— */
+.basil-nebula {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 2%;
+  height: 46%;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 70%,
+    rgba(90, 140, 200, 0.18) 0%,
+    rgba(70, 115, 175, 0.09) 40%,
+    transparent 72%);
+  filter: blur(4px);
+  animation: nebula-breathe 9s ease-in-out infinite;
+}
+@keyframes nebula-breathe {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* —— 星尘微粒 —— */
+.basil-stardust {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+@keyframes stardust-rise {
+  from { transform: translateY(6px); }
+  to { transform: translateY(-9px); }
+}
+@keyframes stardust-twinkle {
+  0% { opacity: 0.15; }
+  100% { opacity: 1; }
 }
 
 /* —— 常驻北极星 —— */
@@ -25,6 +124,7 @@
     0 0 14px rgba(150, 200, 255, 0.6);
   z-index: 5;
   animation: polaris-pulse 3.4s ease-in-out infinite;
+  pointer-events: none;
 }
 @keyframes polaris-pulse {
   0%, 100% { opacity: 0.55; transform: scale(0.9); }
@@ -37,6 +137,7 @@
   inset: 0;
   opacity: 0;
   transition: none;
+  pointer-events: none;
 }
 .basil-layer.hold-float {
   animation: hold-float 7s ease-in-out infinite;
@@ -46,7 +147,7 @@
   50% { transform: translateY(-5px); }
 }
 
-/* —— 线稿层（银蓝滤镜，与旧版一致） —— */
+/* —— 线稿层 —— */
 .basil-image {
   position: absolute;
   inset: 0;
@@ -58,7 +159,7 @@
   will-change: opacity, clip-path;
 }
 
-/* —— 银线流光：同一张线稿做遮罩，银光只沿线条流淌 —— */
+/* —— 银线流光 —— */
 .basil-shimmer {
   position: absolute;
   inset: 0;
@@ -85,7 +186,7 @@
   50% { opacity: 0.9; }
 }
 
-/* —— 绘制扫描光带（跟随揭示边缘） —— */
+/* —— 绘制扫描光带 —— */
 .basil-scan {
   position: absolute;
   display: none;
@@ -93,7 +194,6 @@
   will-change: left, top;
 }
 .basil-scan:not(.h) {
-  /* 垂直揭示：横向光带 */
   left: 12%;
   width: 76%;
   height: 42px;
@@ -115,7 +215,6 @@
   box-shadow: 0 0 8px rgba(180, 220, 255, 0.8);
 }
 .basil-scan.h {
-  /* 水平揭示：纵向光带 */
   top: 8%;
   height: 84%;
   width: 42px;
@@ -137,7 +236,7 @@
   box-shadow: 0 0 8px rgba(180, 220, 255, 0.8);
 }
 
-/* —— 绘制星核光斑（沿边缘移动） —— */
+/* —— 绘制星核光斑 —— */
 .basil-pen-light {
   position: absolute;
   width: 56px;
@@ -188,6 +287,19 @@
   background: #fff;
   box-shadow: 0 0 10px rgba(210, 235, 255, 1), 0 0 20px rgba(150, 200, 255, 0.7);
 }
+.basil-meteor::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  margin-top: -1px;
+  width: 90px;
+  height: 2px;
+  background: repeating-linear-gradient(to left,
+    rgba(200, 228, 255, 0.6) 0 2px,
+    transparent 2px 9px);
+  filter: blur(0.5px);
+}
 .basil-meteor.go {
   animation: meteor-fly 1.4s cubic-bezier(0.25, 0.1, 0.35, 1) forwards;
 }
@@ -201,37 +313,202 @@
 /* —— 双语字幕 —— */
 .basil-caption {
   position: absolute;
-  bottom: 6px;
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 7;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   width: 96%;
-  text-align: center;
   opacity: 0;
   will-change: opacity;
+  pointer-events: none;
 }
 .cap-zh {
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 11px;
   letter-spacing: 3px;
-  color: rgba(215, 235, 255, 0.95);
-  font-weight: 300;
+  color: rgba(220, 238, 255, 0.96);
+  font-weight: 400;
   white-space: nowrap;
   text-shadow: 0 0 8px rgba(120, 180, 240, 0.8), 0 1px 4px rgba(0, 0, 0, 0.9);
 }
+.cap-deco {
+  width: 46px;
+  height: 1px;
+  background: linear-gradient(to right,
+    transparent, rgba(170, 210, 250, 0.75), transparent);
+  position: relative;
+}
+.cap-deco::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  background: rgba(200, 228, 255, 0.9);
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px rgba(150, 200, 255, 0.9);
+}
 .cap-ru {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
   font-size: 8.5px;
   letter-spacing: 0.5px;
-  color: rgba(150, 195, 235, 0.75);
-  font-weight: 300;
+  color: rgba(150, 195, 235, 0.8);
+  font-weight: 400;
   line-height: 1.3;
+  white-space: nowrap;
   text-shadow: 0 0 6px rgba(90, 150, 220, 0.7), 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
-/* 城市词条打开时，动画退到底层 */
+/* —— 轻触提示 —— */
+.basil-hint {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba(170, 205, 240, 0.55);
+  font-weight: 300;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(100, 160, 220, 0.7);
+}
+.basil-container.clickable { cursor: pointer; }
+.basil-container.clickable .basil-hint {
+  animation: hint-pulse 2.6s ease-in-out infinite;
+}
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.95; }
+}
+
+/* —— 建筑介绍卡片 —— */
+.basil-card {
+  position: absolute;
+  top: 50%;
+  right: 224px;
+  transform: translateY(-50%);
+  width: 258px;
+  z-index: 1005;
+  padding: 16px 18px 14px;
+  border-radius: 12px;
+  background: rgba(8, 16, 30, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(135, 190, 240, 0.35);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(100, 160, 220, 0.15),
+    inset 0 0 18px rgba(120, 175, 230, 0.06);
+  color: rgba(215, 233, 252, 0.92);
+  animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: auto;
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(-50%) translateX(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
+}
+.basil-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 20% 0%, rgba(140, 195, 250, 0.1), transparent 55%);
+}
+.basil-card-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: rgba(135, 190, 240, 0.1);
+  color: rgba(180, 215, 245, 0.85);
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+.basil-card-close:hover {
+  background: rgba(135, 190, 240, 0.25);
+  color: #fff;
+}
+.basil-card-zh {
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: rgb(225, 240, 255);
+  font-weight: 500;
+  padding-right: 24px;
+  text-shadow: 0 0 12px rgba(130, 185, 240, 0.55);
+}
+.basil-card-ru {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 11px;
+  color: rgba(150, 195, 235, 0.85);
+  margin-top: 3px;
+  letter-spacing: 0.3px;
+}
+.basil-card-tags {
+  display: flex;
+  gap: 6px;
+  margin: 9px 0 8px;
+  flex-wrap: wrap;
+}
+.basil-card-tags span {
+  font-size: 9.5px;
+  letter-spacing: 1px;
+  color: rgba(165, 205, 245, 0.85);
+  border: 1px solid rgba(135, 190, 240, 0.3);
+  border-radius: 20px;
+  padding: 2px 9px;
+  background: rgba(120, 175, 230, 0.08);
+  white-space: nowrap;
+}
+.basil-card-body {
+  font-size: 12px;
+  line-height: 1.75;
+  color: rgba(200, 222, 245, 0.9);
+  font-weight: 300;
+}
+.basil-card-music {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(135, 190, 240, 0.18);
+  font-size: 11px;
+  line-height: 1.65;
+  color: rgba(175, 210, 245, 0.85);
+  font-style: italic;
+  font-weight: 300;
+}
+.basil-card-music .music-note {
+  flex: none;
+  color: rgb(255, 215, 140);
+  text-shadow: 0 0 8px rgba(255, 215, 140, 0.6);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* 城市词条打开时，动画与卡片都退到底层 */
 .basil-container.city-active { z-index: 1 !important; }
 
 @media (max-width: 768px) {
@@ -242,8 +519,30 @@
     right: 1%;
     z-index: 1003;
   }
+  .astrolabe-ring.outer { width: 122px; height: 122px; margin: -61px 0 0 -61px; }
+  .astrolabe-ring.inner { width: 96px; height: 96px; margin: -48px 0 0 -48px; }
   .basil-pen-light { width: 30px; height: 30px; }
   .cap-zh { font-size: 9px; letter-spacing: 2px; }
   .cap-ru { font-size: 7.5px; }
+  .cap-deco { width: 34px; }
   .basil-meteor { width: 90px; }
+  .basil-caption { bottom: 16px; }
+  .basil-hint { font-size: 7px; letter-spacing: 1.5px; }
+  /* 卡片变底部抽屉 */
+  .basil-card {
+    top: auto;
+    right: auto;
+    left: 10px;
+    bottom: 78px;
+    transform: none;
+    width: min(78vw, 280px);
+    max-height: 46vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: card-in-m 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes card-in-m {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
 }
