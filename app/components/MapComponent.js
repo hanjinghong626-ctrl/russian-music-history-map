@@ -81,10 +81,10 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const style = document.createElement('style');
     style.id = 'rel-dynamic-styles';
     style.textContent = `
-      /* OSM 亮色瓦片转暗色：反色→去饱和→压暗→偏蓝调，配合深蓝黑背景 */
+      /* OSM 反色转暗：海岸/国界为亮线，底为暗色不发灰；低透明度保留梦幻感 */
       .osm-dark {
-        filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.3);
-        opacity: 0.55;
+        filter: invert(1) hue-rotate(180deg) brightness(0.6) contrast(1.0) saturate(0.15);
+        opacity: 0.28;
       }
       @keyframes starTwinkle {
         0%,100% { opacity: 0.15; transform: scale(1); }
