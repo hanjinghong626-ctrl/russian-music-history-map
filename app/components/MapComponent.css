@@ -316,3 +316,31 @@
   .city-ripple { animation: none !important; }
   .map-overlay-tl, .title-main, .title-divider, .title-sub { animation: none !important; }
 }
+
+/* —— 星航抵达信标 —— */
+.fly-beacon { position: relative; width: 60px; height: 60px; pointer-events: none; }
+.fly-beacon .fb-core {
+  position: absolute; left: 50%; top: 50%;
+  width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: #f4f9ff;
+  box-shadow: 0 0 10px rgba(220,240,255,1), 0 0 24px rgba(150,200,255,0.85);
+  animation: fb-core-pulse 1.8s ease-in-out infinite;
+}
+.fly-beacon .fb-ring {
+  position: absolute; left: 50%; top: 50%;
+  width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(200,230,255,0.9);
+  box-shadow: 0 0 10px rgba(150,200,255,0.5);
+  animation: fb-ring-expand 2.4s ease-out infinite;
+}
+.fly-beacon .fb-ring.r2 { animation-delay: 1.2s; }
+@keyframes fb-ring-expand {
+  0% { transform: scale(0.6); opacity: 0.95; }
+  100% { transform: scale(5.2); opacity: 0; }
+}
+@keyframes fb-core-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
