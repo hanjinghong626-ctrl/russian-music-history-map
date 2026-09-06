@@ -1,4 +1,4 @@
-/* v5.4 星河显影仪 */
+/* v5.5 星河显影仪 */
 .basil-container {
   position: absolute;
   top: 14%;
@@ -525,6 +525,42 @@
   text-shadow: 0 0 8px rgba(255, 215, 140, 0.6);
   font-size: 12px;
   line-height: 1.7;
+}
+
+
+/* —— 星航按钮 —— */
+.basil-card-fly {
+  margin-top: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(160, 210, 250, 0.4);
+  background: linear-gradient(135deg, rgba(120,175,230,0.14), rgba(90,140,200,0.08));
+  color: rgb(225, 240, 255);
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 12px rgba(110,170,230,0.12), inset 0 0 10px rgba(130,185,235,0.08);
+  -webkit-tap-highlight-color: transparent;
+}
+.basil-card-fly:hover, .basil-card-fly:active {
+  border-color: rgba(190, 225, 255, 0.75);
+  background: linear-gradient(135deg, rgba(140,195,250,0.24), rgba(110,165,225,0.14));
+  box-shadow: 0 0 20px rgba(130,190,250,0.35);
+  transform: translateY(-1px);
+}
+.basil-card-fly .fly-ru {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: rgba(160, 200, 230, 0.8);
 }
 
 /* 城市词条打开时，动画与卡片都退到底层 */
