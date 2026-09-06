@@ -1,4 +1,4 @@
-// v5.0 星河天象版 - 北极光/银河/流星 + 连线流光 + 城市涟漪 + 标题入场
+// v5.1 星河天象版 - 星航联动(显影仪飞至城市) + 北极光/银河/流星 + 连线流光
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
@@ -39,6 +39,12 @@ const createCityIcon = () => {
   return L.divIcon({ className: 'city-marker', html: `<div style="width:${s}px;height:${s}px;position:relative;cursor:pointer;"><span class="city-ripple" style="animation-delay:${delay}s"></span><div style="position:absolute;inset:0;background:#D4AF37;border-radius:50%;box-shadow:0 0 12px rgba(212,175,55,0.6),0 0 4px rgba(212,175,55,0.9);"></div></div>`, iconSize: [s, s], iconAnchor: [s/2, s/2] });
 };
 const createSmallCityIcon = () => { const s=10; return L.divIcon({ className:'city-marker small', html:`<div style="width:${s}px;height:${s}px;background:#9B8B6E;border-radius:50%;box-shadow:0 0 8px rgba(155,139,110,0.5);cursor:pointer;"></div>`, iconSize:[s,s], iconAnchor:[s/2,s/2] }); };
+
+const createFlyBeaconIcon = () => L.divIcon({
+  className: 'fly-beacon-marker',
+  html: `<div class="fly-beacon"><span class="fb-ring r1"></span><span class="fb-ring r2"></span><span class="fb-core"></span></div>`,
+  iconSize: [60, 60], iconAnchor: [30, 30],
+});
 
 export default function MapComponent({ activePeriod, onComposerSelect, onCitySelect, mapCenter = [60, 50], mapZoom = 4 }) {
   const mapRef = useRef(null);
@@ -379,12 +385,29 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       const hasImage = city.image && city.image.length > 0;
       const icon = hasImage ? createCityIcon() : createSmallCityIcon();
       const cm = L.marker(city.coords, { icon });
-      const tc = hasImage ? `<div class="marker-tooltip city-tooltip"><strong>🏛 ${city.name}</strong><br/><span>${city.nameRu}</span><br/><span style="font-size:10px;opacity:.7">点击查看城市详情</span></div>` : `<div class="marker-tooltip city-tooltip small-city"><strong> ${city.name}</strong><br/><span>${city.nameRu}</span><br/><span style="font-size:10px;opacity:.7">更多城市开发中</span></div>`;
+      const tc = hasImage ? `<div class="marker-tooltip city-tooltip"><strong>${city.name}</strong><br/><span>${city.nameRu}</span><br/><span style="font-size:10px;opacity:.7">点击查看城市详情</span></div>` : `<div class="marker-tooltip city-tooltip small-city"><strong> ${city.name}</strong><br/><span>${city.nameRu}</span><br/><span style="font-size:10px;opacity:.7">更多城市开发中</span></div>`;
       cm.bindTooltip(tc, { className: 'custom-tooltip city ' + (hasImage ? '' : 'small'), direction: 'top', offset: [0, hasImage ? -18 : -14] });
       cm.on('click', () => { if (city.image) handleCitySelect(city); });
       cm.addTo(map); cityMarkersRef.current.push(cm);
     });
   }, [activePeriod, onComposerSelect]);
+
+  const flyBeaconRef = useRef(null);
+  const handleFlyToArt = (cfg) => {
+    const map = mapInstanceRef.current;
+    if (!map || !cfg || !cfg.coords) return;
+    map.flyTo(cfg.coords, cfg.zoom || 6.5, { duration: 2.4 });
+    if (flyBeaconRef.current) { try { map.removeLayer(flyBeaconRef.current); } catch (e) {} flyBeaconRef.current = null; }
+    const beacon = L.marker(cfg.coords, { icon: createFlyBeaconIcon(), interactive: false, keyboard: false });
+    beacon.addTo(map);
+    flyBeaconRef.current = beacon;
+    setTimeout(() => {
+      if (flyBeaconRef.current === beacon) {
+        try { map.removeLayer(beacon); } catch (e) {}
+        flyBeaconRef.current = null;
+      }
+    }, 3800);
+  };
 
   const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
   const composerCount = composers.length;
@@ -406,7 +429,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       <div className="sky-meteor" ref={skyMeteorRef} aria-hidden="true"><i /></div>
 
       {/* 俄罗斯标志性建筑动画 - 银色星座版 */}
-      <BasilCathedral cityActive={!!selectedCity} />
+      <BasilCathedral cityActive={!!selectedCity} onFlyTo={handleFlyToArt} />
 
       <div className="map-overlay-tl">
         <div className="map-title-elegant">
