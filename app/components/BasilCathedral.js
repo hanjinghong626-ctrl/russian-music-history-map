@@ -1,4 +1,4 @@
-// v5.4 星河显影仪（性能重构）- 缩放开窗揭示(GPU合成/透明底无遮板) + rAF静置休眠 + 图片预载
+// v5.5 星河显影仪 - 星航联动(卡片可飞至地图城市) + 缩放开窗揭示 + rAF休眠
 'use client';
 import { useEffect, useRef, useMemo, useState } from 'react';
 import './BasilCathedral.css';
@@ -47,6 +47,17 @@ const ARTWORKS = [
     music: '圣彼得堡是格林卡与强力集团之城，柴可夫斯基毕业于彼得堡音乐学院。',
   },
 ];
+// 星航落点：建筑 -> 地图坐标
+const ART_FLY = {
+  cathedral: { coords: [55.7558, 37.6173], zoom: 6.5, zh: '莫斯科', ruFly: 'Лететь в Москву' },
+  reindeer:  { coords: [66.53, 66.60],  zoom: 4.6, zh: '北极苔原', ruFly: 'Лететь в тундру' },
+  gum:       { coords: [55.7558, 37.6173], zoom: 6.5, zh: '莫斯科', ruFly: 'Лететь в Москву' },
+  bolshoi:   { coords: [55.7558, 37.6173], zoom: 6.5, zh: '莫斯科', ruFly: 'Лететь в Москву' },
+  msu:       { coords: [55.7558, 37.6173], zoom: 6.5, zh: '莫斯科', ruFly: 'Лететь в Москву' },
+  soviet:    { coords: [55.7558, 37.6173], zoom: 6.5, zh: '莫斯科', ruFly: 'Лететь в Москву' },
+  'st-isaac':{ coords: [59.9343, 30.3351], zoom: 6.5, zh: '圣彼得堡', ruFly: 'Лететь в Санкт-Петербург' },
+};
+
 const STORAGE_KEY = 'basil-cycle-start';
 
 const HOLD_MS = 22000;
@@ -115,7 +126,7 @@ function getCycleStartTime() {
   return cycleStartTime;
 }
 
-export default function BasilCathedral({ cityActive }) {
+export default function BasilCathedral({ cityActive, onFlyTo }) {
   const containerRef = useRef(null);
   const layerRefs = useRef([null, null]);
   const penRef = useRef(null);
@@ -372,6 +383,13 @@ export default function BasilCathedral({ cityActive }) {
     };
   }, []);
 
+  const handleFly = () => {
+    const cfg = ART_FLY[cardArt.id];
+    if (!cfg || !onFlyTo) return;
+    setCardArt(null);
+    onFlyTo(cfg);
+  };
+
   const handleContainerClick = () => {
     if (!holdingRef.current) return;
     setCardArt(prev => prev ? null : currentArtRef.current);
@@ -428,6 +446,12 @@ export default function BasilCathedral({ cityActive }) {
             <span className="music-note">♪</span>
             <span>{cardArt.music}</span>
           </div>
+          {ART_FLY[cardArt.id] && (
+            <button type="button" className="basil-card-fly" onClick={handleFly}>
+              <span className="fly-zh">前往 · {ART_FLY[cardArt.id].zh}</span>
+              <span className="fly-ru">{ART_FLY[cardArt.id].ruFly}</span>
+            </button>
+          )}
         </div>
       )}
     </>
