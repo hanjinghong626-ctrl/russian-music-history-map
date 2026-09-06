@@ -1,4 +1,4 @@
-// v5.3 星河显影仪（性能重构）- 遮板平移揭示(GPU合成) + rAF静置休眠 + 图片预载
+// v5.4 星河显影仪（性能重构）- 缩放开窗揭示(GPU合成/透明底无遮板) + rAF静置休眠 + 图片预载
 'use client';
 import { useEffect, useRef, useMemo, useState } from 'react';
 import './BasilCathedral.css';
@@ -183,17 +183,29 @@ export default function BasilCathedral({ cityActive }) {
   useEffect(() => {
     const startTime = getCycleStartTime();
 
-    // 遮板平移揭示：transform 只走 GPU 合成，不触发大图重绘
+    // 缩放开窗揭示：clip 层缩放开窗(GPU合成) + 内容反向缩放保形，透明底不遮星空
     function renderSlot(layerEl, slot, isTop) {
       if (!layerEl) return;
-      const veil = layerEl.querySelector('.basil-veil');
+      const clip = layerEl.querySelector('.basil-clip');
+      const edge = layerEl.querySelector('.basil-edge');
       const shimmer = layerEl.querySelector('.basil-shimmer');
       const img = layerEl.querySelector('.basil-image');
+
+      const resetReveal = () => {
+        clip.style.opacity = '0';
+        clip.style.transform = '';
+        img.style.transform = '';
+        shimmer.style.transform = '';
+        edge.style.opacity = '0';
+        edge.style.transform = '';
+        clip.classList.remove('h');
+        edge.classList.remove('h');
+      };
 
       if (!slot) {
         layerEl.style.opacity = '0';
         layerEl.classList.remove('hold-float');
-        if (veil) { veil.classList.remove('h'); veil.style.transform = ''; }
+        resetReveal();
         return;
       }
 
@@ -207,26 +219,47 @@ export default function BasilCathedral({ cityActive }) {
       }
       const horizontal = slot.art.id === 'reindeer';
       const ep = easeInOut(slot.p);
-      veil.classList.toggle('h', horizontal);
+      clip.classList.toggle('h', horizontal);
+      edge.classList.toggle('h', horizontal);
 
       if (slot.phase === 'drawing') {
         layerEl.style.opacity = '1';
         img.style.opacity = String(Math.min(1, slot.p * 6));
-        veil.style.transform = horizontal
-          ? `translateX(${(ep * 100).toFixed(2)}%)`
-          : `translateY(${(ep * 100).toFixed(2)}%)`;
+        // clip 缩放开窗，img/shimmer 反向缩放 => 线稿不变形，逐帧只动 transform
+        const s = Math.max(ep, 0.02);
+        const inv = (1 / s).toFixed(4);
+        clip.style.opacity = slot.p > 0.03 ? '1' : '0';
+        clip.style.transform = horizontal
+          ? `scaleX(${s.toFixed(4)})`
+          : `scaleY(${s.toFixed(4)})`;
+        img.style.transform = horizontal ? `scaleX(${inv})` : `scaleY(${inv})`;
+        shimmer.style.transform = horizontal ? `scaleX(${inv})` : `scaleY(${inv})`;
+        const cw = layerEl.clientWidth;
+        const ch = layerEl.clientHeight;
+        edge.style.opacity = '1';
+        edge.style.transform = horizontal
+          ? `translateX(${(ep * cw - 21).toFixed(1)}px)`
+          : `translateY(${(ep * ch - 21).toFixed(1)}px)`;
         shimmer.classList.add('flow');
         layerEl.classList.remove('hold-float');
       } else if (slot.phase === 'holding') {
         layerEl.style.opacity = '1';
         img.style.opacity = '1';
-        veil.style.transform = horizontal ? 'translateX(100%)' : 'translateY(100%)';
+        clip.style.opacity = '1';
+        clip.style.transform = 'scale(1)';
+        img.style.transform = 'none';
+        shimmer.style.transform = 'none';
+        edge.style.opacity = '0';
         shimmer.classList.add('flow');
         layerEl.classList.add('hold-float');
       } else { // fading
         layerEl.style.opacity = String(1 - ep);
         img.style.opacity = '1';
-        veil.style.transform = horizontal ? 'translateX(100%)' : 'translateY(100%)';
+        clip.style.opacity = '1';
+        clip.style.transform = 'scale(1)';
+        img.style.transform = 'none';
+        shimmer.style.transform = 'none';
+        edge.style.opacity = '0';
         shimmer.classList.remove('flow');
         layerEl.classList.remove('hold-float');
       }
@@ -362,14 +395,18 @@ export default function BasilCathedral({ cityActive }) {
         <div className="basil-stardust" dangerouslySetInnerHTML={{ __html: stardustHTML }} />
         <div className="basil-polaris" />
         <div className="basil-layer" ref={el => { layerRefs.current[0] = el; }}>
-          <div className="basil-image" />
-          <div className="basil-shimmer" />
-          <div className="basil-veil"><i /></div>
+          <div className="basil-clip">
+            <div className="basil-image" />
+            <div className="basil-shimmer" />
+          </div>
+          <div className="basil-edge" />
         </div>
         <div className="basil-layer" ref={el => { layerRefs.current[1] = el; }}>
-          <div className="basil-image" />
-          <div className="basil-shimmer" />
-          <div className="basil-veil"><i /></div>
+          <div className="basil-clip">
+            <div className="basil-image" />
+            <div className="basil-shimmer" />
+          </div>
+          <div className="basil-edge" />
         </div>
         <div ref={penRef} className="basil-pen-light" style={{ display: 'none' }} />
         <div ref={meteorRef} className="basil-meteor" />
