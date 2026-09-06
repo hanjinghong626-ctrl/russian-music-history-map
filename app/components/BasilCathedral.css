@@ -202,6 +202,10 @@
 .basil-clip.h {
   transform-origin: left center;
 }
+.basil-clip.h .basil-image,
+.basil-clip.h .basil-shimmer {
+  transform-origin: left center;
+}
 
 /* —— 揭示前沿光带（沿开窗边界移动，纯 transform） —— */
 .basil-edge {
