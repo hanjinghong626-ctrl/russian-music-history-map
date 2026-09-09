@@ -17,6 +17,8 @@ export default function ComposerDetail({ params }) {
   const [composer, setComposer] = useState(null);
   const [detail, setDetail] = useState(null);
   const [relatedComposers, setRelatedComposers] = useState([]);
+  const [expandedCategories, setExpandedCategories] = useState({});
+  const [expandedWorks, setExpandedWorks] = useState({});
   const slug = params.slug;
 
   useEffect(() => {
@@ -63,6 +65,11 @@ export default function ComposerDetail({ params }) {
   const portrait = composer.portrait || detail?.portrait_url || '';
   const quote = composer.quote || '';
   const works = composer.works || detail?.works || [];
+  const completeWorks = detail?.complete_works || null;
+  const worksAnalysis = detail?.works_analysis || [];
+
+  const toggleCategory = (cat) => setExpandedCategories(prev => ({...prev, [cat]: !prev[cat]}));
+  const toggleWork = (idx) => setExpandedWorks(prev => ({...prev, [idx]: !prev[idx]}));
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0e1a', color: '#d0d8e8' }}>
@@ -422,6 +429,71 @@ export default function ComposerDetail({ params }) {
           </section>
         )}
 
+        {/* Complete Works Overview */}
+        {completeWorks && Object.keys(completeWorks).length > 0 && (
+          <section style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              fontWeight: 600,
+              color: '#b8c8e0',
+              marginBottom: '1rem',
+              paddingBottom: '0.5rem',
+              borderBottom: '1px solid rgba(100,140,200,0.15)',
+              fontFamily: '"Noto Serif SC", serif'
+            }}>
+              全部作品总览
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {Object.entries(completeWorks).map(([category, worksList]) => (
+                <div key={category} style={{
+                  background: 'rgba(20,28,50,0.5)',
+                  border: '1px solid rgba(100,140,200,0.1)',
+                  borderRadius: '8px',
+                  overflow: 'hidden'
+                }}>
+                  <div 
+                    onClick={() => toggleCategory(category)}
+                    style={{
+                      padding: '0.8rem 1.2rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      background: expandedCategories[category] ? 'rgba(80,120,200,0.06)' : 'transparent',
+                      transition: 'background 0.2s ease'
+                    }}
+                  >
+                    <span style={{ fontSize: '0.95rem', color: '#c0cee0', fontWeight: 500 }}>
+                      {category}
+                    </span>
+                    <span style={{ fontSize: '0.85rem', color: '#5a6d8f' }}>
+                      {Array.isArray(worksList) ? worksList.length + ' 首/部' : ''}
+                      <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem' }}>
+                        {expandedCategories[category] ? '▼' : '▶'}
+                      </span>
+                    </span>
+                  </div>
+                  {expandedCategories[category] && Array.isArray(worksList) && (
+                    <div style={{ padding: '0 1.2rem 0.8rem' }}>
+                      {worksList.map((w, i) => (
+                        <div key={i} style={{
+                          padding: '0.4rem 0',
+                          borderBottom: i < worksList.length - 1 ? '1px solid rgba(100,140,200,0.06)' : 'none',
+                          fontSize: '0.88rem',
+                          color: '#8899bb',
+                          lineHeight: 1.6
+                        }}>
+                          {typeof w === 'string' ? w : `${w.title_zh || w.title || ''}${w.year ? ` (${w.year})` : ''}`}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Works */}
         {works.length > 0 && (
           <section style={{ marginBottom: '2.5rem' }}>
@@ -463,6 +535,129 @@ export default function ComposerDetail({ params }) {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </section>
+        )}
+
+        {/* Works Deep Analysis */}
+        {worksAnalysis.length > 0 && (
+          <section style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{
+              fontSize: '1.2rem',
+              fontWeight: 600,
+              color: '#b8c8e0',
+              marginBottom: '1rem',
+              paddingBottom: '0.5rem',
+              borderBottom: '1px solid rgba(100,140,200,0.15)',
+              fontFamily: '"Noto Serif SC", serif'
+            }}>
+              代表作品深度分析
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              {worksAnalysis.map((work, idx) => (
+                <div key={idx} style={{
+                  background: 'rgba(20,28,50,0.5)',
+                  border: expandedWorks[idx] ? '1px solid rgba(100,150,220,0.25)' : '1px solid rgba(100,140,200,0.1)',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  transition: 'border-color 0.2s ease'
+                }}>
+                  <div 
+                    onClick={() => toggleWork(idx)}
+                    style={{
+                      padding: '1rem 1.2rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontSize: '0.95rem', color: '#c0cee0', fontWeight: 500 }}>
+                        {work.title_zh || work.title || ''}
+                      </span>
+                      <span style={{ fontSize: '0.85rem', color: '#5a6d8f', marginLeft: '0.8rem' }}>
+                        {work.genre_zh || work.genre || ''}
+                        {work.year ? ` · ${work.year}` : ''}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#5a6d8f' }}>
+                      {expandedWorks[idx] ? '▼' : '▶'}
+                    </span>
+                  </div>
+                  {expandedWorks[idx] && (
+                    <div style={{ padding: '0 1.2rem 1.2rem', borderTop: '1px solid rgba(100,140,200,0.08)' }}>
+                      {/* Header info */}
+                      <div style={{ paddingTop: '0.8rem', marginBottom: '1rem' }}>
+                        {work.title_ru && (
+                          <p style={{ fontSize: '0.9rem', color: '#7a8db5', fontStyle: 'italic', marginBottom: '0.5rem' }}>
+                            {work.title_ru}
+                          </p>
+                        )}
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', fontSize: '0.85rem', color: '#5a6d8f' }}>
+                          {work.premiere && <span>首演：{work.premiere}</span>}
+                          {work.libretto && <span>脚本：{work.libretto}</span>}
+                        </div>
+                      </div>
+                      {/* Significance */}
+                      {work.significance && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{ fontSize: '0.85rem', color: '#7db8a4', marginBottom: '0.4rem', fontWeight: 500 }}>
+                            创作背景与历史意义
+                          </h4>
+                          <p style={{ fontSize: '0.9rem', lineHeight: 1.9, color: '#a0b0cc', textAlign: 'justify' }}>
+                            {work.significance}
+                          </p>
+                        </div>
+                      )}
+                      {/* Musical Analysis */}
+                      {work.musical_analysis && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{ fontSize: '0.85rem', color: '#8aa4d4', marginBottom: '0.4rem', fontWeight: 500 }}>
+                            音乐分析
+                          </h4>
+                          <p style={{ fontSize: '0.9rem', lineHeight: 1.9, color: '#a0b0cc', textAlign: 'justify' }}>
+                            {work.musical_analysis}
+                          </p>
+                        </div>
+                      )}
+                      {/* Key Numbers */}
+                      {work.key_numbers && work.key_numbers.length > 0 && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{ fontSize: '0.85rem', color: '#c4a87a', marginBottom: '0.4rem', fontWeight: 500 }}>
+                            关键段落
+                          </h4>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                            {work.key_numbers.map((n, i) => (
+                              <span key={i} style={{
+                                padding: '0.2rem 0.6rem',
+                                background: 'rgba(160,120,80,0.08)',
+                                border: '1px solid rgba(160,120,80,0.15)',
+                                borderRadius: '4px',
+                                fontSize: '0.82rem',
+                                color: '#c4a87a'
+                              }}>
+                                {n}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Historical Context */}
+                      {work.historical_context && (
+                        <div>
+                          <h4 style={{ fontSize: '0.85rem', color: '#7a8db5', marginBottom: '0.4rem', fontWeight: 500 }}>
+                            历史语境
+                          </h4>
+                          <p style={{ fontSize: '0.88rem', lineHeight: 1.8, color: '#8899bb', textAlign: 'justify' }}>
+                            {work.historical_context}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
         )}
