@@ -395,6 +395,45 @@ export default function CityCard({ city, composers, onClose, onSelectComposer })
               ))}
             </div>
             
+            {/* 音乐大事记 */}
+            {city.musicTimeline && city.musicTimeline.length > 0 && (
+              <div className="city-card-timeline">
+                <h3>音乐大事记</h3>
+                <div className="timeline-list">
+                  {city.musicTimeline.map((item, index) => (
+                    <div key={index} className="timeline-item">
+                      <div className="timeline-year">{item.year}</div>
+                      <div className="timeline-dot"></div>
+                      <div className="timeline-content">
+                        <div className="timeline-event">{item.event}</div>
+                        <div className="timeline-event-ru">{item.eventRu}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* 音乐机构 */}
+            {city.musicInstitutions && city.musicInstitutions.length > 0 && (
+              <div className="city-card-institutions">
+                <h3>音乐机构</h3>
+                <div className="institutions-list">
+                  {city.musicInstitutions.map((inst, index) => (
+                    <div key={index} className="institution-item">
+                      <div className="inst-header">
+                        <span className="inst-name">{inst.name}</span>
+                        <span className="inst-name-ru">{inst.nameRu}</span>
+                        <span className={`inst-type inst-type-${inst.type === '教育机构' ? 'edu' : inst.type === '歌剧院' ? 'opera' : inst.type === '交响乐团' ? 'orchestra' : 'museum'}`}>{inst.type}</span>
+                        <span className="inst-founded">{inst.founded}年</span>
+                      </div>
+                      <div className="inst-note">{inst.note}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <div className="city-card-composers">
               <h3>关联作曲家</h3>
               <div className="composers-grid">
