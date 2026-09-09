@@ -29,14 +29,9 @@
   top: 50%;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, 
-    var(--color-primary-dark) 0%, 
-    var(--color-primary) 50%, 
-    var(--color-primary-dark) 100%
-  );
+  height: 1px;
+  background: rgba(135, 206, 250, 0.15);
   transform: translateY(-50%);
-  opacity: 0.3;
 }
 
 .timeline-items {
@@ -52,76 +47,28 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: transparent;
+  background: none;
   border: none;
   cursor: pointer;
   padding: 8px 16px;
-  border-radius: 8px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
   min-width: 120px;
-}
-
-.timeline-item:hover {
-  background: rgba(135, 206, 250, 0.1);
-}
-
-.timeline-item:hover .timeline-dot-inner {
-  transform: scale(1.2);
-}
-
-.timeline-item.active .timeline-dot-inner {
-  background: var(--period-color);
-  box-shadow: 0 0 6px var(--period-color);
-}
-
-.timeline-item.active .timeline-dot-ring {
-  animation: pulse-ring 2s ease-out infinite;
-}
-
-.timeline-item.active .timeline-name {
-  color: var(--period-color);
-  text-shadow: none;
 }
 
 .timeline-dot {
   position: relative;
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
 }
 
 .timeline-dot-inner {
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
   background: var(--color-text-muted);
   border-radius: 50%;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 2;
 }
 
 .timeline-dot-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 32px;
-  height: 32px;
-  border: 2px solid var(--color-primary);
-  border-radius: 50%;
-  opacity: 0;
-  z-index: 1;
-}
-
-@keyframes pulse-ring {
-  0% {
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.5);
-  }
+  display: none;
 }
 
 .timeline-content {
@@ -142,7 +89,6 @@
   font-family: 'Noto Serif SC', serif;
   font-size: 13px;
   color: var(--color-text-secondary);
-  transition: all 0.3s ease;
   white-space: nowrap;
 }
 
@@ -150,41 +96,39 @@
   font-family: 'Noto Sans', sans-serif;
   font-size: 10px;
   color: var(--color-text-muted);
-  opacity: 0.7;
+  opacity: 0.6;
   white-space: nowrap;
 }
 
 .timeline-glow {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 60px;
-  background: transparent;
-  pointer-events: none;
+  display: none;
 }
 
-/* Touch optimization for iPad */
+/* Active state - just color change, NO glow */
+.timeline-item.active .timeline-dot-inner {
+  background: var(--period-color);
+}
+
+.timeline-item.active .timeline-name {
+  color: var(--period-color);
+}
+
+/* iPad responsive */
 @media (max-width: 768px) {
   .timeline-container {
     height: 100px;
   }
-  
   .timeline-items {
     gap: 20px;
     padding: 15px 20px;
   }
-  
   .timeline-item {
     min-width: 100px;
     padding: 6px 12px;
   }
-  
   .timeline-name {
     font-size: 12px;
   }
-  
   .timeline-year {
     font-size: 10px;
   }
