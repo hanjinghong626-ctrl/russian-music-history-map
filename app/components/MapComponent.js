@@ -54,6 +54,9 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const cityMarkersRef = useRef([]);
   const composerMapRef = useRef({});
   const flowDotsRef = useRef([]);
+  const relLinesRef = useRef([]);
+  const selIdRef = useRef(null);
+  const [selectedComposerId, setSelectedComposerId] = useState(null);
   const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -524,9 +527,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   }, [selectedComposerId]);
 
   const flyBeaconRef = useRef(null);
-  const relLinesRef = useRef([]);
-  const selIdRef = useRef(null);
-  const [selectedComposerId, setSelectedComposerId] = useState(null);
   const handleFlyToArt = (cfg) => {
     const map = mapInstanceRef.current;
     if (!map || !cfg || !cfg.coords) return;
