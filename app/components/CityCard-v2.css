@@ -887,6 +887,97 @@
   color: #999;
 }
 
+
+/* Night mode: Timeline */
+.city-card.night-mode .city-card-timeline h3 {
+  color: #d0d0d0;
+}
+
+.city-card.night-mode .timeline-list::before {
+  background: linear-gradient(to bottom, rgba(135,206,250,0.5), rgba(135,206,250,0.1));
+}
+
+.city-card.night-mode .timeline-year {
+  color: rgba(135,206,250,0.8);
+}
+
+.timeline-item:hover .timeline-year {
+  color: rgba(135,206,250,1);
+}
+
+.city-card.night-mode .timeline-dot {
+  background: rgba(135,206,250,0.7);
+  box-shadow: 0 0 0 3px rgba(135,206,250,0.15);
+}
+
+.timeline-item:hover .timeline-dot {
+  background: rgba(135,206,250,1);
+  box-shadow: 0 0 0 4px rgba(135,206,250,0.25);
+}
+
+.city-card.night-mode .timeline-content {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(135,206,250,0.15);
+}
+
+.timeline-item:hover .timeline-content {
+  background: rgba(135,206,250,0.08);
+  border-color: rgba(135,206,250,0.3);
+}
+
+.city-card.night-mode .timeline-event {
+  color: #ccc;
+}
+
+.timeline-item:hover .timeline-event {
+  color: #eee;
+}
+
+.city-card.night-mode .timeline-event-ru {
+  color: #888;
+}
+
+/* Night mode: Institutions */
+.city-card.night-mode .city-card-institutions h3 {
+  color: #d0d0d0;
+}
+
+.city-card.night-mode .institution-item {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(135,206,250,0.15);
+}
+
+.city-card.night-mode .institution-item:hover {
+  background: rgba(135,206,250,0.08);
+  border-color: rgba(135,206,250,0.3);
+}
+
+.city-card.night-mode .inst-name {
+  color: #ddd;
+}
+
+.city-card.night-mode .inst-name-ru {
+  color: #999;
+}
+
+.city-card.night-mode .inst-type {
+  background: rgba(135,206,250,0.12);
+  color: rgba(135,206,250,0.8);
+}
+
+.city-card.night-mode .inst-type-edu { background: rgba(100,150,220,0.15); color: rgba(150,190,255,0.9); }
+.city-card.night-mode .inst-type-opera { background: rgba(200,100,100,0.15); color: rgba(255,150,150,0.9); }
+.city-card.night-mode .inst-type-orchestra { background: rgba(100,180,130,0.15); color: rgba(150,220,170,0.9); }
+.city-card.night-mode .inst-type-museum { background: rgba(180,150,80,0.15); color: rgba(220,200,120,0.9); }
+
+.city-card.night-mode .inst-founded {
+  color: rgba(135,206,250,0.7);
+}
+
+.city-card.night-mode .inst-note {
+  color: #888;
+}
+
 /* ============ 通用样式 ============ */
 
 .city-card-title h2 {
@@ -1041,6 +1132,205 @@
   white-space: nowrap;
 }
 
+
+/* ============ 音乐大事记 Timeline ============ */
+.city-card-timeline {
+  margin-bottom: 24px;
+}
+
+.city-card-timeline h3 {
+  font-size: 16px;
+  color: #3a3020;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.city-card-timeline h3::before {
+  content: '📜';
+  font-size: 18px;
+}
+
+.timeline-list {
+  position: relative;
+  padding-left: 54px;
+}
+
+.timeline-list::before {
+  content: '';
+  position: absolute;
+  left: 42px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(180,155,100,0.6), rgba(180,155,100,0.2));
+  border-radius: 1px;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item:hover {
+  transform: translateX(4px);
+}
+
+.timeline-item:hover .timeline-event {
+  color: #2c2416;
+}
+
+.timeline-year {
+  position: absolute;
+  left: -54px;
+  top: 0;
+  width: 38px;
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #b49b64;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -12px;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #b49b64;
+  box-shadow: 0 0 0 3px rgba(180,155,100,0.2);
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-dot {
+  background: #8b6f3a;
+  box-shadow: 0 0 0 4px rgba(180,155,100,0.35);
+  transform: scale(1.2);
+}
+
+.timeline-content {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  border: 1px solid rgba(180,155,100,0.15);
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-content {
+  background: rgba(255,248,230,0.9);
+  border-color: rgba(180,155,100,0.4);
+}
+
+.timeline-event {
+  font-size: 13px;
+  color: #3a3020;
+  line-height: 1.5;
+  margin-bottom: 2px;
+  transition: color 0.3s ease;
+}
+
+.timeline-event-ru {
+  font-size: 12px;
+  color: #7a6a55;
+  line-height: 1.4;
+}
+
+/* ============ 音乐机构 Institutions ============ */
+.city-card-institutions {
+  margin-bottom: 24px;
+}
+
+.city-card-institutions h3 {
+  font-size: 16px;
+  color: #3a3020;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.city-card-institutions h3::before {
+  content: '🏛️';
+  font-size: 18px;
+}
+
+.institutions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.institution-item {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1px solid rgba(180,155,100,0.2);
+  transition: all 0.3s ease;
+}
+
+.institution-item:hover {
+  background: rgba(255,248,230,0.9);
+  border-color: rgba(180,155,100,0.5);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(180,155,100,0.15);
+}
+
+.inst-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.inst-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c2416;
+}
+
+.inst-name-ru {
+  font-size: 12px;
+  color: #6a5a45;
+}
+
+.inst-type {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(180,155,100,0.15);
+  color: #6a5020;
+  font-weight: 500;
+}
+
+.inst-type-edu { background: rgba(80,120,180,0.15); color: #2a4a80; }
+.inst-type-opera { background: rgba(160,80,80,0.15); color: #802020; }
+.inst-type-orchestra { background: rgba(80,140,100,0.15); color: #2a6a30; }
+.inst-type-museum { background: rgba(140,110,70,0.15); color: #6a4a10; }
+
+.inst-founded {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  color: #b49b64;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.inst-note {
+  font-size: 12px;
+  color: #5a4a35;
+  line-height: 1.4;
+}
+
 /* ============ 响应式设计 - 上下布局适配 ============ */
 
 @media (max-width: 900px) {
@@ -1133,5 +1423,54 @@
     width: 32px;
     height: 32px;
     font-size: 18px;
+  }
+}
+
+/* ============ 响应式设计 - 新增模块适配 ============ */
+
+@media (max-width: 900px) {
+  .timeline-list {
+    padding-left: 48px;
+  }
+  .timeline-year {
+    left: -48px;
+    width: 34px;
+    font-size: 12px;
+  }
+  .inst-header {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .city-card-timeline h3,
+  .city-card-institutions h3 {
+    font-size: 14px;
+  }
+  .timeline-list {
+    padding-left: 44px;
+  }
+  .timeline-year {
+    left: -44px;
+    width: 30px;
+    font-size: 11px;
+  }
+  .timeline-content {
+    padding: 6px 10px;
+  }
+  .timeline-event {
+    font-size: 12px;
+  }
+  .timeline-event-ru {
+    font-size: 11px;
+  }
+  .institution-item {
+    padding: 8px 10px;
+  }
+  .inst-name {
+    font-size: 13px;
+  }
+  .inst-founded {
+    font-size: 11px;
   }
 }
