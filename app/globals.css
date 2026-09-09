@@ -141,7 +141,7 @@ html, body {
   position: relative;
 }
 
-/* Map Loading State */
+/* Map Loading State — Stardust Gathering */
 .map-loading {
   width: 100%;
   height: 100%;
@@ -149,27 +149,151 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-deep);
-  gap: 16px;
+  background: radial-gradient(ellipse at 50% 45%, #0a1628 0%, #030810 100%);
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(135, 206, 250, 0.2);
-  border-top-color: var(--color-primary);
+.stardust-canvas {
+  position: relative;
+  width: 280px;
+  height: 280px;
+}
+
+/* Each dust layer: tiny dot at center + box-shadow particles */
+.dust-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 2px;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  transform: translate(-50%, -50%);
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+/* Far layer — large spread, slow converge */
+.dust-far {
+  background: rgba(135,206,250,0.6);
+  box-shadow:
+    82px -118px 1px 0px rgba(135,206,250,0.5),
+    -108px 72px 0px 1px rgba(180,220,255,0.4),
+    128px 38px 1px 0px rgba(200,230,255,0.5),
+    -58px -102px 0px 0px rgba(135,206,250,0.6),
+    92px 98px 1px 0px rgba(180,220,255,0.3),
+    -128px -28px 0px 1px rgba(135,206,250,0.5),
+    42px 128px 1px 0px rgba(200,230,255,0.4),
+    -98px 88px 0px 0px rgba(135,206,250,0.5),
+    118px -58px 1px 0px rgba(180,220,255,0.4),
+    -38px -128px 0px 1px rgba(135,206,250,0.3),
+    72px -88px 0px 0px rgba(200,230,255,0.5),
+    -118px 48px 1px 0px rgba(135,206,250,0.4),
+    48px 112px 0px 1px rgba(180,220,255,0.3),
+    -78px -68px 1px 0px rgba(135,206,250,0.5),
+    108px -98px 0px 0px rgba(200,230,255,0.4);
+  animation: dust-converge-far 7s ease-in-out infinite;
 }
 
-.map-loading p {
-  font-family: 'Noto Sans SC', sans-serif;
-  font-size: 14px;
-  color: var(--color-text-muted);
+/* Mid layer — medium spread, medium speed */
+.dust-mid {
+  background: rgba(135,206,250,0.7);
+  box-shadow:
+    52px -78px 1px 0px rgba(135,206,250,0.6),
+    -68px 42px 0px 1px rgba(180,220,255,0.5),
+    78px 28px 1px 0px rgba(135,206,250,0.5),
+    -42px -62px 0px 0px rgba(200,230,255,0.6),
+    58px 68px 1px 0px rgba(135,206,250,0.5),
+    -78px -18px 0px 1px rgba(180,220,255,0.4),
+    28px 78px 1px 0px rgba(135,206,250,0.6),
+    -62px 52px 0px 0px rgba(200,230,255,0.5),
+    72px -48px 0px 1px rgba(135,206,250,0.4),
+    -32px -72px 1px 0px rgba(180,220,255,0.5),
+    42px -58px 0px 0px rgba(135,206,250,0.6),
+    -68px 32px 1px 0px rgba(200,230,255,0.4);
+  animation: dust-converge-mid 5.5s ease-in-out infinite 0.8s;
+}
+
+/* Near layer — small spread, fast converge, bright */
+.dust-near {
+  background: rgba(180,220,255,0.8);
+  box-shadow:
+    28px -42px 1px 0px rgba(135,206,250,0.7),
+    -38px 22px 0px 1px rgba(180,220,255,0.6),
+    42px 12px 1px 0px rgba(200,230,255,0.7),
+    -22px -38px 0px 0px rgba(135,206,250,0.8),
+    32px 38px 1px 0px rgba(180,220,255,0.6),
+    -42px -8px 0px 1px rgba(135,206,250,0.7),
+    18px 42px 1px 0px rgba(200,230,255,0.6),
+    -32px 28px 0px 0px rgba(135,206,250,0.7),
+    38px -28px 0px 1px rgba(180,220,255,0.5),
+    -18px -42px 1px 0px rgba(135,206,250,0.6);
+  animation: dust-converge-near 4s ease-in-out infinite 1.5s;
+}
+
+@keyframes dust-converge-far {
+  0%   { transform: translate(-50%,-50%) scale(1.6) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.6; }
+  50%  { opacity: 0.8; }
+  85%  { opacity: 0.4; }
+  100% { transform: translate(-50%,-50%) scale(0.15) rotate(25deg); opacity: 0; }
+}
+
+@keyframes dust-converge-mid {
+  0%   { transform: translate(-50%,-50%) scale(1.5) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.7; }
+  50%  { opacity: 0.9; }
+  85%  { opacity: 0.5; }
+  100% { transform: translate(-50%,-50%) scale(0.12) rotate(-30deg); opacity: 0; }
+}
+
+@keyframes dust-converge-near {
+  0%   { transform: translate(-50%,-50%) scale(1.4) rotate(0deg); opacity: 0; }
+  15%  { opacity: 0.8; }
+  50%  { opacity: 1; }
+  85%  { opacity: 0.6; }
+  100% { transform: translate(-50%,-50%) scale(0.1) rotate(20deg); opacity: 0; }
+}
+
+/* Central core — glowing musical note */
+.stardust-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(135,206,250,0.12) 0%, transparent 70%);
+}
+
+.core-note {
+  font-size: 32px;
+  color: var(--color-primary);
+  text-shadow:
+    0 0 15px rgba(135,206,250,0.8),
+    0 0 30px rgba(135,206,250,0.4),
+    0 0 60px rgba(135,206,250,0.2);
+  animation: core-breathe 3s ease-in-out infinite;
+}
+
+@keyframes core-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Loading verse text */
+.loading-verse {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  color: rgba(135,206,250,0.5);
+  letter-spacing: 4px;
+  margin-top: 20px;
+  animation: verse-fade 4s ease-in-out infinite;
+}
+
+@keyframes verse-fade {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
 }
 
 /* Selection highlight */
