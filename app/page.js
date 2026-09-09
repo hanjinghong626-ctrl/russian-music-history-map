@@ -13,9 +13,16 @@ import './globals.css';
 const MapComponent = dynamic(() => import('./components/MapComponent'), {
   ssr: false,
   loading: () => (
-    <div className="map-loading">
-      <div className="loading-spinner"></div>
-      <p>正在加载地图...</p>
+    <div className="map-loading stardust-loading">
+      <div className="stardust-canvas">
+        <div className="dust-layer dust-far"></div>
+        <div className="dust-layer dust-mid"></div>
+        <div className="dust-layer dust-near"></div>
+        <div className="stardust-core">
+          <span className="core-note">♪</span>
+        </div>
+      </div>
+      <p className="loading-verse">星河为谱 · 群星作章</p>
     </div>
   )
 });
