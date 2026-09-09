@@ -72,7 +72,7 @@
 
 .timeline-item.active .timeline-dot-inner {
   background: var(--period-color);
-  box-shadow: 0 0 20px var(--period-color);
+  box-shadow: 0 0 6px var(--period-color);
 }
 
 .timeline-item.active .timeline-dot-ring {
@@ -81,7 +81,7 @@
 
 .timeline-item.active .timeline-name {
   color: var(--period-color);
-  text-shadow: 0 0 10px var(--period-color);
+  text-shadow: none;
 }
 
 .timeline-dot {
@@ -161,7 +161,7 @@
   transform: translateX(-50%);
   width: 200px;
   height: 60px;
-  background: radial-gradient(ellipse at bottom, rgba(135, 206, 250, 0.15) 0%, transparent 70%);
+  background: transparent;
   pointer-events: none;
 }
 
