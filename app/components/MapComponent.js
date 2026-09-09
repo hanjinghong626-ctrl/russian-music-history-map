@@ -1,4 +1,4 @@
-// v5.1 星河天象版 - 星航联动(显影仪飞至城市) + 北极光/银河/流星 + 连线流光
+// v5.2 师承关系落回地图 - 星航联动(显影仪飞至城市) + 北极光/银河/流星 + 连线流光
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import { composers } from '../data/composers';
 import { cities } from '../data/cities';
 import RelationshipNetwork from './RelationshipNetwork';
+import { relationships, relationshipConfig } from '../data/relationships';
 import CityCard from './CityCard';
 import BasilCathedral from './BasilCathedral';
 import './MapComponent.css';
@@ -278,6 +279,11 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     flowDotsRef.current.forEach(({ g, upd }) => { try { map.off('zoomend', upd); } catch (e) {} g.remove(); });
     flowDotsRef.current = [];
 
+    // 切换时代时清除关系线
+    relLinesRef.current.forEach(item => { try { map.removeLayer(item.line); map.removeLayer(item.glow); item.halos.forEach(h => map.removeLayer(h)); if(item._upd) map.off('zoomend', item._upd); if(item._g) item._g.remove(); } catch(e){} });
+    relLinesRef.current = [];
+    const hint = document.querySelector('.rel-hint'); if (hint) hint.remove();
+
     const SVG_NS = 'http://www.w3.org/2000/svg';
     const flowDots = [];
 
@@ -285,7 +291,25 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     filtered.forEach(composer => {
       const marker = L.marker(composer.coordinates, { icon: createCustomIcon(false, false, false, composer.period) });
       marker.bindTooltip(`<div class="marker-tooltip"><strong>${composer.name}</strong><br/><span>${composer.birthYear}-${composer.deathYear}</span></div>`, { className: 'custom-tooltip', direction: 'top', offset: [0, -12] });
-      marker.on('click', () => onComposerSelect(composer));
+      marker.on('click', () => {
+        onComposerSelect(composer);
+        const cid = composer.id;
+        const wasSelected = selIdRef.current === cid;
+        // 清除旧标记选中态
+        if (selIdRef.current && composerMapRef.current[selIdRef.current]) {
+          const oldEl = composerMapRef.current[selIdRef.current].getElement();
+          if (oldEl) { const w = oldEl.querySelector('.marker-wrapper'); if (w) w.classList.remove('composer-selected'); }
+        }
+        if (wasSelected) {
+          setSelectedComposerId(null);
+          selIdRef.current = null;
+        } else {
+          setSelectedComposerId(cid);
+          selIdRef.current = cid;
+          const el = marker.getElement();
+          if (el) { const w = el.querySelector('.marker-wrapper'); if (w) w.classList.add('composer-selected'); }
+        }
+      });
       marker.composerId = composer.id; marker.addTo(map); markersRef.current.push(marker); composerMapRef.current[composer.id] = marker;
     });
 
@@ -392,7 +416,117 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     });
   }, [activePeriod, onComposerSelect]);
 
+
+  // ===== 师承关系落回地图：点击作曲家 → 关系线流光点亮 =====
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    // 清除旧关系线
+    relLinesRef.current.forEach(item => {
+      try { map.removeLayer(item.line); map.removeLayer(item.glow); item.halos.forEach(h => map.removeLayer(h)); } catch(e){}
+    });
+    relLinesRef.current = [];
+    const hint = document.querySelector('.rel-hint');
+    if (hint) hint.remove();
+    if (!selectedComposerId) return;
+
+    const c = composers.find(x => x.id === selectedComposerId);
+    if (!c) return;
+    const rels = relationships.filter(r => r.from === selectedComposerId || r.to === selectedComposerId);
+    if (!rels.length) return;
+
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const colors = { mentor: '#D4AF37', influence: '#A0B4C8', collaboration: '#7EC8E3', opposition: '#E06060' };
+
+    rels.forEach(rel => {
+      const oid = rel.from === selectedComposerId ? rel.to : rel.from;
+      const o = composers.find(x => x.id === oid);
+      if (!o) return;
+      const coords = [c.coordinates, o.coordinates];
+      const color = colors[rel.type] || '#A0B4C8';
+      const da = rel.type === 'influence' ? '6,4' : rel.type === 'collaboration' ? '3,3' : rel.type === 'opposition' ? '8,4' : undefined;
+
+      // 辉光底层
+      const glowOpts = { color, weight: 7, opacity: 0 };
+      if (da) glowOpts.dashArray = da;
+      const glow = L.polyline(coords, glowOpts).addTo(map);
+      glow.getElement()?.animate?.([{ opacity: 0 }, { opacity: 0.22 }], { duration: 700, fill: 'forwards' });
+
+      // 主线
+      const lineOpts = { color, weight: 2.2, opacity: 0 };
+      if (da) lineOpts.dashArray = da;
+      const line = L.polyline(coords, lineOpts).addTo(map);
+      line.getElement()?.animate?.([{ opacity: 0 }, { opacity: 0.92 }], { duration: 600, fill: 'forwards' });
+
+      const item = { line, glow, halos: [] };
+
+      // SVG 流光
+      const pathEl = line.getElement?.();
+      if (pathEl?.getAttribute?.('d')) {
+        const d = pathEl.getAttribute('d');
+        const g = document.createElementNS(SVG_NS, 'g');
+        g.style.pointerEvents = 'none';
+
+        const halo = document.createElementNS(SVG_NS, 'circle');
+        halo.setAttribute('r', '6');
+        halo.setAttribute('fill', color);
+        halo.setAttribute('opacity', '0.28');
+        const core = document.createElementNS(SVG_NS, 'circle');
+        core.setAttribute('r', '2.5');
+        core.setAttribute('fill', '#fff');
+        core.setAttribute('opacity', '0.95');
+
+        const dur = (3.8 + Math.random() * 1.6).toFixed(2);
+        [halo, core].forEach(ci => {
+          const am = document.createElementNS(SVG_NS, 'animateMotion');
+          am.setAttribute('path', d);
+          am.setAttribute('dur', dur + 's');
+          am.setAttribute('repeatCount', 'indefinite');
+          ci.appendChild(am);
+          g.appendChild(ci);
+        });
+        pathEl.parentNode.appendChild(g);
+
+        const upd = () => {
+          const p = line.getElement();
+          if (!p) return;
+          const nd = p.getAttribute('d');
+          g.querySelectorAll('animateMotion').forEach(am => am.setAttribute('path', nd));
+        };
+        map.on('zoomend', upd);
+        item._upd = upd;
+        item._g = g;
+        item._map = map;
+      }
+
+      // 两端呼吸光环
+      [c.coordinates, o.coordinates].forEach(pos => {
+        const hIcon = L.divIcon({
+          className: '',
+          html: `<div class="rel-halo-outer"></div>`,
+          iconSize: [28, 28], iconAnchor: [14, 14],
+        });
+        const hm = L.marker(pos, { icon: hIcon, interactive: false, keyboard: false }).addTo(map);
+        item.halos.push(hm);
+      });
+
+      relLinesRef.current.push(item);
+    });
+
+    // 底部关系提示
+    const div = document.createElement('div');
+    div.className = 'rel-hint';
+    const labels = { mentor: '师承', influence: '影响', collaboration: '合作', opposition: '对立' };
+    const types = [...new Set(rels.map(r => r.type))];
+    const legend = types.map(t => `<span style="color:${colors[t]}">${labels[t]}</span>`).join(' · ');
+    div.innerHTML = `<strong>${c.name}</strong> <em>${rels.length} 条关系</em> ${legend}`;
+    document.querySelector('.map-wrapper')?.appendChild(div);
+  }, [selectedComposerId]);
+
   const flyBeaconRef = useRef(null);
+  const relLinesRef = useRef([]);
+  const selIdRef = useRef(null);
+  const [selectedComposerId, setSelectedComposerId] = useState(null);
   const handleFlyToArt = (cfg) => {
     const map = mapInstanceRef.current;
     if (!map || !cfg || !cfg.coords) return;
