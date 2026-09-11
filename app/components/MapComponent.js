@@ -359,7 +359,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
 
 
 
-      .star-legend-item[data-active="true"] .star-legend-label { color: rgb(240,230,200); text-shadow: 0 0 6px rgba(240,200,120,0.5); }
     `;
     document.head.appendChild(style);
 
