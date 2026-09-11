@@ -68,43 +68,73 @@ const periodStarConfig = {
 const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = false, period = null) => {
   const cfg = periodStarConfig[period] || periodStarConfig.classical;
   let color = cfg.color;
-  let size = cfg.size || 22;
-  if (isActive) size = Math.round(size * 1.6);
-  else if (isHighlighted) size = Math.round(size * 1.3);
+  let scale = 1;
+  if (isActive) scale = 1.5;
+  else if (isHighlighted) scale = 1.2;
   if (isDimmed) color = '#3a3a3a';
 
   const stateClass = [isActive ? 'active' : '', isHighlighted ? 'highlighted' : '', isDimmed ? 'dimmed' : ''].filter(Boolean).join(' ');
   const animDur = isActive ? '1.6s' : '3.4s';
 
-  // SVG 星芒：十字光芒 + 对角线 + 通透亮核
-  const s = size;
-  const h = s / 2;
-  const spikeLen = s * 0.92;
-  const sw = Math.max(1.2, s * 0.09);
-  const sw2 = sw * 0.55;
-  const cr = s * 0.18;
-
-  const starSVG = [
-    '<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + ' ' + s + '" xmlns="http://www.w3.org/2000/svg">',
-    '<defs><radialGradient id="sg' + cfg.spike + '"><stop offset="0%" stop-color="' + cfg.glow + '" stop-opacity="0.7"/><stop offset="100%" stop-color="' + cfg.glow + '" stop-opacity="0"/></radialGradient></defs>',
-    '<circle cx="' + h + '" cy="' + h + '" r="' + (s * 0.42) + '" fill="url(#sg' + cfg.spike + ')" opacity="0.5"/>',
-    '<line x1="' + h + '" y1="' + (h - spikeLen / 2) + '" x2="' + h + '" y2="' + (h + spikeLen / 2) + '" stroke="' + color + '" stroke-width="' + sw + '" stroke-linecap="round" opacity="0.85"/>',
-    '<line x1="' + (h - spikeLen / 2) + '" y1="' + h + '" x2="' + (h + spikeLen / 2) + '" y2="' + h + '" stroke="' + color + '" stroke-width="' + sw + '" stroke-linecap="round" opacity="0.85"/>',
-    '<line x1="' + (h - spikeLen * 0.32) + '" y1="' + (h - spikeLen * 0.32) + '" x2="' + (h + spikeLen * 0.32) + '" y2="' + (h + spikeLen * 0.32) + '" stroke="' + color + '" stroke-width="' + sw2 + '" stroke-linecap="round" opacity="0.6"/>',
-    '<line x1="' + (h + spikeLen * 0.32) + '" y1="' + (h - spikeLen * 0.32) + '" x2="' + (h - spikeLen * 0.32) + '" y2="' + (h + spikeLen * 0.32) + '" stroke="' + color + '" stroke-width="' + sw2 + '" stroke-linecap="round" opacity="0.6"/>',
-    '<circle cx="' + h + '" cy="' + h + '" r="' + cr + '" fill="#fff" opacity="0.95"/>',
-    '<circle cx="' + h + '" cy="' + h + '" r="' + (cr * 0.5) + '" fill="' + color + '"/>',
-    '</svg>'
+  // 细芒星 SVG：中心亮点 + 细长渐隐光芒（天文恒星级）
+  const coreR = cfg.coreSize * scale;
+  const spikeLen = cfg.spikeLen * scale;
+  const haloR = cfg.haloSize * scale;
+  const size = Math.round(haloR * 2.2);
+  const h = size / 2;
+  const spikeWidth = Math.max(0.8, 1.2 * scale);
+  const cid = cfg.coreSize; // 用于渐变 ID
+  
+  const defs = [
+    '<defs>',
+    '<radialGradient id="hg' + cid + '" cx="50%" cy="50%" r="50%">',
+    '<stop offset="0%" stop-color="' + cfg.glow + '" stop-opacity="0.3"/>',
+    '<stop offset="100%" stop-color="' + cfg.glow + '" stop-opacity="0"/>',
+    '</radialGradient>',
+    '<linearGradient id="sgv' + cid + '" x1="0%" y1="0%" x2="0%" y2="100%">',
+    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.9"/>',
+    '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>',
+    '</linearGradient>',
+    '<linearGradient id="sgh' + cid + '" x1="0%" y1="0%" x2="100%" y2="0%">',
+    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.9"/>',
+    '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>',
+    '</linearGradient>',
+    '</defs>'
   ].join('');
+  
+  // 外层柔光晕（极淡）
+  const halo = '<circle cx="' + h + '" cy="' + h + '" r="' + haloR + '" fill="url(#hg' + cid + ')" opacity="0.5"/>';
+  
+  // 4 条主芒（十字，细长渐隐）
+  const mainSpikes = [
+    '<line x1="' + h + '" y1="' + (h - coreR) + '" x2="' + h + '" y2="' + (h - spikeLen) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>',
+    '<line x1="' + h + '" y1="' + (h + coreR) + '" x2="' + h + '" y2="' + (h + spikeLen) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>',
+    '<line x1="' + (h - coreR) + '" y1="' + h + '" x2="' + (h - spikeLen) + '" y2="' + h + '" stroke="url(#sgh' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>',
+    '<line x1="' + (h + coreR) + '" y1="' + h + '" x2="' + (h + spikeLen) + '" y2="' + h + '" stroke="url(#sgh' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>'
+  ].join('');
+  
+  // 4 条短芒（对角，更细更淡）
+  const shortSpikes = [
+    '<line x1="' + (h - coreR * 0.7) + '" y1="' + (h - coreR * 0.7) + '" x2="' + (h - spikeLen * 0.6) + '" y2="' + (h - spikeLen * 0.6) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>',
+    '<line x1="' + (h + coreR * 0.7) + '" y1="' + (h + coreR * 0.7) + '" x2="' + (h + spikeLen * 0.6) + '" y2="' + (h + spikeLen * 0.6) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>',
+    '<line x1="' + (h + coreR * 0.7) + '" y1="' + (h - coreR * 0.7) + '" x2="' + (h + spikeLen * 0.6) + '" y2="' + (h - spikeLen * 0.6) + '" stroke="url(#sgh' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>',
+    '<line x1="' + (h - coreR * 0.7) + '" y1="' + (h + coreR * 0.7) + '" x2="' + (h - spikeLen * 0.6) + '" y2="' + (h + spikeLen * 0.6) + '" stroke="url(#sgh' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>'
+  ].join('');
+  
+  // 中心亮点（纯白 + 内层着色）
+  const core = '<circle cx="' + h + '" cy="' + h + '" r="' + coreR + '" fill="#fff" opacity="0.95"/>';
+  const coreInner = '<circle cx="' + h + '" cy="' + h + '" r="' + (coreR * 0.5) + '" fill="' + color + '"/>';
+  
+  const starSVG = '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + defs + halo + mainSpikes + shortSpikes + core + coreInner + '</svg>';
 
   return L.divIcon({
     className: 'custom-marker',
-    html: '<div class="marker-wrapper ' + stateClass + '" style="width:' + s + 'px;height:' + s + 'px;position:relative;cursor:pointer;">' +
-      '<div class="star-halo" style="position:absolute;inset:-' + Math.round(s * 0.3) + 'px;background:radial-gradient(circle,' + cfg.glow.replace(/0.9/, '0.35').replace(/0.95/, '0.35') + ' 0%,transparent 65%);animation:star-breathe ' + animDur + ' ease-in-out infinite;"></div>' +
-      '<div class="star-body" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 ' + (isActive ? '14px' : '8px') + ' ' + cfg.glow + ');">' + starSVG + '</div>' +
+    html: '<div class="marker-wrapper ' + stateClass + '" style="width:' + size + 'px;height:' + size + 'px;position:relative;cursor:pointer;">' +
+      '<div class="star-halo" style="position:absolute;inset:-' + Math.round(size * 0.15) + 'px;background:radial-gradient(circle,' + cfg.glow.replace(/0.9/, '0.15').replace(/0.95/, '0.15') + ' 0%,transparent 70%);animation:star-breathe ' + animDur + ' ease-in-out infinite;"></div>' +
+      '<div class="star-body" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 ' + (isActive ? '8px' : '4px') + ' ' + cfg.glow + ');">' + starSVG + '</div>' +
     '</div>',
-    iconSize: [s, s],
-    iconAnchor: [s / 2, s / 2],
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
   });
 };
 const createCityIcon = () => {
