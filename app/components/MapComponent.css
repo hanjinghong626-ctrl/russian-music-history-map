@@ -394,12 +394,17 @@
   50%      { transform: scale(1.3); opacity: 0.65; }
 }
 
-/* 选中的作曲家标记 - 增强发光 */
-.marker-wrapper.composer-selected > div:first-child {
-  box-shadow: 0 0 32px rgba(255,255,255,0.5), 0 0 56px rgba(180,210,240,0.3) !important;
+/* 选中的作曲家标记 - 增强发光（新版三图层：halo / body / core） */
+.marker-wrapper.composer-selected > .star-body {
+  box-shadow: 0 0 32px rgba(255,255,255,0.6), 0 0 64px currentColor !important;
   animation: marker-pulse 1.2s ease-in-out infinite !important;
+  filter: brightness(1.3);
 }
-.marker-wrapper.composer-selected > div:last-child {
+.marker-wrapper.composer-selected > .star-halo {
+  opacity: 1 !important;
+  animation: star-breathe 1.2s ease-in-out infinite !important;
+}
+.marker-wrapper.composer-selected > .star-core {
   border-color: #fff !important;
-  box-shadow: 0 0 14px rgba(255,255,255,0.7) !important;
+  box-shadow: 0 0 14px rgba(255,255,255,0.8) !important;
 }
