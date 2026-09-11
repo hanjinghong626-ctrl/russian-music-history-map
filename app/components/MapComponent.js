@@ -691,23 +691,38 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     ];
     return items.map(it => {
       const isActive = activePeriod && activePeriod.id === it.key;
-      const opacity = activePeriod ? (isActive ? 1 : 0.35) : 0.9;
-      const spikeSize = 16;
-      const h = spikeSize / 2;
-      const spikeSVG = `<svg width="${spikeSize}" height="${spikeSize}" viewBox="0 0 ${spikeSize} ${spikeSize}">
+      const opacity = activePeriod ? (isActive ? 1 : 0.3) : 0.9;
+      // 图例样本：28px 容器，24px SVG，光芒清晰可见
+      const sz = 24;
+      const h = sz / 2;
+      const spikeLen = sz * 0.42;
+      const sw = 1.2;
+      const cr = 2.2;
+      const gid = 'lg' + it.key;
+      const spikeSVG = `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="overflow:visible;">
         <defs>
-          <linearGradient id="lv${it.key}" x1="0%" y1="0%" x2="0%" y2="100%">
+          <linearGradient id="${gid}v" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="${it.color}" stop-opacity="0.9"/>
+            <stop offset="70%" stop-color="${it.color}" stop-opacity="0.3"/>
             <stop offset="100%" stop-color="${it.color}" stop-opacity="0"/>
           </linearGradient>
-          <linearGradient id="lh${it.key}" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="${gid}h" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="${it.color}" stop-opacity="0.9"/>
+            <stop offset="70%" stop-color="${it.color}" stop-opacity="0.3"/>
             <stop offset="100%" stop-color="${it.color}" stop-opacity="0"/>
           </linearGradient>
+          <radialGradient id="${gid}g">
+            <stop offset="0%" stop-color="${it.glow}" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="${it.glow}" stop-opacity="0"/>
+          </radialGradient>
         </defs>
-        <line x1="${h}" y1="2" x2="${h}" y2="${spikeSize-2}" stroke="url(#lv${it.key})" stroke-width="1" stroke-linecap="round"/>
-        <line x1="2" y1="${h}" x2="${spikeSize-2}" y2="${h}" stroke="url(#lh${it.key})" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="${h}" cy="${h}" r="1.8" fill="#fff" opacity="0.95"/>
+        <circle cx="${h}" cy="${h}" r="${sz*0.4}" fill="url(#${gid}g)"/>
+        <line x1="${h}" y1="${h-cr}" x2="${h}" y2="${h-spikeLen}" stroke="url(#${gid}v)" stroke-width="${sw}" stroke-linecap="round"/>
+        <line x1="${h}" y1="${h+cr}" x2="${h}" y2="${h+spikeLen}" stroke="url(#${gid}v)" stroke-width="${sw}" stroke-linecap="round"/>
+        <line x1="${h-cr}" y1="${h}" x2="${h-spikeLen}" y2="${h}" stroke="url(#${gid}h)" stroke-width="${sw}" stroke-linecap="round"/>
+        <line x1="${h+cr}" y1="${h}" x2="${h+spikeLen}" y2="${h}" stroke="url(#${gid}h)" stroke-width="${sw}" stroke-linecap="round"/>
+        <circle cx="${h}" cy="${h}" r="${cr}" fill="#fff" opacity="0.95"/>
+        <circle cx="${h}" cy="${h}" r="${cr*0.5}" fill="${it.color}"/>
       </svg>`;
       return `<div class="star-legend-item" data-active="${isActive}" style="opacity:${opacity};">
         <span class="star-legend-sample">${spikeSVG}</span>
