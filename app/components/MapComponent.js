@@ -69,43 +69,49 @@ const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = fa
   const cfg = periodStarConfig[period] || periodStarConfig.classical;
   let color = cfg.color;
   let scale = 1;
-  if (isActive) scale = 1.5;
-  else if (isHighlighted) scale = 1.2;
+  if (isActive) scale = 1.6;
+  else if (isHighlighted) scale = 1.25;
   if (isDimmed) color = '#3a3a3a';
 
   const stateClass = [isActive ? 'active' : '', isHighlighted ? 'highlighted' : '', isDimmed ? 'dimmed' : ''].filter(Boolean).join(' ');
   const animDur = isActive ? '1.6s' : '3.4s';
 
-  // 细芒星 SVG：中心亮点 + 细长渐隐光芒（天文恒星级）
+  // 进阶细芒星 SVG：更细光芒 + 多层光晕 + 闪烁
   const coreR = cfg.coreSize * scale;
   const spikeLen = cfg.spikeLen * scale;
   const haloR = cfg.haloSize * scale;
-  const size = Math.round(haloR * 2.2);
+  const size = Math.round(haloR * 2.4);
   const h = size / 2;
-  const spikeWidth = Math.max(0.8, 1.2 * scale);
-  const cid = cfg.coreSize; // 用于渐变 ID
+  const spikeWidth = Math.max(0.6, 1 * scale);
+  const cid = cfg.coreSize;
   
   const defs = [
     '<defs>',
     '<radialGradient id="hg' + cid + '" cx="50%" cy="50%" r="50%">',
-    '<stop offset="0%" stop-color="' + cfg.glow + '" stop-opacity="0.3"/>',
+    '<stop offset="0%" stop-color="' + cfg.glow + '" stop-opacity="0.25"/>',
+    '<stop offset="60%" stop-color="' + cfg.glow + '" stop-opacity="0.08"/>',
+    '<stop offset="100%" stop-color="' + cfg.glow + '" stop-opacity="0"/>',
+    '</radialGradient>',
+    '<radialGradient id="mg' + cid + '" cx="50%" cy="50%" r="50%">',
+    '<stop offset="0%" stop-color="' + cfg.glow + '" stop-opacity="0.5"/>',
     '<stop offset="100%" stop-color="' + cfg.glow + '" stop-opacity="0"/>',
     '</radialGradient>',
     '<linearGradient id="sgv' + cid + '" x1="0%" y1="0%" x2="0%" y2="100%">',
-    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.9"/>',
+    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.95"/>',
+    '<stop offset="60%" stop-color="' + color + '" stop-opacity="0.4"/>',
     '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>',
     '</linearGradient>',
     '<linearGradient id="sgh' + cid + '" x1="0%" y1="0%" x2="100%" y2="0%">',
-    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.9"/>',
+    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.95"/>',
+    '<stop offset="60%" stop-color="' + color + '" stop-opacity="0.4"/>',
     '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>',
     '</linearGradient>',
     '</defs>'
   ].join('');
   
-  // 外层柔光晕（极淡）
-  const halo = '<circle cx="' + h + '" cy="' + h + '" r="' + haloR + '" fill="url(#hg' + cid + ')" opacity="0.5"/>';
+  const halo = '<circle cx="' + h + '" cy="' + h + '" r="' + (haloR * 1.2) + '" fill="url(#hg' + cid + ')" opacity="0.7"/>' +
+               '<circle cx="' + h + '" cy="' + h + '" r="' + (haloR * 0.7) + '" fill="url(#mg' + cid + ')" opacity="0.8"/>';
   
-  // 4 条主芒（十字，细长渐隐）
   const mainSpikes = [
     '<line x1="' + h + '" y1="' + (h - coreR) + '" x2="' + h + '" y2="' + (h - spikeLen) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>',
     '<line x1="' + h + '" y1="' + (h + coreR) + '" x2="' + h + '" y2="' + (h + spikeLen) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>',
@@ -113,25 +119,24 @@ const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = fa
     '<line x1="' + (h + coreR) + '" y1="' + h + '" x2="' + (h + spikeLen) + '" y2="' + h + '" stroke="url(#sgh' + cid + ')" stroke-width="' + spikeWidth + '" stroke-linecap="round"/>'
   ].join('');
   
-  // 4 条短芒（对角，更细更淡）
   const shortSpikes = [
-    '<line x1="' + (h - coreR * 0.7) + '" y1="' + (h - coreR * 0.7) + '" x2="' + (h - spikeLen * 0.6) + '" y2="' + (h - spikeLen * 0.6) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>',
-    '<line x1="' + (h + coreR * 0.7) + '" y1="' + (h + coreR * 0.7) + '" x2="' + (h + spikeLen * 0.6) + '" y2="' + (h + spikeLen * 0.6) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>',
-    '<line x1="' + (h + coreR * 0.7) + '" y1="' + (h - coreR * 0.7) + '" x2="' + (h + spikeLen * 0.6) + '" y2="' + (h - spikeLen * 0.6) + '" stroke="url(#sgh' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>',
-    '<line x1="' + (h - coreR * 0.7) + '" y1="' + (h + coreR * 0.7) + '" x2="' + (h - spikeLen * 0.6) + '" y2="' + (h + spikeLen * 0.6) + '" stroke="url(#sgh' + cid + ')" stroke-width="' + (spikeWidth * 0.7) + '" stroke-linecap="round" opacity="0.6"/>'
+    '<line x1="' + (h - coreR * 0.7) + '" y1="' + (h - coreR * 0.7) + '" x2="' + (h - spikeLen * 0.65) + '" y2="' + (h - spikeLen * 0.65) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + (spikeWidth * 0.6) + '" stroke-linecap="round" opacity="0.55"/>',
+    '<line x1="' + (h + coreR * 0.7) + '" y1="' + (h + coreR * 0.7) + '" x2="' + (h + spikeLen * 0.65) + '" y2="' + (h + spikeLen * 0.65) + '" stroke="url(#sgv' + cid + ')" stroke-width="' + (spikeWidth * 0.6) + '" stroke-linecap="round" opacity="0.55"/>',
+    '<line x1="' + (h + coreR * 0.7) + '" y1="' + (h - coreR * 0.7) + '" x2="' + (h + spikeLen * 0.65) + '" y2="' + (h - spikeLen * 0.65) + '" stroke="url(#sgh' + cid + ')" stroke-width="' + (spikeWidth * 0.6) + '" stroke-linecap="round" opacity="0.55"/>',
+    '<line x1="' + (h - coreR * 0.7) + '" y1="' + (h + coreR * 0.7) + '" x2="' + (h - spikeLen * 0.65) + '" y2="' + (h + spikeLen * 0.65) + '" stroke="url(#sgh' + cid + ')" stroke-width="' + (spikeWidth * 0.6) + '" stroke-linecap="round" opacity="0.55"/>'
   ].join('');
   
-  // 中心亮点（纯白 + 内层着色）
-  const core = '<circle cx="' + h + '" cy="' + h + '" r="' + coreR + '" fill="#fff" opacity="0.95"/>';
-  const coreInner = '<circle cx="' + h + '" cy="' + h + '" r="' + (coreR * 0.5) + '" fill="' + color + '"/>';
+  const core = '<circle cx="' + h + '" cy="' + h + '" r="' + coreR + '" fill="#fff" opacity="0.98"/>';
+  const coreInner = '<circle cx="' + h + '" cy="' + h + '" r="' + (coreR * 0.55) + '" fill="' + color + '" opacity="0.9"/>';
+  const coreTiny = '<circle cx="' + h + '" cy="' + h + '" r="' + (coreR * 0.2) + '" fill="#fff"/>';
   
-  const starSVG = '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + defs + halo + mainSpikes + shortSpikes + core + coreInner + '</svg>';
+  const starSVG = '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" xmlns="http://www.w3.org/2000/svg">' + defs + halo + mainSpikes + shortSpikes + core + coreInner + coreTiny + '</svg>';
 
   return L.divIcon({
     className: 'custom-marker',
     html: '<div class="marker-wrapper ' + stateClass + '" style="width:' + size + 'px;height:' + size + 'px;position:relative;cursor:pointer;">' +
-      '<div class="star-halo" style="position:absolute;inset:-' + Math.round(size * 0.15) + 'px;background:radial-gradient(circle,' + cfg.glow.replace(/0.9/, '0.15').replace(/0.95/, '0.15') + ' 0%,transparent 70%);animation:star-breathe ' + animDur + ' ease-in-out infinite;"></div>' +
-      '<div class="star-body" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 ' + (isActive ? '8px' : '4px') + ' ' + cfg.glow + ');">' + starSVG + '</div>' +
+      '<div class="star-halo" style="position:absolute;inset:-' + Math.round(size * 0.1) + 'px;background:radial-gradient(circle,' + cfg.glow.replace(/0.9/, '0.12').replace(/0.95/, '0.12') + ' 0%,transparent 75%);animation:star-breathe ' + animDur + ' ease-in-out infinite;opacity:' + (isActive ? '1' : '0.7') + ';"></div>' +
+      '<div class="star-body" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 ' + (isActive ? '12px' : '6px') + ' ' + cfg.glow + ');animation:star-twinkle ' + (isActive ? '1.6s' : (2.5 + Math.random() * 1.5).toFixed(1) + 's') + ' ease-in-out infinite;">' + starSVG + '</div>' +
     '</div>',
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
