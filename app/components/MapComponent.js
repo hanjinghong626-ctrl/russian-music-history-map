@@ -21,46 +21,46 @@ const periodColors = {
   'soviet': 'rgb(170,210,240)',
 };
 
-// 四色星辰·星体配置：细芒星 - 天文恒星级精致星体
+// 四色星辰·星体配置：进阶细芒星 - 带闪烁+星爆效果
 const periodStarConfig = {
   'classical': {
     color: '#e8f0ff',
     glow: 'rgba(200,220,255,0.9)',
-    coreSize: 2.5,
-    spikeLen: 12,
-    haloSize: 18,
+    coreSize: 2.2,
+    spikeLen: 14,
+    haloSize: 20,
     name: '古典先驱',
   },
   'national-foundation': {
     color: '#a0d8ff',
     glow: 'rgba(130,200,255,0.95)',
-    coreSize: 2.8,
-    spikeLen: 13,
-    haloSize: 19,
+    coreSize: 2.4,
+    spikeLen: 15,
+    haloSize: 21,
     name: '民族奠基',
   },
   'national-prosperity': {
     color: '#ffe080',
     glow: 'rgba(240,200,100,0.95)',
-    coreSize: 3,
-    spikeLen: 14,
-    haloSize: 20,
+    coreSize: 2.6,
+    spikeLen: 16,
+    haloSize: 22,
     name: '民族繁荣',
   },
   'late-romantic': {
     color: '#ffc0d8',
     glow: 'rgba(240,168,200,0.9)',
-    coreSize: 2.8,
-    spikeLen: 13,
-    haloSize: 19,
+    coreSize: 2.4,
+    spikeLen: 15,
+    haloSize: 21,
     name: '白银时代',
   },
   'soviet': {
     color: '#c0e0ff',
     glow: 'rgba(168,208,240,0.9)',
-    coreSize: 2.5,
-    spikeLen: 12,
-    haloSize: 18,
+    coreSize: 2.2,
+    spikeLen: 14,
+    haloSize: 20,
     name: '苏联学派',
   },
 };
@@ -687,11 +687,22 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     return items.map(it => {
       const isActive = activePeriod && activePeriod.id === it.key;
       const opacity = activePeriod ? (isActive ? 1 : 0.35) : 0.9;
-      const spikeSize = 14;
+      const spikeSize = 16;
+      const h = spikeSize / 2;
       const spikeSVG = `<svg width="${spikeSize}" height="${spikeSize}" viewBox="0 0 ${spikeSize} ${spikeSize}">
-        <line x1="${spikeSize/2}" y1="2" x2="${spikeSize/2}" y2="${spikeSize-2}" stroke="${it.color}" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-        <line x1="2" y1="${spikeSize/2}" x2="${spikeSize-2}" y2="${spikeSize/2}" stroke="${it.color}" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-        <circle cx="${spikeSize/2}" cy="${spikeSize/2}" r="2" fill="#fff"/>
+        <defs>
+          <linearGradient id="lv${it.key}" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="${it.color}" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="${it.color}" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="lh${it.key}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="${it.color}" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="${it.color}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <line x1="${h}" y1="2" x2="${h}" y2="${spikeSize-2}" stroke="url(#lv${it.key})" stroke-width="1" stroke-linecap="round"/>
+        <line x1="2" y1="${h}" x2="${spikeSize-2}" y2="${h}" stroke="url(#lh${it.key})" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="${h}" cy="${h}" r="1.8" fill="#fff" opacity="0.95"/>
       </svg>`;
       return `<div class="star-legend-item" data-active="${isActive}" style="opacity:${opacity};">
         <span class="star-legend-sample">${spikeSVG}</span>
