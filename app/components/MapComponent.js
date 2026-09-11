@@ -342,8 +342,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         box-shadow: 0 4px 24px rgba(0,0,0,0.5);
         pointer-events: none;
       }
-      .star-legend-item { display: flex; align-items: center; gap: 9px; transition: opacity 0.5s ease; }
-      .star-legend-sample { display: inline-block; width: 16px; height: 16px; flex-shrink: 0; }
+      .star-legend-item { display: flex; align-items: center; gap: 6px; transition: opacity 0.5s ease; }
+      .star-legend-sample { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex-shrink: 0; overflow: visible; }
       .star-legend-label { font-family: 'Noto Serif SC', serif; font-size: 11px; letter-spacing: 1.5px; color: rgba(215,230,250,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; }
       .star-legend-item[data-active="true"] .star-legend-label { color: rgb(240,230,200); text-shadow: 0 0 6px rgba(240,200,120,0.5); }
 
