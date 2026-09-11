@@ -396,15 +396,17 @@
 
 /* 选中的作曲家标记 - 增强发光（新版三图层：halo / body / core） */
 .marker-wrapper.composer-selected > .star-body {
-  box-shadow: 0 0 32px rgba(255,255,255,0.6), 0 0 64px currentColor !important;
-  animation: marker-pulse 1.2s ease-in-out infinite !important;
-  filter: brightness(1.3);
+  filter: drop-shadow(0 0 18px rgba(255,255,255,0.7)) drop-shadow(0 0 40px currentColor) brightness(1.4) !important;
+}
+.marker-wrapper.composer-selected > .star-body svg {
+  animation: marker-glow 1.2s ease-in-out infinite;
 }
 .marker-wrapper.composer-selected > .star-halo {
   opacity: 1 !important;
   animation: star-breathe 1.2s ease-in-out infinite !important;
+  inset: -50% !important;
 }
-.marker-wrapper.composer-selected > .star-core {
-  border-color: #fff !important;
-  box-shadow: 0 0 14px rgba(255,255,255,0.8) !important;
+@keyframes marker-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
 }
