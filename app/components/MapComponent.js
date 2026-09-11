@@ -329,23 +329,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         0%,100% { transform: scale(1); opacity: 1; filter: brightness(1); }
         50% { transform: scale(1.06); opacity: 0.9; filter: brightness(1.15); }
       }
-      /* 四色星辰·星图图例 */
-      .star-legend {
-        position: absolute; left: 14px; bottom: 72px; z-index: 600;
-        display: flex; flex-direction: column; gap: 6px;
-        padding: 10px 12px;
-        background: rgba(10,20,38,0.6);
-        backdrop-filter: blur(12px) saturate(150%);
-        -webkit-backdrop-filter: blur(12px) saturate(150%);
-        border: 1px solid rgba(170,210,250,0.2);
-        border-radius: 10px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-        pointer-events: none;
-      }
-      .star-legend-item { display: flex; align-items: center; gap: 6px; transition: opacity 0.5s ease; }
-      .star-legend-sample { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex-shrink: 0; overflow: visible; }
-      .star-legend-label { font-family: 'Noto Serif SC', serif; font-size: 11px; letter-spacing: 1.5px; color: rgba(215,230,250,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; }
-      .star-legend-item[data-active="true"] .star-legend-label { color: rgb(240,230,200); text-shadow: 0 0 6px rgba(240,200,120,0.5); }
 
       @keyframes star-breathe {
         0%,100% { opacity: 0.55; transform: scale(0.92); }
@@ -680,56 +663,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     }, 3800);
   };
 
-  // 星图图例
-  const starLegendHTML = useMemo(() => {
-    const items = [
-      { key: 'classical', color: '#e8f0ff', glow: 'rgba(200,220,255,0.9)', label: '古典先驱' },
-      { key: 'national-foundation', color: '#a0d8ff', glow: 'rgba(130,200,255,0.95)', label: '民族奠基' },
-      { key: 'national-prosperity', color: '#ffe080', glow: 'rgba(240,200,100,0.95)', label: '民族繁荣' },
-      { key: 'late-romantic', color: '#ffc0d8', glow: 'rgba(240,168,200,0.9)', label: '白银时代' },
-      { key: 'soviet', color: '#c0e0ff', glow: 'rgba(168,208,240,0.9)', label: '苏联学派' },
-    ];
-    return items.map(it => {
-      const isActive = activePeriod && activePeriod.id === it.key;
-      const opacity = activePeriod ? (isActive ? 1 : 0.3) : 0.9;
-      // 图例样本：28px 容器，24px SVG，光芒清晰可见
-      const sz = 24;
-      const h = sz / 2;
-      const spikeLen = sz * 0.42;
-      const sw = 1.2;
-      const cr = 2.2;
-      const gid = 'lg' + it.key;
-      const spikeSVG = `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="overflow:visible;">
-        <defs>
-          <linearGradient id="${gid}v" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="${it.color}" stop-opacity="0.9"/>
-            <stop offset="70%" stop-color="${it.color}" stop-opacity="0.3"/>
-            <stop offset="100%" stop-color="${it.color}" stop-opacity="0"/>
-          </linearGradient>
-          <linearGradient id="${gid}h" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="${it.color}" stop-opacity="0.9"/>
-            <stop offset="70%" stop-color="${it.color}" stop-opacity="0.3"/>
-            <stop offset="100%" stop-color="${it.color}" stop-opacity="0"/>
-          </linearGradient>
-          <radialGradient id="${gid}g">
-            <stop offset="0%" stop-color="${it.glow}" stop-opacity="0.4"/>
-            <stop offset="100%" stop-color="${it.glow}" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <circle cx="${h}" cy="${h}" r="${sz*0.4}" fill="url(#${gid}g)"/>
-        <line x1="${h}" y1="${h-cr}" x2="${h}" y2="${h-spikeLen}" stroke="url(#${gid}v)" stroke-width="${sw}" stroke-linecap="round"/>
-        <line x1="${h}" y1="${h+cr}" x2="${h}" y2="${h+spikeLen}" stroke="url(#${gid}v)" stroke-width="${sw}" stroke-linecap="round"/>
-        <line x1="${h-cr}" y1="${h}" x2="${h-spikeLen}" y2="${h}" stroke="url(#${gid}h)" stroke-width="${sw}" stroke-linecap="round"/>
-        <line x1="${h+cr}" y1="${h}" x2="${h+spikeLen}" y2="${h}" stroke="url(#${gid}h)" stroke-width="${sw}" stroke-linecap="round"/>
-        <circle cx="${h}" cy="${h}" r="${cr}" fill="#fff" opacity="0.95"/>
-        <circle cx="${h}" cy="${h}" r="${cr*0.5}" fill="${it.color}"/>
-      </svg>`;
-      return `<div class="star-legend-item" data-active="${isActive}" style="opacity:${opacity};">
-        <span class="star-legend-sample">${spikeSVG}</span>
-        <span class="star-legend-label">${it.label}</span>
-      </div>`;
-    }).join('');
-  }, [activePeriod]);
 
   const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
   const composerCount = composers.length;
@@ -756,9 +689,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       <BasilCathedral cityActive={!!selectedCity} onFlyTo={handleFlyToArt} />
 
 
-
-      {/* 四色星辰·星图图例 */}
-      <div className="star-legend" dangerouslySetInnerHTML={{ __html: starLegendHTML }} />
 
       <div className="map-overlay-tl">
         <div className="map-title-elegant">
