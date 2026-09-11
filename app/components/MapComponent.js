@@ -21,36 +21,36 @@ const periodColors = {
   'soviet': 'rgb(170,210,240)',
 };
 
-// 四色星辰·星体形态配置：每个时代拥有专属"星座"外观
+// 四色星辰·星体配置：每个时代拥有专属颜色与光晕
 const periodStarConfig = {
   'classical': {
-    shape: 'cross',          // 十字四芒星 —— 古典均衡·北极星
     color: '#e4ecff',
     glow: 'rgba(200,220,255,0.85)',
+    size: 24,
     name: '古典先驱',
   },
   'national-foundation': {
-    shape: 'burst',          // 八芒爆星 —— 奠基的爆发力
     color: '#82c8ff',
     glow: 'rgba(130,200,255,0.9)',
+    size: 26,
     name: '民族奠基',
   },
   'national-prosperity': {
-    shape: 'pentagon',       // 五角暖星 —— 黄金时代
     color: '#f0c864',
     glow: 'rgba(240,200,100,0.9)',
+    size: 28,
     name: '民族繁荣',
   },
   'late-romantic': {
-    shape: 'hex',            // 六角柔星 —— 白银时代·朦胧
     color: '#f0a8c8',
     glow: 'rgba(240,168,200,0.85)',
+    size: 26,
     name: '白银时代',
   },
   'soviet': {
-    shape: 'diamond',        // 钢蓝菱形 —— 力量·理性
     color: '#a8d0f0',
     glow: 'rgba(168,208,240,0.85)',
+    size: 24,
     name: '苏联学派',
   },
 };
@@ -58,63 +58,22 @@ const periodStarConfig = {
 const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = false, period = null) => {
   const cfg = periodStarConfig[period] || periodStarConfig.classical;
   let color = cfg.color;
-  let size = 26;
-  if (isActive) size = 38;
-  else if (isHighlighted) size = 32;
+  let size = cfg.size || 24;
+  if (isActive) size = Math.round(size * 1.5);
+  else if (isHighlighted) size = Math.round(size * 1.25);
   if (isDimmed) color = '#3a3a3a';
 
   const stateClass = `${isActive ? 'active' : ''} ${isHighlighted ? 'highlighted' : ''} ${isDimmed ? 'dimmed' : ''}`.trim();
   const animDur = isActive ? '1.6s' : '3.4s';
 
-  // 星体主体：conic-gradient 构造多芒星
+  // 星体主体：radial-gradient 柔和光晕
   const starBG = (() => {
-    switch (cfg.shape) {
-      case 'cross':
-        return `conic-gradient(from 0deg,
-          transparent 0deg, ${color} 10deg, transparent 28deg,
-          transparent 62deg, ${color} 72deg, transparent 90deg,
-          transparent 152deg, ${color} 162deg, transparent 180deg,
-          transparent 242deg, ${color} 252deg, transparent 270deg,
-          transparent 332deg, ${color} 342deg, transparent 360deg)`;
-      case 'burst':
-        return `conic-gradient(from 22.5deg,
-          transparent 0deg, ${color} 8deg, transparent 22deg,
-          transparent 45deg, ${color} 53deg, transparent 67deg,
-          transparent 90deg, ${color} 98deg, transparent 112deg,
-          transparent 135deg, ${color} 143deg, transparent 157deg,
-          transparent 180deg, ${color} 188deg, transparent 202deg,
-          transparent 225deg, ${color} 233deg, transparent 247deg,
-          transparent 270deg, ${color} 278deg, transparent 292deg,
-          transparent 315deg, ${color} 323deg, transparent 337deg,
-          transparent 360deg)`;
-      case 'pentagon':
-        return `conic-gradient(from 0deg,
-          transparent 0deg, ${color} 12deg, transparent 30deg,
-          transparent 60deg, ${color} 72deg, transparent 102deg,
-          transparent 132deg, ${color} 144deg, transparent 174deg,
-          transparent 204deg, ${color} 216deg, transparent 246deg,
-          transparent 276deg, ${color} 288deg, transparent 318deg,
-          transparent 348deg, ${color} 360deg)`;
-      case 'hex':
-        return `conic-gradient(from 15deg,
-          transparent 0deg, ${color} 8deg, transparent 20deg,
-          transparent 50deg, ${color} 58deg, transparent 70deg,
-          transparent 100deg, ${color} 108deg, transparent 120deg,
-          transparent 150deg, ${color} 158deg, transparent 170deg,
-          transparent 200deg, ${color} 208deg, transparent 220deg,
-          transparent 250deg, ${color} 258deg, transparent 270deg,
-          transparent 300deg, ${color} 308deg, transparent 320deg,
-          transparent 350deg, ${color} 358deg, transparent 360deg)`;
-      case 'diamond':
-        return `conic-gradient(from 45deg,
-          transparent 0deg, ${color} 18deg, transparent 45deg,
-          transparent 90deg, ${color} 108deg, transparent 135deg,
-          transparent 180deg, ${color} 198deg, transparent 225deg,
-          transparent 270deg, ${color} 288deg, transparent 315deg,
-          transparent 360deg)`;
-      default:
-        return `radial-gradient(circle, ${color} 0%, transparent 70%)`;
-    }
+    // 内层亮核 → 中层主体色 → 外层光晕渐隐
+    return `radial-gradient(circle at 40% 40%, 
+      rgba(255,255,255,0.9) 0%, 
+      ${color} 25%, 
+      ${cfg.glow.replace(/0.9/, '0.6').replace(/0.85/, '0.5')} 55%, 
+      transparent 80%)`;
   })();
 
   const haloSize = isActive ? 1.6 : 1.2;
@@ -668,27 +627,18 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   // 星图图例：五个学派的"星体形态"小样本
   const starLegendHTML = useMemo(() => {
     const items = [
-      { key: 'classical', shape: 'cross', color: '#e4ecff', glow: 'rgba(200,220,255,0.85)', label: '古典先驱' },
-      { key: 'national-foundation', shape: 'burst', color: '#82c8ff', glow: 'rgba(130,200,255,0.9)', label: '民族奠基' },
-      { key: 'national-prosperity', shape: 'pentagon', color: '#f0c864', glow: 'rgba(240,200,100,0.9)', label: '民族繁荣' },
-      { key: 'late-romantic', shape: 'hex', color: '#f0a8c8', glow: 'rgba(240,168,200,0.85)', label: '白银时代' },
-      { key: 'soviet', shape: 'diamond', color: '#a8d0f0', glow: 'rgba(168,208,240,0.85)', label: '苏联学派' },
+      { key: 'classical', color: '#e4ecff', glow: 'rgba(200,220,255,0.85)', label: '古典先驱' },
+      { key: 'national-foundation', color: '#82c8ff', glow: 'rgba(130,200,255,0.9)', label: '民族奠基' },
+      { key: 'national-prosperity', color: '#f0c864', glow: 'rgba(240,200,100,0.9)', label: '民族繁荣' },
+      { key: 'late-romantic', color: '#f0a8c8', glow: 'rgba(240,168,200,0.85)', label: '白银时代' },
+      { key: 'soviet', color: '#a8d0f0', glow: 'rgba(168,208,240,0.85)', label: '苏联学派' },
     ];
-    const starBG = (shape, color) => {
-      switch (shape) {
-        case 'cross': return `conic-gradient(from 0deg,transparent 0deg,${color} 10deg,transparent 28deg,transparent 62deg,${color} 72deg,transparent 90deg,transparent 152deg,${color} 162deg,transparent 180deg,transparent 242deg,${color} 252deg,transparent 270deg,transparent 332deg,${color} 342deg,transparent 360deg)`;
-        case 'burst': return `conic-gradient(from 22.5deg,transparent 0deg,${color} 8deg,transparent 22deg,transparent 45deg,${color} 53deg,transparent 67deg,transparent 90deg,${color} 98deg,transparent 112deg,transparent 135deg,${color} 143deg,transparent 157deg,transparent 180deg,${color} 188deg,transparent 202deg,transparent 225deg,${color} 233deg,transparent 247deg,transparent 270deg,${color} 278deg,transparent 292deg,transparent 315deg,${color} 323deg,transparent 337deg,transparent 360deg)`;
-        case 'pentagon': return `conic-gradient(from 0deg,transparent 0deg,${color} 12deg,transparent 30deg,transparent 60deg,${color} 72deg,transparent 102deg,transparent 132deg,${color} 144deg,transparent 174deg,transparent 204deg,${color} 216deg,transparent 246deg,transparent 276deg,${color} 288deg,transparent 318deg,transparent 348deg,${color} 360deg)`;
-        case 'hex': return `conic-gradient(from 15deg,transparent 0deg,${color} 8deg,transparent 20deg,transparent 50deg,${color} 58deg,transparent 70deg,transparent 100deg,${color} 108deg,transparent 120deg,transparent 150deg,${color} 158deg,transparent 170deg,transparent 200deg,${color} 208deg,transparent 220deg,transparent 250deg,${color} 258deg,transparent 270deg,transparent 300deg,${color} 308deg,transparent 320deg,transparent 350deg,${color} 358deg,transparent 360deg)`;
-        case 'diamond': return `conic-gradient(from 45deg,transparent 0deg,${color} 18deg,transparent 45deg,transparent 90deg,${color} 108deg,transparent 135deg,transparent 180deg,${color} 198deg,transparent 225deg,transparent 270deg,${color} 288deg,transparent 315deg,transparent 360deg)`;
-        default: return `radial-gradient(circle,${color} 0%,transparent 70%)`;
-      }
-    };
+
     return items.map(it => {
       const isActive = activePeriod && activePeriod.id === it.key;
       const opacity = activePeriod ? (isActive ? 1 : 0.35) : 0.85;
       return `<div class="star-legend-item" data-active="${isActive}" style="opacity:${opacity};">
-        <span class="star-legend-sample" style="background:${starBG(it.shape, it.color)};box-shadow:0 0 8px ${it.glow};"></span>
+        <span class="star-legend-sample" style="background:radial-gradient(circle,${it.color} 0%,transparent 70%);box-shadow:0 0 8px ${it.glow};"></span>
         <span class="star-legend-label">${it.label}</span>
       </div>`;
     }).join('');
