@@ -302,21 +302,10 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       .marker-wrapper.dimmed > .star-body { opacity: 0.15 !important; box-shadow: none !important; animation: none !important; filter: grayscale(1); }
       .marker-wrapper.dimmed > .star-core { opacity: 0.15 !important; border-color: #2a2a2a !important; box-shadow: none !important; }
       /* 四色星辰·星图图例 */
-      .star-legend {
-        position: absolute; left: 14px; bottom: 72px; z-index: 600;
-        display: flex; flex-direction: column; gap: 6px;
-        padding: 10px 12px;
-        background: rgba(10,20,38,0.55);
-        backdrop-filter: blur(10px) saturate(140%);
-        -webkit-backdrop-filter: blur(10px) saturate(140%);
-        border: 1px solid rgba(170,210,250,0.25);
-        border-radius: 10px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 0 20px rgba(100,160,220,0.06);
-        pointer-events: none;
-      }
-      .star-legend-item { display: flex; align-items: center; gap: 9px; transition: opacity 0.5s ease; }
-      .star-legend-sample { display: inline-block; width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; animation: marker-pulse 3.4s ease-in-out infinite; }
-      .star-legend-label { font-family: 'Noto Serif SC', serif; font-size: 11px; letter-spacing: 1.5px; color: rgba(215,230,250,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; }
+
+
+
+
       .star-legend-item[data-active="true"] .star-legend-label { color: rgb(240,230,200); text-shadow: 0 0 6px rgba(240,200,120,0.5); }
     `;
     document.head.appendChild(style);
@@ -624,25 +613,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
   const composerCount = composers.length;
 
-  // 星图图例：五个学派的"星体形态"小样本
-  const starLegendHTML = useMemo(() => {
-    const items = [
-      { key: 'classical', color: '#e4ecff', glow: 'rgba(200,220,255,0.85)', label: '古典先驱' },
-      { key: 'national-foundation', color: '#82c8ff', glow: 'rgba(130,200,255,0.9)', label: '民族奠基' },
-      { key: 'national-prosperity', color: '#f0c864', glow: 'rgba(240,200,100,0.9)', label: '民族繁荣' },
-      { key: 'late-romantic', color: '#f0a8c8', glow: 'rgba(240,168,200,0.85)', label: '白银时代' },
-      { key: 'soviet', color: '#a8d0f0', glow: 'rgba(168,208,240,0.85)', label: '苏联学派' },
-    ];
 
-    return items.map(it => {
-      const isActive = activePeriod && activePeriod.id === it.key;
-      const opacity = activePeriod ? (isActive ? 1 : 0.35) : 0.85;
-      return `<div class="star-legend-item" data-active="${isActive}" style="opacity:${opacity};">
-        <span class="star-legend-sample" style="background:radial-gradient(circle,${it.color} 0%,transparent 70%);box-shadow:0 0 8px ${it.glow};"></span>
-        <span class="star-legend-label">${it.label}</span>
-      </div>`;
-    }).join('');
-  }, [activePeriod]);
 
   return (
     <div className="map-wrapper">
@@ -663,8 +634,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       {/* 俄罗斯标志性建筑动画 - 银色星座版 */}
       <BasilCathedral cityActive={!!selectedCity} onFlyTo={handleFlyToArt} />
 
-      {/* 四色星辰·星图图例 */}
-      <div className="star-legend" dangerouslySetInnerHTML={{ __html: starLegendHTML }} />
+
 
       <div className="map-overlay-tl">
         <div className="map-title-elegant">
