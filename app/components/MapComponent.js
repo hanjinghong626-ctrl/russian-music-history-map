@@ -21,36 +21,41 @@ const periodColors = {
   'soviet': 'rgb(170,210,240)',
 };
 
-// 四色星辰·星体配置：每个时代拥有专属颜色与光晕
+// 四色星辰·星体配置：每个时代拥有专属星芒形态
 const periodStarConfig = {
   'classical': {
-    color: '#e4ecff',
-    glow: 'rgba(200,220,255,0.85)',
-    size: 24,
+    color: '#e8f0ff',
+    glow: 'rgba(200,220,255,0.9)',
+    spike: 4,
+    size: 22,
     name: '古典先驱',
   },
   'national-foundation': {
-    color: '#82c8ff',
-    glow: 'rgba(130,200,255,0.9)',
-    size: 26,
+    color: '#a0d8ff',
+    glow: 'rgba(130,200,255,0.95)',
+    spike: 4,
+    size: 24,
     name: '民族奠基',
   },
   'national-prosperity': {
-    color: '#f0c864',
-    glow: 'rgba(240,200,100,0.9)',
-    size: 28,
+    color: '#ffe080',
+    glow: 'rgba(240,200,100,0.95)',
+    spike: 4,
+    size: 26,
     name: '民族繁荣',
   },
   'late-romantic': {
-    color: '#f0a8c8',
-    glow: 'rgba(240,168,200,0.85)',
-    size: 26,
+    color: '#ffc0d8',
+    glow: 'rgba(240,168,200,0.9)',
+    spike: 4,
+    size: 24,
     name: '白银时代',
   },
   'soviet': {
-    color: '#a8d0f0',
-    glow: 'rgba(168,208,240,0.85)',
-    size: 24,
+    color: '#c0e0ff',
+    glow: 'rgba(168,208,240,0.9)',
+    spike: 4,
+    size: 22,
     name: '苏联学派',
   },
 };
@@ -277,6 +282,24 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         0%,100% { transform: scale(1); opacity: 1; filter: brightness(1); }
         50% { transform: scale(1.06); opacity: 0.9; filter: brightness(1.15); }
       }
+      /* 四色星辰·星图图例 */
+      .star-legend {
+        position: absolute; left: 14px; bottom: 72px; z-index: 600;
+        display: flex; flex-direction: column; gap: 6px;
+        padding: 10px 12px;
+        background: rgba(10,20,38,0.6);
+        backdrop-filter: blur(12px) saturate(150%);
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+        border: 1px solid rgba(170,210,250,0.2);
+        border-radius: 10px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+        pointer-events: none;
+      }
+      .star-legend-item { display: flex; align-items: center; gap: 9px; transition: opacity 0.5s ease; }
+      .star-legend-sample { display: inline-block; width: 16px; height: 16px; flex-shrink: 0; }
+      .star-legend-label { font-family: 'Noto Serif SC', serif; font-size: 11px; letter-spacing: 1.5px; color: rgba(215,230,250,0.9); text-shadow: 0 1px 2px rgba(0,0,0,0.8); white-space: nowrap; }
+      .star-legend-item[data-active="true"] .star-legend-label { color: rgb(240,230,200); text-shadow: 0 0 6px rgba(240,200,120,0.5); }
+
       @keyframes star-breathe {
         0%,100% { opacity: 0.55; transform: scale(0.92); }
         50% { opacity: 1; transform: scale(1.12); }
@@ -610,6 +633,31 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     }, 3800);
   };
 
+  // 星图图例
+  const starLegendHTML = useMemo(() => {
+    const items = [
+      { key: 'classical', color: '#e8f0ff', glow: 'rgba(200,220,255,0.9)', label: '古典先驱' },
+      { key: 'national-foundation', color: '#a0d8ff', glow: 'rgba(130,200,255,0.95)', label: '民族奠基' },
+      { key: 'national-prosperity', color: '#ffe080', glow: 'rgba(240,200,100,0.95)', label: '民族繁荣' },
+      { key: 'late-romantic', color: '#ffc0d8', glow: 'rgba(240,168,200,0.9)', label: '白银时代' },
+      { key: 'soviet', color: '#c0e0ff', glow: 'rgba(168,208,240,0.9)', label: '苏联学派' },
+    ];
+    return items.map(it => {
+      const isActive = activePeriod && activePeriod.id === it.key;
+      const opacity = activePeriod ? (isActive ? 1 : 0.35) : 0.9;
+      const spikeSize = 14;
+      const spikeSVG = `<svg width="${spikeSize}" height="${spikeSize}" viewBox="0 0 ${spikeSize} ${spikeSize}">
+        <line x1="${spikeSize/2}" y1="2" x2="${spikeSize/2}" y2="${spikeSize-2}" stroke="${it.color}" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+        <line x1="2" y1="${spikeSize/2}" x2="${spikeSize-2}" y2="${spikeSize/2}" stroke="${it.color}" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+        <circle cx="${spikeSize/2}" cy="${spikeSize/2}" r="2" fill="#fff"/>
+      </svg>`;
+      return `<div class="star-legend-item" data-active="${isActive}" style="opacity:${opacity};">
+        <span class="star-legend-sample">${spikeSVG}</span>
+        <span class="star-legend-label">${it.label}</span>
+      </div>`;
+    }).join('');
+  }, [activePeriod]);
+
   const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
   const composerCount = composers.length;
 
@@ -635,6 +683,9 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       <BasilCathedral cityActive={!!selectedCity} onFlyTo={handleFlyToArt} />
 
 
+
+      {/* 四色星辰·星图图例 */}
+      <div className="star-legend" dangerouslySetInnerHTML={{ __html: starLegendHTML }} />
 
       <div className="map-overlay-tl">
         <div className="map-title-elegant">
