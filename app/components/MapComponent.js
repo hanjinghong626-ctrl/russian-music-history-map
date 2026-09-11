@@ -63,36 +63,43 @@ const periodStarConfig = {
 const createCustomIcon = (isActive = false, isHighlighted = false, isDimmed = false, period = null) => {
   const cfg = periodStarConfig[period] || periodStarConfig.classical;
   let color = cfg.color;
-  let size = cfg.size || 24;
-  if (isActive) size = Math.round(size * 1.5);
-  else if (isHighlighted) size = Math.round(size * 1.25);
+  let size = cfg.size || 22;
+  if (isActive) size = Math.round(size * 1.6);
+  else if (isHighlighted) size = Math.round(size * 1.3);
   if (isDimmed) color = '#3a3a3a';
 
-  const stateClass = `${isActive ? 'active' : ''} ${isHighlighted ? 'highlighted' : ''} ${isDimmed ? 'dimmed' : ''}`.trim();
+  const stateClass = [isActive ? 'active' : '', isHighlighted ? 'highlighted' : '', isDimmed ? 'dimmed' : ''].filter(Boolean).join(' ');
   const animDur = isActive ? '1.6s' : '3.4s';
 
-  // 星体主体：radial-gradient 柔和光晕
-  const starBG = (() => {
-    // 内层亮核 → 中层主体色 → 外层光晕渐隐
-    return `radial-gradient(circle at 40% 40%, 
-      rgba(255,255,255,0.9) 0%, 
-      ${color} 25%, 
-      ${cfg.glow.replace(/0.9/, '0.6').replace(/0.85/, '0.5')} 55%, 
-      transparent 80%)`;
-  })();
+  // SVG 星芒：十字光芒 + 对角线 + 通透亮核
+  const s = size;
+  const h = s / 2;
+  const spikeLen = s * 0.92;
+  const sw = Math.max(1.2, s * 0.09);
+  const sw2 = sw * 0.55;
+  const cr = s * 0.18;
 
-  const haloSize = isActive ? 1.6 : 1.2;
-  const coreSize = isActive ? 0.3 : 0.28;
+  const starSVG = [
+    '<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + ' ' + s + '" xmlns="http://www.w3.org/2000/svg">',
+    '<defs><radialGradient id="sg' + cfg.spike + '"><stop offset="0%" stop-color="' + cfg.glow + '" stop-opacity="0.7"/><stop offset="100%" stop-color="' + cfg.glow + '" stop-opacity="0"/></radialGradient></defs>',
+    '<circle cx="' + h + '" cy="' + h + '" r="' + (s * 0.42) + '" fill="url(#sg' + cfg.spike + ')" opacity="0.5"/>',
+    '<line x1="' + h + '" y1="' + (h - spikeLen / 2) + '" x2="' + h + '" y2="' + (h + spikeLen / 2) + '" stroke="' + color + '" stroke-width="' + sw + '" stroke-linecap="round" opacity="0.85"/>',
+    '<line x1="' + (h - spikeLen / 2) + '" y1="' + h + '" x2="' + (h + spikeLen / 2) + '" y2="' + h + '" stroke="' + color + '" stroke-width="' + sw + '" stroke-linecap="round" opacity="0.85"/>',
+    '<line x1="' + (h - spikeLen * 0.32) + '" y1="' + (h - spikeLen * 0.32) + '" x2="' + (h + spikeLen * 0.32) + '" y2="' + (h + spikeLen * 0.32) + '" stroke="' + color + '" stroke-width="' + sw2 + '" stroke-linecap="round" opacity="0.6"/>',
+    '<line x1="' + (h + spikeLen * 0.32) + '" y1="' + (h - spikeLen * 0.32) + '" x2="' + (h - spikeLen * 0.32) + '" y2="' + (h + spikeLen * 0.32) + '" stroke="' + color + '" stroke-width="' + sw2 + '" stroke-linecap="round" opacity="0.6"/>',
+    '<circle cx="' + h + '" cy="' + h + '" r="' + cr + '" fill="#fff" opacity="0.95"/>',
+    '<circle cx="' + h + '" cy="' + h + '" r="' + (cr * 0.5) + '" fill="' + color + '"/>',
+    '</svg>'
+  ].join('');
 
   return L.divIcon({
     className: 'custom-marker',
-    html: `<div class="marker-wrapper ${stateClass}" style="width:${size}px;height:${size}px;position:relative;cursor:pointer;">
-      <div class="star-halo" style="position:absolute;inset:-${((haloSize - 1) * size * 0.5).toFixed(0)}px;background:radial-gradient(circle, ${cfg.glow.replace('0.9', '0.5').replace('0.85', '0.4')} 0%, transparent 60%);animation:star-breathe ${animDur} ease-in-out infinite;"></div>
-      <div class="star-body" style="position:absolute;inset:0;background:${starBG};border-radius:50%;animation:marker-pulse ${animDur} ease-in-out infinite;transition:all 0.3s ease;box-shadow:0 0 ${isActive ? 20 : 12}px ${cfg.glow},0 0 ${isActive ? 36 : 20}px ${cfg.glow.replace(/[\d.]+\)$/, '0.25)')};"></div>
-      <div class="star-core" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:${size * coreSize}px;height:${size * coreSize}px;background:rgba(5,10,20,0.92);border-radius:50%;border:1.5px solid ${color};box-shadow:0 0 6px ${cfg.glow},inset 0 0 4px rgba(255,255,255,0.3);"></div>
-    </div>`,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
+    html: '<div class="marker-wrapper ' + stateClass + '" style="width:' + s + 'px;height:' + s + 'px;position:relative;cursor:pointer;">' +
+      '<div class="star-halo" style="position:absolute;inset:-' + Math.round(s * 0.3) + 'px;background:radial-gradient(circle,' + cfg.glow.replace(/0.9/, '0.35').replace(/0.95/, '0.35') + ' 0%,transparent 65%);animation:star-breathe ' + animDur + ' ease-in-out infinite;"></div>' +
+      '<div class="star-body" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 ' + (isActive ? '14px' : '8px') + ' ' + cfg.glow + ');">' + starSVG + '</div>' +
+    '</div>',
+    iconSize: [s, s],
+    iconAnchor: [s / 2, s / 2],
   });
 };
 const createCityIcon = () => {
