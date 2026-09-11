@@ -21,41 +21,46 @@ const periodColors = {
   'soviet': 'rgb(170,210,240)',
 };
 
-// 四色星辰·星体配置：每个时代拥有专属星芒形态
+// 四色星辰·星体配置：细芒星 - 天文恒星级精致星体
 const periodStarConfig = {
   'classical': {
     color: '#e8f0ff',
     glow: 'rgba(200,220,255,0.9)',
-    spike: 4,
-    size: 22,
+    coreSize: 2.5,
+    spikeLen: 12,
+    haloSize: 18,
     name: '古典先驱',
   },
   'national-foundation': {
     color: '#a0d8ff',
     glow: 'rgba(130,200,255,0.95)',
-    spike: 4,
-    size: 24,
+    coreSize: 2.8,
+    spikeLen: 13,
+    haloSize: 19,
     name: '民族奠基',
   },
   'national-prosperity': {
     color: '#ffe080',
     glow: 'rgba(240,200,100,0.95)',
-    spike: 4,
-    size: 26,
+    coreSize: 3,
+    spikeLen: 14,
+    haloSize: 20,
     name: '民族繁荣',
   },
   'late-romantic': {
     color: '#ffc0d8',
     glow: 'rgba(240,168,200,0.9)',
-    spike: 4,
-    size: 24,
+    coreSize: 2.8,
+    spikeLen: 13,
+    haloSize: 19,
     name: '白银时代',
   },
   'soviet': {
     color: '#c0e0ff',
     glow: 'rgba(168,208,240,0.9)',
-    spike: 4,
-    size: 22,
+    coreSize: 2.5,
+    spikeLen: 12,
+    haloSize: 18,
     name: '苏联学派',
   },
 };
