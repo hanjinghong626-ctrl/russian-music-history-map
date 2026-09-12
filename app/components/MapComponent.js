@@ -10,7 +10,8 @@ import RelationshipNetwork from './RelationshipNetwork';
 import { relationships, relationshipConfig } from '../data/relationships';
 import CityCard from './CityCard';
 import ConstellationCard from './ConstellationCard';
-import StarTour from './StarTour';
+import dynamic from 'next/dynamic';
+const StarTour = dynamic(() => import('./StarTour'), { ssr: false });
 import BasilCathedral from './BasilCathedral';
 import './MapComponent.css';
 
