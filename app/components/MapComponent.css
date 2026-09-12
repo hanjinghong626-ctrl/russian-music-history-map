@@ -801,3 +801,46 @@
   .st-era-trans-en { font-size: 0.9rem; }
   .st-vignette { background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%); }
 }
+
+/* === 电影感 V3 增强 === */
+
+/* 地图变暗层 - 漫游时地图瓦片变暗 */
+.st-map-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 18, 0.35);
+  pointer-events: none;
+  z-index: 0;
+  animation: st-dim-in 1.5s ease-out both;
+}
+@keyframes st-dim-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* 底部进度条 */
+.st-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(40, 80, 140, 0.2);
+  z-index: 10;
+  pointer-events: none;
+}
+.st-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(100, 180, 255, 0.6), rgba(200, 160, 255, 0.8));
+  box-shadow: 0 0 8px rgba(100, 180, 255, 0.5);
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.st-progress-text {
+  position: absolute;
+  top: -22px;
+  right: 16px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(140, 180, 220, 0.6);
+  letter-spacing: 1px;
+}
