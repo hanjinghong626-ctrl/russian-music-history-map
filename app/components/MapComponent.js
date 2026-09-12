@@ -181,7 +181,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourSpeeds = [6000, 4000, 2500];
   const tourLabels = ['慢', '中', '快'];
   const tourCurrent = tourIndex >= 0 && tourIndex < tourComposers.length ? tourComposers[tourIndex] : null;
-  const [showStarTour, setShowStarTour] = useState(false);
   const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
