@@ -1,7 +1,7 @@
 // v5.2 师承关系落回地图 - 星航联动(显影仪飞至城市) + 北极光/银河/流星 + 连线流光
 'use client';
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { composers } from '../data/composers';
