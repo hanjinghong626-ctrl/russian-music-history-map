@@ -428,11 +428,26 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         if (wasSelected) {
           setSelectedComposerId(null);
           selIdRef.current = null;
+          setConstellationComposer(null);
+          setConstellationPos(null);
         } else {
           setSelectedComposerId(cid);
           selIdRef.current = cid;
           const el = marker.getElement();
           if (el) { const w = el.querySelector('.marker-wrapper'); if (w) w.classList.add('composer-selected'); }
+          // 星座卡片定位
+          const map = mapInstanceRef.current;
+          if (map) {
+            const pt = map.latLngToContainerPoint(composer.coordinates);
+            const mapEl = map.getContainer();
+            const mw = mapEl.offsetWidth, mh = mapEl.offsetHeight;
+            let cx = pt.x + 22, cy = pt.y - 130;
+            if (cx + 270 > mw) cx = pt.x - 282;
+            if (cy < 10) cy = pt.y + 22;
+            if (cy + 320 > mh) cy = mh - 330;
+            setConstellationPos({ x: cx, y: cy });
+            setConstellationComposer(composer);
+          }
         }
       });
       marker.composerId = composer.id; marker.addTo(map); markersRef.current.push(marker); composerMapRef.current[composer.id] = marker;
