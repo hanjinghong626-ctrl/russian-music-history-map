@@ -2,6 +2,7 @@
 
 import { composers } from '../data/composers';
 import { relationships, relationshipConfig } from '../data/relationships';
+import './ConstellationCard.css';
 
 // 星座卡片：点击星体后浮现在地图上的精致信息卡
 export default function ConstellationCard({ composer, position, onClose }) {
