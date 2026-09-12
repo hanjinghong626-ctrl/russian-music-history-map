@@ -177,10 +177,34 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourTimerRef = useRef(null);
   const tourLineRef = useRef(null);
   const tourIndexRef = useRef(-1);
+  const tourPrevIdxRef = useRef(-1);
+  const tourCanvasRef = useRef(null);
+  const tourEraTimerRef = useRef(null);
+  const [tourEraOverlay, setTourEraOverlay] = useState(null);
   const tourComposers = useMemo(() => [...composers].sort((a, b) => a.birthYear - b.birthYear), []);
   const tourSpeeds = [6000, 4000, 2500];
   const tourLabels = ['慢', '中', '快'];
   const tourCurrent = tourIndex >= 0 && tourIndex < tourComposers.length ? tourComposers[tourIndex] : null;
+
+  // 作曲家重要性（决定相机缩放）
+  const tourImportance = {
+    'glinka': 3, 'dargomyzhsky': 2, 'serov': 1,
+    'balakirev': 2, 'cui': 1, 'mussorgsky': 3, 'borodin': 2, 'rimsky-korsakov': 3,
+    'tchaikovsky': 3, 'taneyev': 1, 'lyadov': 1, 'glazunov': 2,
+    'scriabin': 2, 'rachmaninoff': 3, 'prokofiev': 3, 'shostakovich': 3,
+    'stravinsky': 3, 'kabalevsky': 1, 'miaskovsky': 1, 'khachaturian': 2,
+    'glier': 1, 'lyatoshinsky': 1, 'stasov': 1, 'rubinstein': 2,
+  };
+  const tourZoomLevels = { 3: 7, 2: 5.5, 1: 4.2 };
+
+  // 时代名称
+  const tourEraNames = {
+    'classical': { zh: '古典先驱', en: 'Classical Pioneer', range: '1742–1815' },
+    'national-foundation': { zh: '民族奠基', en: 'National Foundation', range: '1804–1865' },
+    'national-prosperity': { zh: '民族繁荣', en: 'National Prosperity', range: '1835–1871' },
+    'late-romantic': { zh: '白银时代', en: 'Silver Age', range: '1862–1902' },
+    'soviet': { zh: '苏联学派', en: 'Soviet School', range: '1877–1934' },
+  };
   const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -698,19 +722,127 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   // === 星轨漫游函数 ===
   const tourClearTimer = () => { if (tourTimerRef.current) { clearTimeout(tourTimerRef.current); tourTimerRef.current = null; } };
 
+  // 粒子拖尾绘制
+  const tourDrawParticleTrail = useCallback((fromIdx, toIdx) => {
+    const canvas = tourCanvasRef.current;
+    if (!canvas) return;
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width = window.innerWidth;
+    const h = canvas.height = window.innerHeight;
+
+    const from = tourComposers[fromIdx];
+    const to = tourComposers[toIdx];
+    if (!from || !to) return;
+
+    const p1 = map.latLngToContainerPoint(from.coordinates);
+    const p2 = map.latLngToContainerPoint(to.coordinates);
+    const period = to.period || 'classical';
+    const eraColor = {
+      'classical': [180, 210, 255],
+      'national-foundation': [100, 200, 255],
+      'national-prosperity': [255, 200, 100],
+      'late-romantic': [255, 160, 200],
+      'soviet': [160, 200, 255],
+    }[period] || [100, 180, 255];
+
+    let progress = 0;
+    const totalDur = 1800;
+    const startTime = performance.now();
+
+    const animate = (now) => {
+      progress = Math.min((now - startTime) / totalDur, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const cx = p1.x + (p2.x - p1.x) * ease;
+      const cy = p1.y + (p2.y - p1.y) * ease;
+
+      // 流星拖尾
+      for (let i = 0; i < 3; i++) {
+        const t = Math.max(0, ease - 0.05 * i);
+        const px = p1.x + (p2.x - p1.x) * t;
+        const py = p1.y + (p2.y - p1.y) * t;
+        const alpha = (1 - i * 0.3) * 0.8;
+        const size = 3 - i * 0.8;
+        ctx.beginPath();
+        ctx.arc(px, py, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},${alpha})`;
+        ctx.fill();
+        // 光晕
+        ctx.beginPath();
+        ctx.arc(px, py, size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},${alpha * 0.15})`;
+        ctx.fill();
+      }
+
+      // 头部亮点
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,0.9)`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.3)`;
+      ctx.fill();
+
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [tourComposers]);
+
+  // 时代过渡检测
+  const tourCheckEraTransition = useCallback((idx) => {
+    const prev = tourPrevIdxRef.current;
+    if (prev < 0 || prev >= tourComposers.length) return;
+    const prevPeriod = tourComposers[prev]?.period;
+    const curPeriod = tourComposers[idx]?.period;
+    if (prevPeriod && curPeriod && prevPeriod !== curPeriod) {
+      const era = tourEraNames[curPeriod];
+      if (era) {
+        setTourEraOverlay(era);
+        if (tourEraTimerRef.current) clearTimeout(tourEraTimerRef.current);
+        tourEraTimerRef.current = setTimeout(() => setTourEraOverlay(null), 2500);
+      }
+    }
+    tourPrevIdxRef.current = idx;
+  }, [tourComposers]);
+
   const tourFlyTo = useCallback((idx) => {
     const map = mapInstanceRef.current;
     if (!map || idx < 0 || idx >= tourComposers.length) return;
     const c = tourComposers[idx];
     tourIndexRef.current = idx;
     setTourIndex(idx);
-    map.flyTo(c.coordinates, 5.5, { duration: 1.8, easeLinearity: 0.3 });
+
+    // 电影感变焦
+    const imp = tourImportance[c.id] || 1;
+    const zoom = tourZoomLevels[imp] || 5.5;
+    map.flyTo(c.coordinates, zoom, { duration: 2.2, easeLinearity: 0.25 });
+
+    // 粒子拖尾
+    const prevIdx = tourIndexRef.current;
+    if (prevIdx >= 0 && prevIdx !== idx) {
+      tourDrawParticleTrail(prevIdx, idx);
+    }
+
+    // 更新轨迹线
     if (tourLineRef.current) { try { map.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
     const coords = tourComposers.slice(0, idx + 1).map(x => x.coordinates);
     if (coords.length > 1) {
-      tourLineRef.current = L.polyline(coords, { color: 'rgba(100,180,255,0.4)', weight: 1.5, dashArray: '8,5', smoothFactor: 2 }).addTo(map);
+      const period = c.period || 'classical';
+      const lineColor = {
+        'classical': 'rgba(180,210,255,0.35)',
+        'national-foundation': 'rgba(100,200,255,0.35)',
+        'national-prosperity': 'rgba(255,200,100,0.35)',
+        'late-romantic': 'rgba(255,160,200,0.35)',
+        'soviet': 'rgba(160,200,255,0.35)',
+      }[period] || 'rgba(100,180,255,0.35)';
+      tourLineRef.current = L.polyline(coords, { color: lineColor, weight: 1.5, dashArray: '8,5', smoothFactor: 2 }).addTo(map);
     }
-  }, [tourComposers]);
+
+    // 时代过渡
+    tourCheckEraTransition(idx);
+  }, [tourComposers, tourDrawParticleTrail, tourCheckEraTransition]);
 
   useEffect(() => {
     if (!tourPlaying) { tourClearTimer(); return; }
@@ -735,7 +867,11 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourCycleSpeed = useCallback(() => setTourSpeedIdx(p => (p + 1) % 3), []);
   const tourClose = useCallback(() => {
     tourClearTimer(); setTourPlaying(false); setShowStarTour(false);
+    setTourEraOverlay(null);
+    if (tourEraTimerRef.current) { clearTimeout(tourEraTimerRef.current); tourEraTimerRef.current = null; }
     if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
+    const canvas = tourCanvasRef.current;
+    if (canvas) { const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); }
   }, [mapInstanceRef]);
 
   // 漫游键盘快捷键
@@ -807,6 +943,21 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
       {showStarTour && (
         <div className="star-tour-overlay">
+          {/* 电影感暗角 */}
+          <div className="st-vignette" />
+          {/* 粒子拖尾画布 */}
+          <canvas ref={tourCanvasRef} className="st-particle-canvas" />
+          {/* 时代过渡覆盖 */}
+          {tourEraOverlay && (
+            <div className="st-era-transition">
+              <div className="st-era-trans-bg" />
+              <div className="st-era-trans-content">
+                <div className="st-era-trans-range">{tourEraOverlay.range}</div>
+                <h2 className="st-era-trans-zh">{tourEraOverlay.zh}</h2>
+                <p className="st-era-trans-en">{tourEraOverlay.en}</p>
+              </div>
+            </div>
+          )}
           {/* HUD 背景扫描线 */}
           <div className="st-scanlines" />
           {/* 右上角信息卡 */}
