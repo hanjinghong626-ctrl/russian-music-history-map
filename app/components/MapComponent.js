@@ -739,6 +739,19 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
   }, [mapInstanceRef]);
 
+  // 漫游键盘快捷键
+  useEffect(() => {
+    if (!showStarTour) return;
+    const handler = (e) => {
+      if (e.key === 'Escape') { tourClose(); }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); tourSkipFwd(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); tourSkipBack(); }
+      else if (e.key === ' ') { e.preventDefault(); tourTogglePlay(); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [showStarTour, tourClose, tourSkipFwd, tourSkipBack, tourTogglePlay]);
+
   const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
   const composerCount = composers.length;
 
