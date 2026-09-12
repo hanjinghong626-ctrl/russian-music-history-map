@@ -10,6 +10,7 @@ import RelationshipNetwork from './RelationshipNetwork';
 import { relationships, relationshipConfig } from '../data/relationships';
 import CityCard from './CityCard';
 import ConstellationCard from './ConstellationCard';
+import StarTour from './StarTour';
 import BasilCathedral from './BasilCathedral';
 import './MapComponent.css';
 
@@ -168,6 +169,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const [selectedComposerId, setSelectedComposerId] = useState(null);
   const [constellationPos, setConstellationPos] = useState(null);
   const [constellationComposer, setConstellationComposer] = useState(null);
+  const [showStarTour, setShowStarTour] = useState(false);
   const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -722,12 +724,20 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
           </div>
         </div>
       )}
+      <button className="tour-btn" onClick={() => setShowStarTour(true)} title="星轨漫游 - 按出生年飞览50位作曲家">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>
+          <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" strokeDasharray="2,2"/>
+        </svg>
+        <span>漫游</span>
+      </button>
       <button className={`rel-toggle-btn ${relationshipMode ? 'active' : ''}`} onClick={toggleRelationshipMode} title={relationshipMode ? "退出关系网" : "查看关系网"}>
         <svg className="rel-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="5" cy="12" r="2.5" fill="currentColor" stroke="none"/><circle cx="19" cy="5" r="2.5" fill="currentColor" stroke="none"/><circle cx="19" cy="19" r="2.5" fill="currentColor" stroke="none"/><line x1="7.2" y1="10.5" x2="16.8" y2="6.5" strokeDasharray="3,2"/><line x1="7.2" y1="13.5" x2="16.8" y2="17.5" strokeDasharray="3,2"/></svg>
         关系网
       </button>
       {relationshipMode && <RelationshipNetwork onClose={() => setRelationshipMode(false)} />}
       {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
+      {showStarTour && <StarTour mapInstanceRef={mapInstanceRef} onClose={() => setShowStarTour(false)} />}
       {selectedCity && <CityCard city={selectedCity} composers={composers} onClose={() => setSelectedCity(null)} onSelectComposer={handleComposerSelectFromCard} />}
       <div className="map-instructions"><span>点击标记查看作曲家详情 · 点击城市查看详情 · 点击"关系网"按钮查看关系网络</span></div>
     </div>
