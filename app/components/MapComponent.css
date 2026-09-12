@@ -508,7 +508,7 @@
 
 /* 信息卡 - 科幻 HUD 风格 */
 .st-info-card {
-  position: absolute; top: 20px; right: 20px; width: 250px; z-index: 10;
+  position: absolute; bottom: 20px; left: 20px; width: 260px; z-index: 10;
   background: rgba(4, 10, 22, 0.93);
   border: 1px solid rgba(80, 160, 255, 0.25);
   border-radius: 2px;
