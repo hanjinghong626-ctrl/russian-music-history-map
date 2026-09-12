@@ -441,7 +441,7 @@
   position: absolute;
   top: 16px;
   right: 260px;
-  z-index: 1001;
+  z-index: 1105;
   background: rgba(10, 21, 32, 0.92);
   border: 1px solid rgba(180, 200, 255, 0.3);
   border-radius: 8px;
@@ -483,7 +483,7 @@
 
 /* ===== 星轨漫游 HUD 科幻风 ===== */
 .star-tour-overlay {
-  position: fixed; inset: 0; z-index: 1000; pointer-events: none;
+  position: fixed; inset: 0; z-index: 1100; pointer-events: none;
 }
 
 /* 扫描线背景 */
@@ -507,7 +507,7 @@
 
 /* 信息卡 - 科幻 HUD 风格 */
 .st-info-card {
-  position: absolute; top: 20px; right: 20px; width: 250px;
+  position: absolute; top: 20px; right: 20px; width: 250px; z-index: 1110;
   background: rgba(4, 10, 22, 0.93);
   border: 1px solid rgba(80, 160, 255, 0.25);
   border-radius: 2px;
@@ -592,7 +592,7 @@
 
 /* 底部 HUD 控制栏 */
 .st-hud-bar {
-  position: absolute; bottom: 0; left: 0; right: 0;
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 1110;
   background: rgba(4, 10, 22, 0.95);
   backdrop-filter: blur(16px) saturate(150%);
   border-top: 1px solid rgba(80, 160, 255, 0.2);
@@ -697,7 +697,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 1090;
   background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
 }
 
@@ -706,14 +706,14 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 2;
+  z-index: 1091;
 }
 
 /* 时代过渡覆盖 */
 .st-era-transition {
   position: absolute;
   inset: 0;
-  z-index: 50;
+  z-index: 1120;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -781,10 +781,7 @@
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* 增强信息卡动画 */
-.st-info-card {
-  animation: st-card-cinematic-in 0.6s ease-out;
-}
+/* 增强信息卡动画 - 已在上方定义 */
 
 @keyframes st-card-cinematic-in {
   0% { opacity: 0; transform: translateX(30px) scale(0.9); filter: blur(8px); }
