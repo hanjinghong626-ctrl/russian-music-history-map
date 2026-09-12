@@ -433,3 +433,48 @@
   animation: star-breathe 1s ease-in-out infinite !important;
   inset: -60% !important;
 }
+
+
+/* ===== 星轨漫游按钮 ===== */
+.tour-btn {
+  position: absolute;
+  top: 16px;
+  right: 260px;
+  z-index: 1001;
+  background: rgba(10, 21, 32, 0.92);
+  border: 1px solid rgba(180, 200, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: rgba(180, 210, 255, 0.85);
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(4px);
+  transition: all 0.25s ease;
+  letter-spacing: 1px;
+}
+
+.tour-btn:hover {
+  background: rgba(100, 160, 240, 0.12);
+  border-color: rgba(160, 200, 255, 0.5);
+  color: rgba(200, 225, 255, 1);
+  box-shadow: 0 0 16px rgba(100, 160, 240, 0.2);
+}
+
+.tour-btn svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.tour-btn:hover svg {
+  opacity: 1;
+  animation: tour-spin 4s linear infinite;
+}
+
+@keyframes tour-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
