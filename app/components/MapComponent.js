@@ -948,8 +948,24 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
       {showStarTour && (
         <div className="star-tour-overlay">
+          {/* 漫游标题 - 开场闪现 */}
+          <div className="st-tour-title">
+            <span className="st-tour-title-zh">星轨漫游</span>
+            <span className="st-tour-title-sub">Star Trail Tour</span>
+          </div>
           {/* 地图变暗层 */}
           <div className="st-map-dim" />
+          {/* 星点闪烁层 */}
+          <div className="st-stars">
+            {[...Array(40)].map((_, i) => (
+              <div key={i} className="st-star" style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`
+              }} />
+            ))}
+          </div>
           {/* 电影感暗角 */}
           <div className="st-vignette" />
           {/* 粒子拖尾画布 */}
