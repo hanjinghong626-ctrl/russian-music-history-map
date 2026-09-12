@@ -182,7 +182,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourEraTimerRef = useRef(null);
   const [tourEraOverlay, setTourEraOverlay] = useState(null);
   const tourComposers = useMemo(() => [...composers].sort((a, b) => a.birthYear - b.birthYear), []);
-  const tourSpeeds = [6000, 4000, 2500];
+  const tourSpeeds = [9000, 5500, 3500];
   const tourLabels = ['慢', '中', '快'];
   const tourCurrent = tourIndex >= 0 && tourIndex < tourComposers.length ? tourComposers[tourIndex] : null;
 
@@ -729,8 +729,9 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const map = mapInstanceRef.current;
     if (!map) return;
     const ctx = canvas.getContext('2d');
-    const w = canvas.width = window.innerWidth;
-    const h = canvas.height = window.innerHeight;
+    const mapEl = map.getContainer();
+    const w = canvas.width = mapEl.clientWidth;
+    const h = canvas.height = mapEl.clientHeight;
 
     const from = tourComposers[fromIdx];
     const to = tourComposers[toIdx];
@@ -748,7 +749,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     }[period] || [100, 180, 255];
 
     let progress = 0;
-    const totalDur = 1800;
+    const totalDur = 2600;
     const startTime = performance.now();
 
     const animate = (now) => {
@@ -758,7 +759,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       const cy = p1.y + (p2.y - p1.y) * ease;
 
       // 流星拖尾
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 6; i++) {
         const t = Math.max(0, ease - 0.05 * i);
         const px = p1.x + (p2.x - p1.x) * t;
         const py = p1.y + (p2.y - p1.y) * t;
@@ -775,14 +776,18 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         ctx.fill();
       }
 
-      // 头部亮点
+      // 头部亮点（更大更亮）
       ctx.beginPath();
-      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,0.9)`;
+      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.3)`;
+      ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.35)`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, 20, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.1)`;
       ctx.fill();
 
       if (progress < 1) requestAnimationFrame(animate);
@@ -811,16 +816,16 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const map = mapInstanceRef.current;
     if (!map || idx < 0 || idx >= tourComposers.length) return;
     const c = tourComposers[idx];
+    const prevIdx = tourIndexRef.current;
     tourIndexRef.current = idx;
     setTourIndex(idx);
 
-    // 电影感变焦
+    // 电影感变焦（更慢更戏剧性）
     const imp = tourImportance[c.id] || 1;
     const zoom = tourZoomLevels[imp] || 5.5;
-    map.flyTo(c.coordinates, zoom, { duration: 2.2, easeLinearity: 0.25 });
+    map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
 
     // 粒子拖尾
-    const prevIdx = tourIndexRef.current;
     if (prevIdx >= 0 && prevIdx !== idx) {
       tourDrawParticleTrail(prevIdx, idx);
     }
