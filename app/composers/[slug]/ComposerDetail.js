@@ -622,7 +622,7 @@ export default function ComposerDetail({ params }) {
                         </div>
                       )}
                       {/* Key Numbers */}
-                      {work.key_numbers && work.key_numbers.length > 0 && (
+                      {work.key_numbers && (Array.isArray(work.key_numbers) ? (work.key_numbers.length > 0 && (
                         <div style={{ marginBottom: '1rem' }}>
                           <h4 style={{ fontSize: '0.85rem', color: '#c4a87a', marginBottom: '0.4rem', fontWeight: 500 }}>
                             关键段落
@@ -642,7 +642,16 @@ export default function ComposerDetail({ params }) {
                             ))}
                           </div>
                         </div>
-                      )}
+                      )) : (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{ fontSize: '0.85rem', color: '#c4a87a', marginBottom: '0.4rem', fontWeight: 500 }}>
+                            关键段落
+                          </h4>
+                          <p style={{ fontSize: '0.9rem', lineHeight: 1.9, color: '#a0b0cc', textAlign: 'justify' }}>
+                            {String(work.key_numbers)}
+                          </p>
+                        </div>
+                      ))}
                       {/* Historical Context */}
                       {work.historical_context && (
                         <div>
