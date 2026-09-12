@@ -948,6 +948,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
       {showStarTour && (
         <div className="star-tour-overlay">
+          {/* 地图变暗层 */}
+          <div className="st-map-dim" />
           {/* 电影感暗角 */}
           <div className="st-vignette" />
           {/* 粒子拖尾画布 */}
@@ -990,6 +992,11 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
               <div className="st-tour-progress-num">{tourIndex + 1} <span className="st-tour-of">/</span> {tourComposers.length}</div>
             </div>
           )}
+          {/* 底部进度条 */}
+          <div className="st-progress-bar">
+            <div className="st-progress-fill" style={{ width: `${tourComposers.length > 0 ? ((tourIndex + 1) / tourComposers.length * 100) : 0}%` }} />
+            <div className="st-progress-text">{tourIndex >= 0 ? `${tourIndex + 1} / ${tourComposers.length}` : '—'}</div>
+          </div>
           {/* 底部 HUD 控制栏 */}
           <div className="st-hud-bar">
             {/* 时间轴 */}
