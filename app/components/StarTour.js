@@ -42,30 +42,25 @@ export default function StarTour({ mapInstanceRef, onClose }) {
     // 地图飞行
     map.flyTo(composer.coordinates, 5.5, { duration: 1.8, easeLinearity: 0.3 });
 
-    // 添加轨迹线
-    setTrail(prev => {
-      const newTrail = [...prev, composer.coordinates];
-      return newTrail;
-    });
+    // 记录轨迹
+    setTrail(prev => [...prev, composer.coordinates]);
 
-    // 更新轨迹 polyline
+    // 更新轨迹虚线：从第1位到当前位置
     if (lineRef.current) {
       try { map.removeLayer(lineRef.current); } catch (e) {}
       lineRef.current = null;
     }
-    if (trail.length > 0 || true) {
-      const allCoords = sortedComposers.slice(0, idx + 1).map(c => c.coordinates);
-      if (allCoords.length > 1) {
-        const line = L.polyline(allCoords, {
-          color: 'rgba(180,210,255,0.35)',
-          weight: 1.5,
-          dashArray: '6,4',
-          smoothFactor: 2,
-        }).addTo(map);
-        lineRef.current = line;
-      }
+    const allCoords = sortedComposers.slice(0, idx + 1).map(c => c.coordinates);
+    if (allCoords.length > 1) {
+      const line = L.polyline(allCoords, {
+        color: 'rgba(180,210,255,0.35)',
+        weight: 1.5,
+        dashArray: '6,4',
+        smoothFactor: 2,
+      }).addTo(map);
+      lineRef.current = line;
     }
-  }, [mapInstanceRef, trail]);
+  }, [mapInstanceRef]);
 
   // 自动播放
   useEffect(() => {
