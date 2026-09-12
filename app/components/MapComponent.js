@@ -10,8 +10,7 @@ import RelationshipNetwork from './RelationshipNetwork';
 import { relationships, relationshipConfig } from '../data/relationships';
 import CityCard from './CityCard';
 import ConstellationCard from './ConstellationCard';
-import dynamic from 'next/dynamic';
-const StarTour = dynamic(() => import('./StarTour'), { ssr: false });
+
 import BasilCathedral from './BasilCathedral';
 import './MapComponent.css';
 
@@ -170,6 +169,18 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const [selectedComposerId, setSelectedComposerId] = useState(null);
   const [constellationPos, setConstellationPos] = useState(null);
   const [constellationComposer, setConstellationComposer] = useState(null);
+  // === 星轨漫游状态 ===
+  const [showStarTour, setShowStarTour] = useState(false);
+  const [tourIndex, setTourIndex] = useState(-1);
+  const [tourPlaying, setTourPlaying] = useState(false);
+  const [tourSpeedIdx, setTourSpeedIdx] = useState(1);
+  const tourTimerRef = useRef(null);
+  const tourLineRef = useRef(null);
+  const tourIndexRef = useRef(-1);
+  const tourComposers = useMemo(() => [...composers].sort((a, b) => a.birthYear - b.birthYear), []);
+  const tourSpeeds = [6000, 4000, 2500];
+  const tourLabels = ['慢', '中', '快'];
+  const tourCurrent = tourIndex >= 0 && tourIndex < tourComposers.length ? tourComposers[tourIndex] : null;
   const [showStarTour, setShowStarTour] = useState(false);
   const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
@@ -684,6 +695,50 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   };
 
 
+
+  // === 星轨漫游函数 ===
+  const tourClearTimer = () => { if (tourTimerRef.current) { clearTimeout(tourTimerRef.current); tourTimerRef.current = null; } };
+
+  const tourFlyTo = useCallback((idx) => {
+    const map = mapInstanceRef.current;
+    if (!map || idx < 0 || idx >= tourComposers.length) return;
+    const c = tourComposers[idx];
+    tourIndexRef.current = idx;
+    setTourIndex(idx);
+    map.flyTo(c.coordinates, 5.5, { duration: 1.8, easeLinearity: 0.3 });
+    if (tourLineRef.current) { try { map.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
+    const coords = tourComposers.slice(0, idx + 1).map(x => x.coordinates);
+    if (coords.length > 1) {
+      tourLineRef.current = L.polyline(coords, { color: 'rgba(100,180,255,0.4)', weight: 1.5, dashArray: '8,5', smoothFactor: 2 }).addTo(map);
+    }
+  }, [tourComposers]);
+
+  useEffect(() => {
+    if (!tourPlaying) { tourClearTimer(); return; }
+    const cur = tourIndexRef.current;
+    const next = cur < 0 ? 0 : cur + 1;
+    if (next >= tourComposers.length) { setTourPlaying(false); return; }
+    tourTimerRef.current = setTimeout(() => tourFlyTo(next), cur < 0 ? 600 : tourSpeeds[tourSpeedIdx]);
+    return () => tourClearTimer();
+  }, [tourPlaying, tourSpeedIdx, tourFlyTo, tourComposers.length]);
+
+  const tourGoTo = useCallback((idx) => { tourClearTimer(); setTourPlaying(false); tourFlyTo(Math.max(0, Math.min(idx, tourComposers.length - 1))); }, [tourFlyTo, tourComposers.length]);
+  const tourTogglePlay = useCallback(() => {
+    const cur = tourIndexRef.current;
+    if (cur < 0) { setTourPlaying(true); tourFlyTo(0); }
+    else if (cur >= tourComposers.length - 1 && !tourPlaying) {
+      if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
+      setTourPlaying(true); tourFlyTo(0);
+    } else { setTourPlaying(p => !p); }
+  }, [tourPlaying, tourFlyTo, tourComposers.length, mapInstanceRef]);
+  const tourSkipBack = useCallback(() => tourGoTo(tourIndexRef.current - 1), [tourGoTo]);
+  const tourSkipFwd = useCallback(() => tourGoTo(tourIndexRef.current + 1), [tourGoTo]);
+  const tourCycleSpeed = useCallback(() => setTourSpeedIdx(p => (p + 1) % 3), []);
+  const tourClose = useCallback(() => {
+    tourClearTimer(); setTourPlaying(false); setShowStarTour(false);
+    if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
+  }, [mapInstanceRef]);
+
   const toggleRelationshipMode = () => setRelationshipMode(prev => !prev);
   const composerCount = composers.length;
 
@@ -738,7 +793,65 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       </button>
       {relationshipMode && <RelationshipNetwork onClose={() => setRelationshipMode(false)} />}
       {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
-      {showStarTour && <StarTour mapInstanceRef={mapInstanceRef} onClose={() => setShowStarTour(false)} />}
+      {showStarTour && (
+        <div className="star-tour-overlay">
+          {/* HUD 背景扫描线 */}
+          <div className="st-scanlines" />
+          {/* 右上角信息卡 */}
+          {tourCurrent && (
+            <div className={`st-info-card ${tourPlaying ? 'st-auto' : ''}`}>
+              <div className="st-card-corner tl"/><div className="st-card-corner tr"/>
+              <div className="st-card-corner bl"/><div className="st-card-corner br"/>
+              <div className="st-period-tag" style={{'--pcolor': periodColors[tourCurrent.period]?.replace('rgb','rgba').replace(')', ',0.6)') || 'rgba(160,200,255,0.6)'}}>
+                {({ 'classical': '古典先驱', 'national-foundation': '民族奠基', 'national-prosperity': '民族繁荣', 'late-romantic': '白银时代', 'soviet': '苏联学派' })[tourCurrent.period] || ''}
+              </div>
+              <h3 className="st-name">{tourCurrent.name}</h3>
+              <p className="st-name-ru">{tourCurrent.nameRu}</p>
+              <div className="st-years-row">
+                <span className="st-year-num">{tourCurrent.birthYear}</span>
+                <span className="st-year-dash">—</span>
+                <span className="st-year-num">{tourCurrent.deathYear}</span>
+              </div>
+              <p className="st-school">{tourCurrent.school}</p>
+              {tourCurrent.works && tourCurrent.works[0] && (
+                <div className="st-work-box">
+                  <span className="st-work-label">代 表 作</span>
+                  <span className="st-work-title">{tourCurrent.works[0].title}</span>
+                </div>
+              )}
+              <div className="st-tour-progress-num">{tourIndex + 1} <span className="st-tour-of">/</span> {tourComposers.length}</div>
+            </div>
+          )}
+          {/* 底部 HUD 控制栏 */}
+          <div className="st-hud-bar">
+            {/* 时间轴 */}
+            <div className="st-timeline">
+              <div className="st-timeline-fill" style={{width: `${tourIndex >= 0 ? (tourIndex + 1) / tourComposers.length * 100 : 0}%`}} />
+              <div className="st-timeline-dots">
+                {tourComposers.map((c, i) => (
+                  <span key={c.id} className={`st-tdot ${i <= tourIndex ? 'st-tdot-v' : ''} ${i === tourIndex ? 'st-tdot-cur' : ''}`}
+                    style={{left: `${(i / Math.max(tourComposers.length - 1, 1)) * 100}%`}}
+                    onClick={() => tourGoTo(i)} title={`${c.name} (${c.birthYear})`} />
+                ))}
+              </div>
+            </div>
+            {/* 控制按钮 */}
+            <div className="st-hud-controls">
+              <button className="st-hbtn" onClick={tourClose} title="关闭 (Esc)">✕</button>
+              <button className="st-hbtn" onClick={tourSkipBack} disabled={tourIndex <= 0} title="上一位">◂</button>
+              <button className="st-hbtn st-hbtn-play" onClick={tourTogglePlay} title={tourPlaying ? '暂停' : '播放'}>
+                {tourPlaying ? '❚❚' : '▶'}
+              </button>
+              <button className="st-hbtn" onClick={tourSkipFwd} disabled={tourIndex >= tourComposers.length - 1} title="下一位">▸</button>
+              <button className="st-hbtn st-hbtn-spd" onClick={tourCycleSpeed} title="速度">{tourLabels[tourSpeedIdx]}</button>
+            </div>
+            <div className="st-hud-era">
+              <span className="st-era-yr">{tourCurrent ? tourCurrent.birthYear : '—'}</span>
+              <span className="st-era-nm">{tourCurrent ? tourCurrent.name : '点击 ▶ 开始漫游'}</span>
+            </div>
+          </div>
+        </div>
+      )}
       {selectedCity && <CityCard city={selectedCity} composers={composers} onClose={() => setSelectedCity(null)} onSelectComposer={handleComposerSelectFromCard} />}
       <div className="map-instructions"><span>点击标记查看作曲家详情 · 点击城市查看详情 · 点击"关系网"按钮查看关系网络</span></div>
     </div>
