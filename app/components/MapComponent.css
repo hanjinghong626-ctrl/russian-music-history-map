@@ -689,3 +689,112 @@
   .st-hud-bar { padding: 10px 16px 14px; }
   .st-era-yr { font-size: 1.2rem; }
 }
+
+/* ===== 电影感漫游增强 ===== */
+
+/* 暗角效果 */
+.st-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* 粒子画布 */
+.st-particle-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 时代过渡覆盖 */
+.st-era-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: st-era-fade-in 0.6s ease-out;
+}
+
+.st-era-trans-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 14, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: st-era-bg-pulse 2.5s ease-in-out;
+}
+
+.st-era-trans-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  animation: st-era-content-in 0.8s ease-out 0.2s both;
+}
+
+.st-era-trans-range {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 8px;
+  color: rgba(160, 200, 255, 0.5);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.st-era-trans-zh {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: rgba(200, 225, 255, 0.95);
+  text-shadow: 0 0 40px rgba(100, 180, 255, 0.5), 0 0 80px rgba(100, 180, 255, 0.2);
+  margin-bottom: 8px;
+  letter-spacing: 12px;
+}
+
+.st-era-trans-en {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(180, 210, 240, 0.5);
+  letter-spacing: 4px;
+}
+
+@keyframes st-era-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes st-era-bg-pulse {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes st-era-content-in {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 增强信息卡动画 */
+.st-info-card {
+  animation: st-card-cinematic-in 0.6s ease-out;
+}
+
+@keyframes st-card-cinematic-in {
+  0% { opacity: 0; transform: translateX(30px) scale(0.9); filter: blur(8px); }
+  100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .st-era-trans-zh { font-size: 2.2rem; letter-spacing: 6px; }
+  .st-era-trans-range { font-size: 0.8rem; letter-spacing: 4px; }
+  .st-era-trans-en { font-size: 0.9rem; }
+  .st-vignette { background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.4) 100%); }
+}
