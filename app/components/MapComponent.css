@@ -485,7 +485,8 @@
 .star-tour-overlay {
   position: absolute; inset: 0; z-index: 100; pointer-events: none;
   overflow: hidden;
-  animation: st-tour-fadein 1.2s ease-out both;
+  background: radial-gradient(ellipse at 50% 40%, rgba(8,16,36,0.3) 0%, rgba(2,6,18,0.6) 100%);
+  animation: st-tour-fadein 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes st-tour-fadein {
   0% { opacity: 0; }
@@ -704,7 +705,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.72) 100%);
+  background: radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,0.85) 100%);
 }
 
 /* 粒子画布 */
@@ -824,25 +825,26 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: rgba(40, 80, 140, 0.2);
+  height: 2px;
+  background: rgba(40, 80, 140, 0.15);
   z-index: 10;
   pointer-events: none;
 }
 .st-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, rgba(100, 180, 255, 0.6), rgba(200, 160, 255, 0.8));
-  box-shadow: 0 0 8px rgba(100, 180, 255, 0.5);
-  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(90deg, rgba(100, 180, 255, 0.4), rgba(180, 140, 255, 0.7));
+  box-shadow: 0 0 12px rgba(100, 180, 255, 0.4), 0 -1px 4px rgba(180, 140, 255, 0.2);
+  transition: width 2.0s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0 1px 1px 0;
 }
 .st-progress-text {
   position: absolute;
-  top: -22px;
-  right: 16px;
-  font-size: 11px;
+  top: -24px;
+  right: 20px;
+  font-size: 10px;
   font-family: 'JetBrains Mono', monospace;
-  color: rgba(140, 180, 220, 0.6);
-  letter-spacing: 1px;
+  color: rgba(140, 180, 220, 0.45);
+  letter-spacing: 2px;
 }
 
 /* 星点闪烁 */
@@ -853,10 +855,19 @@
 .st-star {
   position: absolute;
   width: 2px; height: 2px;
-  background: rgba(200, 220, 255, 0.8);
+  background: rgba(220, 235, 255, 1);
   border-radius: 50%;
   animation: st-twinkle ease-in-out infinite;
-  box-shadow: 0 0 4px rgba(180, 210, 255, 0.4);
+  box-shadow: 0 0 6px rgba(180, 210, 255, 0.8), 0 0 12px rgba(140, 180, 255, 0.3);
+}
+.st-star:nth-child(3n) {
+  width: 3px; height: 3px;
+  box-shadow: 0 0 10px rgba(180, 210, 255, 1), 0 0 20px rgba(140, 180, 255, 0.5);
+}
+.st-star:nth-child(7n) {
+  width: 1.5px; height: 1.5px;
+  background: rgba(255, 200, 160, 0.9);
+  box-shadow: 0 0 6px rgba(255, 180, 140, 0.6);
 }
 @keyframes st-twinkle {
   0%, 100% { opacity: 0.2; transform: scale(0.8); }
@@ -875,12 +886,12 @@
 }
 .st-tour-title-zh {
   display: block;
-  font-size: 3rem;
-  font-weight: 300;
-  color: rgba(200, 225, 255, 0.9);
-  letter-spacing: 16px;
-  text-shadow: 0 0 40px rgba(100, 180, 255, 0.5);
-  margin-bottom: 8px;
+  font-size: 3.2rem;
+  font-weight: 200;
+  color: rgba(210, 230, 255, 0.92);
+  letter-spacing: 20px;
+  text-shadow: 0 0 60px rgba(100, 180, 255, 0.6), 0 0 120px rgba(100,180,255,0.2);
+  margin-bottom: 12px;
 }
 .st-tour-title-sub {
   display: block;
