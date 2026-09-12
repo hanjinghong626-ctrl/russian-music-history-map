@@ -9,6 +9,7 @@ import { cities } from '../data/cities';
 import RelationshipNetwork from './RelationshipNetwork';
 import { relationships, relationshipConfig } from '../data/relationships';
 import CityCard from './CityCard';
+import ConstellationCard from './ConstellationCard';
 import BasilCathedral from './BasilCathedral';
 import './MapComponent.css';
 
@@ -165,6 +166,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const relLinesRef = useRef([]);
   const selIdRef = useRef(null);
   const [selectedComposerId, setSelectedComposerId] = useState(null);
+  const [constellationPos, setConstellationPos] = useState(null);
+  const [constellationComposer, setConstellationComposer] = useState(null);
   const skyMeteorRef = useRef(null);
   const [relationshipMode, setRelationshipMode] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -709,6 +712,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         关系网
       </button>
       {relationshipMode && <RelationshipNetwork onClose={() => setRelationshipMode(false)} />}
+      {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
       {selectedCity && <CityCard city={selectedCity} composers={composers} onClose={() => setSelectedCity(null)} onSelectComposer={handleComposerSelectFromCard} />}
       <div className="map-instructions"><span>点击标记查看作曲家详情 · 点击城市查看详情 · 点击"关系网"按钮查看关系网络</span></div>
     </div>
