@@ -74,7 +74,8 @@
 .map-overlay-tl,
 .map-overlay-tr,
 .map-instructions,
-.rel-toggle-btn {
+.rel-toggle-btn,
+.tour-btn {
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
 }
