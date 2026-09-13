@@ -483,9 +483,9 @@
 
 /* ===== 星轨漫游 HUD 科幻风 ===== */
 .star-tour-overlay {
-  position: fixed; inset: 0; z-index: 10000; pointer-events: none;
-  background: radial-gradient(ellipse at 50% 40%, rgba(2,8,20,0.15) 0%, rgba(0,2,8,0.35) 100%);
-  animation: st-tour-fadein 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  position: fixed;
+  background: radial-gradient(ellipse at 50% 45%, rgba(0,5,15,0.25) 0%, rgba(0,2,8,0.45) 100%);
+  animation: st-tour-fadein 1.5s ease-out both;
 }
 @keyframes st-tour-fadein {
   0% { opacity: 0; }
@@ -513,13 +513,8 @@
 
 /* 信息卡 - 科幻 HUD 风格 */
 .st-info-card {
-  position: fixed; bottom: 20px; left: 20px; width: 260px; z-index: 10010;
-  background: rgba(4, 10, 22, 0.93);
-  border: 1px solid rgba(80, 160, 255, 0.25);
-  border-radius: 2px;
-  padding: 24px 20px 18px;
+  position: fixed;
   pointer-events: auto;
-  animation: st-hud-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .st-auto {
@@ -598,14 +593,8 @@
 
 /* 底部 HUD 控制栏 */
 .st-hud-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 10010;
-  background: rgba(4, 10, 22, 0.95);
-  backdrop-filter: blur(16px) saturate(150%);
-  border-top: 1px solid rgba(80, 160, 255, 0.2);
-  padding: 12px 24px 16px;
+  position: fixed;
   pointer-events: auto;
-  display: flex; flex-direction: column; gap: 10px;
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5), 0 -1px 0 rgba(80, 160, 255, 0.1);
 }
 
 /* 时间轴 */
@@ -701,30 +690,19 @@
 /* 暗角效果 */
 .st-vignette {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10002;
-  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(0,0,0,0.5) 100%);
+  background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.35) 100%);
 }
 
 /* 粒子画布 */
 .st-particle-canvas {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10003;
 }
 
 /* 时代过渡覆盖 */
 .st-era-transition {
   position: fixed;
-  inset: 0;
-  z-index: 10020;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   pointer-events: none;
-  animation: st-era-fade-in 0.6s ease-out;
 }
 
 .st-era-trans-bg {
@@ -821,12 +799,6 @@
 /* 底部进度条 */
 .st-progress-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: rgba(40, 80, 140, 0.15);
-  z-index: 10010;
   pointer-events: none;
 }
 .st-progress-fill {
@@ -848,7 +820,7 @@
 
 /* 星点闪烁 */
 .st-stars {
-  position: fixed; inset: 0; pointer-events: none; z-index: 10000;
+  position: fixed;
   overflow: hidden;
 }
 .st-star {
@@ -876,12 +848,8 @@
 /* 漫游开场标题 */
 .st-tour-title {
   position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 10025;
-  pointer-events: none;
-  animation: st-title-show 3.5s ease-out forwards;
+  transform: translate(-50%, -50%); z-index: 10025;
+  pointer-events: none; text-align: center;
 }
 .st-tour-title-zh {
   display: block;
