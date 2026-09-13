@@ -729,9 +729,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const map = mapInstanceRef.current;
     if (!map) return;
     const ctx = canvas.getContext('2d');
-    const mapEl = map.getContainer();
-    const w = canvas.width = mapEl.clientWidth;
-    const h = canvas.height = mapEl.clientHeight;
+    const w = canvas.width = window.innerWidth;
+    const h = canvas.height = window.innerHeight;
 
     const from = tourComposers[fromIdx];
     const to = tourComposers[toIdx];
