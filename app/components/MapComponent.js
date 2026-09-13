@@ -183,6 +183,15 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const [tourEraOverlay, setTourEraOverlay] = useState(null);
   const tourComposers = useMemo(() => [...composers].sort((a, b) => a.birthYear - b.birthYear), []);
   const tourSpeeds = [9000, 5500, 3500];
+
+  // 漫游星点数据（稳定生成，避免每次渲染变化）
+  const stStarsData = React.useMemo(() => 
+    [...Array(40)].map(() => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 3,
+      dur: 2 + Math.random() * 3
+    })), []);
   const tourLabels = ['慢', '中', '快'];
   const tourCurrent = tourIndex >= 0 && tourIndex < tourComposers.length ? tourComposers[tourIndex] : null;
 
@@ -754,14 +763,23 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const animate = (now) => {
       progress = Math.min((now - startTime) / totalDur, 1);
       const ease = 1 - Math.pow(1 - progress, 3);
-      const cx = p1.x + (p2.x - p1.x) * ease;
-      const cy = p1.y + (p2.y - p1.y) * ease;
+      // 弧线控制点（垂直偏移）
+      const dx = p2.x - p1.x, dy = p2.y - p1.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const arcH = Math.min(dist * 0.3, 120);
+      const mx = (p1.x + p2.x) / 2 - dy / dist * arcH;
+      const my = (p1.y + p2.y) / 2 + dx / dist * arcH;
+      // 贝塞尔插值
+      const bezX = (t) => (1-t)*(1-t)*p1.x + 2*(1-t)*t*mx + t*t*p2.x;
+      const bezY = (t) => (1-t)*(1-t)*p1.y + 2*(1-t)*t*my + t*t*p2.y;
+      const cx = bezX(ease);
+      const cy = bezY(ease);
 
       // 流星拖尾
       for (let i = 0; i < 6; i++) {
-        const t = Math.max(0, ease - 0.05 * i);
-        const px = p1.x + (p2.x - p1.x) * t;
-        const py = p1.y + (p2.y - p1.y) * t;
+        const t = Math.max(0, ease - 0.04 * i);
+        const px = bezX(t);
+        const py = bezY(t);
         const alpha = (1 - i * 0.3) * 0.8;
         const size = 3 - i * 0.8;
         ctx.beginPath();
@@ -775,18 +793,31 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
         ctx.fill();
       }
 
+      // 尾迹线（从上一个粒子到头部）
+      const tailT = Math.max(0, ease - 0.15);
+      const tailX = bezX(tailT), tailY = bezY(tailT);
+      const grad = ctx.createLinearGradient(tailX, tailY, cx, cy);
+      grad.addColorStop(0, `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0)`);
+      grad.addColorStop(1, `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.6)`);
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(cx, cy);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
       // 头部亮点（更大更亮）
       ctx.beginPath();
-      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255,255,255,0.95)';
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(cx, cy, 12, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.35)`;
+      ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.4)`;
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(cx, cy, 20, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.1)`;
+      ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${eraColor[0]},${eraColor[1]},${eraColor[2]},0.12)`;
       ctx.fill();
 
       if (progress < 1) requestAnimationFrame(animate);
@@ -823,6 +854,12 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     const imp = tourImportance[c.id] || 1;
     const zoom = tourZoomLevels[imp] || 5.5;
     map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
+    // 地图微暗 + 色彩偏移
+    const mapContainer = map.getContainer();
+    if (mapContainer) {
+      mapContainer.style.transition = 'filter 2s ease';
+      mapContainer.style.filter = 'brightness(0.65) saturate(0.7) contrast(1.1)';
+    }
 
     // 粒子拖尾
     if (prevIdx >= 0 && prevIdx !== idx) {
@@ -860,7 +897,12 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourGoTo = useCallback((idx) => { tourClearTimer(); setTourPlaying(false); tourFlyTo(Math.max(0, Math.min(idx, tourComposers.length - 1))); }, [tourFlyTo, tourComposers.length]);
   const tourTogglePlay = useCallback(() => {
     const cur = tourIndexRef.current;
-    if (cur < 0) { setTourPlaying(true); tourFlyTo(0); }
+    if (cur < 0) {
+      // 开场先飞回全景视角
+      const map = mapInstanceRef.current;
+      if (map) { map.flyTo([55.75, 37.62], 4, { duration: 2.0, easeLineLinear: 0.2 }); }
+      setTimeout(() => { setTourPlaying(true); tourFlyTo(0); }, 2200);
+    }
     else if (cur >= tourComposers.length - 1 && !tourPlaying) {
       if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
       setTourPlaying(true); tourFlyTo(0);
@@ -872,6 +914,14 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourClose = useCallback(() => {
     tourClearTimer(); setTourPlaying(false); setShowStarTour(false);
     setTourEraOverlay(null);
+    // 恢复地图亮度
+    const map = mapInstanceRef.current;
+    if (map) {
+      const mapContainer = map.getContainer();
+      if (mapContainer) {
+        mapContainer.style.filter = 'none';
+      }
+    }
     if (tourEraTimerRef.current) { clearTimeout(tourEraTimerRef.current); tourEraTimerRef.current = null; }
     if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
     const canvas = tourCanvasRef.current;
@@ -954,12 +1004,12 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
           </div>
           {/* 星点闪烁层 */}
           <div className="st-stars">
-            {[...Array(40)].map((_, i) => (
+            {stStarsData.map((s, i) => (
               <div key={i} className="st-star" style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 3}s`
+                left: `${s.x}%`,
+                top: `${s.y}%`,
+                animationDelay: `${s.delay}s`,
+                animationDuration: `${s.dur}s`
               }} />
             ))}
           </div>
@@ -1045,3 +1095,4 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     </div>
   );
 }
+
