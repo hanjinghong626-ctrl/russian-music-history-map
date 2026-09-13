@@ -784,9 +784,9 @@
 
 /* 地图变暗层 - 漫游时地图瓦片变暗 */
 .st-map-dim {
-  position: fixed;
+  display: none; /* disabled */
   inset: 0;
-  background: rgba(2, 6, 18, 0.7);
+  display: none; /* disabled */
   pointer-events: none;
   z-index: 10001;
   animation: st-dim-in 1.5s ease-out both;
