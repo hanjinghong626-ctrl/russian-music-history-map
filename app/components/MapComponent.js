@@ -185,7 +185,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourSpeeds = [9000, 5500, 3500];
 
   // 漫游星点数据（稳定生成，避免每次渲染变化）
-  const stStarsData = React.useMemo(() => 
+  const stStarsData = useMemo(() => 
     [...Array(40)].map(() => ({
       x: Math.random() * 100,
       y: Math.random() * 100,
@@ -1095,4 +1095,5 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     </div>
   );
 }
+
 
