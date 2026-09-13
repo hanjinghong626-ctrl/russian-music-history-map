@@ -897,32 +897,34 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourGoTo = useCallback((idx) => { tourClearTimer(); setTourPlaying(false); tourFlyTo(Math.max(0, Math.min(idx, tourComposers.length - 1))); }, [tourFlyTo, tourComposers.length]);
     const tourTogglePlay = useCallback(() => {
     const cur = tourIndexRef.current;
-    const map = mapInstanceRef.current;
+    // 多种方式获取 map 实例
+    let map = mapInstanceRef.current;
+    if (!map) {
+      const leafletEl = document.querySelector('.leaflet-container');
+      if (leafletEl && leafletEl._leaflet_map) map = leafletEl._leaflet_map;
+    }
+    const doFly = (idx) => {
+      if (!map || !tourComposers[idx]) return false;
+      const c = tourComposers[idx];
+      const imp = tourImportance[c.id] || 1;
+      const zoom = tourZoomLevels[imp] || 5.5;
+      map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
+      return true;
+    };
     if (cur < 0) {
-      // 首次开始
       setTourPlaying(true);
       setTourIndex(0);
       tourIndexRef.current = 0;
-      if (map && tourComposers.length > 0) {
-        const c = tourComposers[0];
-        const imp = tourImportance[c.id] || 1;
-        const zoom = tourZoomLevels[imp] || 5.5;
-        map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
-      }
+      doFly(0);
     }
     else if (cur >= tourComposers.length - 1 && !tourPlaying) {
       if (tourLineRef.current && map) { try { map.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
       setTourPlaying(true);
       setTourIndex(0);
       tourIndexRef.current = 0;
-      if (map && tourComposers.length > 0) {
-        const c = tourComposers[0];
-        const imp = tourImportance[c.id] || 1;
-        const zoom = tourZoomLevels[imp] || 5.5;
-        map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
-      }
+      doFly(0);
     } else { setTourPlaying(p => !p); }
-  }, [tourPlaying, tourComposers, tourComposers.length, mapInstanceRef]);
+  }, [tourPlaying, tourComposers, tourComposers.length]);
   const tourSkipBack = useCallback(() => tourGoTo(tourIndexRef.current - 1), [tourGoTo]);
   const tourSkipFwd = useCallback(() => tourGoTo(tourIndexRef.current + 1), [tourGoTo]);
   const tourCycleSpeed = useCallback(() => setTourSpeedIdx(p => (p + 1) % 3), []);
@@ -1110,6 +1112,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     </div>
   );
 }
+
 
 
 
