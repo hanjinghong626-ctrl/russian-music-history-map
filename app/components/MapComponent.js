@@ -850,40 +850,12 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     tourIndexRef.current = idx;
     setTourIndex(idx);
 
-    // 电影感变焦（更慢更戏剧性）
     const imp = tourImportance[c.id] || 1;
     const zoom = tourZoomLevels[imp] || 5.5;
-    map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
-    // 地图微暗 + 色彩偏移
-    const mapContainer = map.getContainer();
-    if (mapContainer) {
-      mapContainer.style.transition = 'filter 2s ease';
-      mapContainer.style.filter = 'brightness(0.65) saturate(0.7) contrast(1.1)';
-    }
+    map.flyTo(c.coordinates, zoom, { duration: 2.0 });
 
-    // 粒子拖尾
-    if (prevIdx >= 0 && prevIdx !== idx) {
-      tourDrawParticleTrail(prevIdx, idx);
-    }
-
-    // 更新轨迹线
-    if (tourLineRef.current) { try { map.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
-    const coords = tourComposers.slice(0, idx + 1).map(x => x.coordinates);
-    if (coords.length > 1) {
-      const period = c.period || 'classical';
-      const lineColor = {
-        'classical': 'rgba(180,210,255,0.35)',
-        'national-foundation': 'rgba(100,200,255,0.35)',
-        'national-prosperity': 'rgba(255,200,100,0.35)',
-        'late-romantic': 'rgba(255,160,200,0.35)',
-        'soviet': 'rgba(160,200,255,0.35)',
-      }[period] || 'rgba(100,180,255,0.35)';
-      tourLineRef.current = L.polyline(coords, { color: lineColor, weight: 1.5, dashArray: '8,5', smoothFactor: 2 }).addTo(map);
-    }
-
-    // 时代过渡
     tourCheckEraTransition(idx);
-  }, [tourComposers, tourDrawParticleTrail, tourCheckEraTransition]);
+  }, [tourComposers, tourCheckEraTransition]);
 
   useEffect(() => {
     if (!tourPlaying) { tourClearTimer(); return; }
@@ -897,33 +869,26 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourGoTo = useCallback((idx) => { tourClearTimer(); setTourPlaying(false); tourFlyTo(Math.max(0, Math.min(idx, tourComposers.length - 1))); }, [tourFlyTo, tourComposers.length]);
     const tourTogglePlay = useCallback(() => {
     const cur = tourIndexRef.current;
-    // 多种方式获取 map 实例
     let map = mapInstanceRef.current;
     if (!map) {
-      const leafletEl = document.querySelector('.leaflet-container');
-      if (leafletEl && leafletEl._leaflet_map) map = leafletEl._leaflet_map;
+      const el = document.querySelector('.leaflet-container');
+      if (el && el._leaflet_map) map = el._leaflet_map;
     }
-    const doFly = (idx) => {
-      if (!map || !tourComposers[idx]) return false;
-      const c = tourComposers[idx];
-      const imp = tourImportance[c.id] || 1;
-      const zoom = tourZoomLevels[imp] || 5.5;
-      map.flyTo(c.coordinates, zoom, { duration: 3.0, easeLinearity: 0.15 });
-      return true;
-    };
-    if (cur < 0) {
+    if (!map) return;
+    if (cur < 0 || (cur >= tourComposers.length - 1 && !tourPlaying)) {
+      if (tourLineRef.current) { try { map.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
       setTourPlaying(true);
       setTourIndex(0);
       tourIndexRef.current = 0;
-      doFly(0);
+      const c = tourComposers[0];
+      if (c) {
+        const imp = tourImportance[c.id] || 1;
+        const zoom = tourZoomLevels[imp] || 5.5;
+        map.flyTo(c.coordinates, zoom, { duration: 2.0 });
+      }
+    } else {
+      setTourPlaying(p => !p);
     }
-    else if (cur >= tourComposers.length - 1 && !tourPlaying) {
-      if (tourLineRef.current && map) { try { map.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
-      setTourPlaying(true);
-      setTourIndex(0);
-      tourIndexRef.current = 0;
-      doFly(0);
-    } else { setTourPlaying(p => !p); }
   }, [tourPlaying, tourComposers, tourComposers.length]);
   const tourSkipBack = useCallback(() => tourGoTo(tourIndexRef.current - 1), [tourGoTo]);
   const tourSkipFwd = useCallback(() => tourGoTo(tourIndexRef.current + 1), [tourGoTo]);
@@ -931,14 +896,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourClose = useCallback(() => {
     tourClearTimer(); setTourPlaying(false); setShowStarTour(false);
     setTourEraOverlay(null);
-    // 恢复地图亮度
-    const map = mapInstanceRef.current;
-    if (map) {
-      const mapContainer = map.getContainer();
-      if (mapContainer) {
-        mapContainer.style.filter = 'none';
-      }
-    }
+    // 地图亮度恢复已移除
     if (tourEraTimerRef.current) { clearTimeout(tourEraTimerRef.current); tourEraTimerRef.current = null; }
     if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
     const canvas = tourCanvasRef.current;
@@ -1112,6 +1070,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     </div>
   );
 }
+
 
 
 
