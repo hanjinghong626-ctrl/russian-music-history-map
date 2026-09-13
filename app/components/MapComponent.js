@@ -898,10 +898,8 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
   const tourTogglePlay = useCallback(() => {
     const cur = tourIndexRef.current;
     if (cur < 0) {
-      // 开场先飞回全景视角
-      const map = mapInstanceRef.current;
-      if (map) { map.flyTo([55.75, 37.62], 4, { duration: 2.0, easeLineLinear: 0.2 }); }
-      setTimeout(() => { setTourPlaying(true); tourFlyTo(0); }, 2200);
+      setTourPlaying(true);
+      setTimeout(() => tourFlyTo(0), 300);
     }
     else if (cur >= tourComposers.length - 1 && !tourPlaying) {
       if (tourLineRef.current && mapInstanceRef.current) { try { mapInstanceRef.current.removeLayer(tourLineRef.current); } catch(e){} tourLineRef.current = null; }
@@ -1095,5 +1093,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
     </div>
   );
 }
+
 
 
