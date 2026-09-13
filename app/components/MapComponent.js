@@ -952,8 +952,6 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
             <span className="st-tour-title-zh">星轨漫游</span>
             <span className="st-tour-title-sub">Star Trail Tour</span>
           </div>
-          {/* 地图变暗层 */}
-          <div className="st-map-dim" />
           {/* 星点闪烁层 */}
           <div className="st-stars">
             {[...Array(40)].map((_, i) => (
