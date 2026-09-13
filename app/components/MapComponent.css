@@ -484,7 +484,7 @@
 /* ===== 星轨漫游 HUD 科幻风 ===== */
 .star-tour-overlay {
   position: fixed; inset: 0; z-index: 10000; pointer-events: none;
-  background: radial-gradient(ellipse at 50% 40%, rgba(2,8,20,0.7) 0%, rgba(0,2,8,0.9) 100%);
+  background: radial-gradient(ellipse at 50% 40%, rgba(2,8,20,0.15) 0%, rgba(0,2,8,0.35) 100%);
   animation: st-tour-fadein 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes st-tour-fadein {
@@ -704,7 +704,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 10002;
-  background: radial-gradient(ellipse at 50% 45%, transparent 10%, rgba(0,0,0,0.9) 100%);
+  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(0,0,0,0.5) 100%);
 }
 
 /* 粒子画布 */
