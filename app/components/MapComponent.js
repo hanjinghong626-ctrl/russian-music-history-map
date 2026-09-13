@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { composers } from '../data/composers';
@@ -970,7 +971,7 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
       </button>
       {relationshipMode && <RelationshipNetwork onClose={() => setRelationshipMode(false)} />}
       {constellationComposer && <ConstellationCard composer={constellationComposer} position={constellationPos} onClose={() => { setConstellationComposer(null); setConstellationPos(null); }} />}
-      {showStarTour && (
+      {showStarTour && ReactDOM.createPortal((
         <div className="star-tour-overlay">
           {/* 漫游标题 - 开场闪现 */}
           <div className="st-tour-title">
@@ -1064,12 +1065,13 @@ export default function MapComponent({ activePeriod, onComposerSelect, onCitySel
             </div>
           </div>
         </div>
-      )}
+      ), document.body)}
       {selectedCity && <CityCard city={selectedCity} composers={composers} onClose={() => setSelectedCity(null)} onSelectComposer={handleComposerSelectFromCard} />}
       <div className="map-instructions"><span>点击标记查看作曲家详情 · 点击城市查看详情 · 点击"关系网"按钮查看关系网络</span></div>
     </div>
   );
 }
+
 
 
 
