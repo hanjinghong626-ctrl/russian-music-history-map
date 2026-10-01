@@ -41,10 +41,13 @@ System.register([], function (_export, _context) {
             return cc.game.init({
               debugMode: false ? cc.DebugMode.INFO : cc.DebugMode.ERROR,
               settingsPath: this.settingsPath,
+              renderOption: {
+                preferWebGL2: true
+              },
               overrideSettings: {
-                // assets: {
-                //      preloadBundles: [{ bundle: 'main', version: 'xxx' }],
-                // }
+                rendering: {
+                  preferedAPI: 'webgl2'
+                },
                 profiling: {
                   showFPS: this.showFPS
                 }
