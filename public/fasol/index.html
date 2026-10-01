@@ -9,7 +9,7 @@
   <meta name="viewport"
         content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true"/>
 
-  <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+  <!--https://www.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/SafariHTMLRef.html-->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,7 +43,7 @@
         <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
       </div>
     </div>
-  
+
 
 <!-- Polyfills bundle. -->
 
@@ -56,8 +56,67 @@
 <!-- Import map -->
 <script src="src/import-map.fafd5.json" type="systemjs-importmap" charset="utf-8"> </script>
 
+<!-- ===== 临时诊断层：把 WebGL 环境与报错直接显示到画面上 ===== -->
+<div id="__diag" style="position:fixed;inset:0;z-index:99999;pointer-events:none;padding:14px 12px;box-sizing:border-box;font:12px/1.5 -apple-system,'PingFang SC',monospace;color:#9fe8ff;background:rgba(0,0,0,0.82);white-space:pre-wrap;word-break:break-all;overflow:auto;"></div>
 <script>
-    System.import('./index.56ae2.js').catch(function(err) { console.error(err); })
+(function(){
+  var box = document.getElementById('__diag');
+  var logs = [];
+  function render(){
+    var c = document.createElement('canvas');
+    var gl2=null, gl1=null, err2='', err1='';
+    try { gl2 = c.getContext('webgl2'); } catch(e){ err2 = String(e); }
+    try { gl1 = c.getContext('webgl'); } catch(e){ err1 = String(e); }
+    var dbg = gl2 ? gl2.getExtension('WEBGL_debug_renderer_info') : null;
+    var renderer = (gl2 && dbg) ? gl2.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : '(n/a)';
+    var env = [
+      '== FASOL 诊断 ==',
+      'UA: ' + navigator.userAgent.slice(0,110),
+      'WebGL2: ' + (!!gl2) + (err2 ? (' ('+err2+')') : ''),
+      'WebGL1: ' + (!!gl1) + (err1 ? (' ('+err1+')') : ''),
+      'GPU: ' + renderer,
+      'viewport: ' + window.innerWidth + 'x' + window.innerHeight,
+      '',
+      '== 运行日志 =='
+    ];
+    box.textContent = env.join('\n') + '\n' + logs.join('\n');
+  }
+  function push(s){
+    var t = new Date().toISOString().slice(11,19);
+    logs.push(t + ' ' + s);
+    if (logs.length > 60) logs.shift();
+    render();
+  }
+  window.addEventListener('error', function(e){
+    push('[error] ' + (e.message||'') + ' @ ' + (e.filename||'').slice(-36) + ':' + e.lineno);
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){
+    var m = e.reason && e.reason.message ? e.reason.message : e.reason;
+    push('[promise] ' + String(m).slice(0,200));
+  });
+  var oe = console.error.bind(console);
+  console.error = function(){
+    try {
+      push('[console] ' + Array.prototype.slice.call(arguments).map(function(a){
+        return typeof a === 'object' ? JSON.stringify(a).slice(0,150) : String(a).slice(0,150);
+      }).join(' '));
+    } catch(e){}
+    return oe.apply(console, arguments);
+  };
+  render();
+  setTimeout(function(){
+    var bad = logs.filter(function(l){ return l.indexOf('[error]')>-1 || l.indexOf('[promise]')>-1; });
+    if (bad.length === 0) { box.style.display='none'; }
+  }, 35000);
+})();
+</script>
+
+<script>
+    System.import('./index.56ae2.js').catch(function(err) {
+      console.error(err);
+      var b = document.getElementById('__diag');
+      if (b) { b.style.display = 'block'; }
+    })
 </script>
 
 </body>
