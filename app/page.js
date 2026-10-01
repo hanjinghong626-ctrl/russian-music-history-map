@@ -64,6 +64,7 @@ export default function MusicHistoryPage() {
           <Link href="/topics/romance" className="nav-link">浪漫曲</Link>
           <Link href="/topics/opera" className="nav-link">歌剧</Link>
           <Link href="/mystery" className="nav-link">🎭 剧本杀</Link>
+          <Link href="/fasol" className="nav-link">🎵 FASOL音游</Link>
         </nav>
       </header>
 
